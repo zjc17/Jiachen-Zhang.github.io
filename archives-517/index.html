@@ -1,0 +1,994 @@
+<!doctype html><html lang=zh-cn>
+<head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+<meta charset=utf-8>
+<meta name=generator content="Hugo 0.88.1"><meta name=theme-color content="#16171d">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=format-detection content="telephone=no, date=no, address=no, email=no">
+<meta http-equiv=cache-control content="no-transform">
+<meta http-equiv=cache-control content="no-siteapp">
+<title>笔记 | Stanford CS49n 学习笔记：0 - blink 【LED闪烁】 | The Daily Awesome</title>
+<link rel=stylesheet href=/css/meme.min.c7b66d8ab937ea5489e87c6d96c470e3f5e7b5a21a385e18c358b7b3be61b6de.css>
+<script src=/js/meme.min.8cbe976441b5181abfd3093c9beee209b19cdbb1fa77c48d225a83ba81fa3fb1.js></script>
+<link rel=preconnect href=https://fonts.gstatic.com crossorigin>
+<link rel=stylesheet href="https://fonts.loli.net/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400;1,700&family=Noto+Serif+SC:wght@400;500;700&family=Source+Code+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap" media=print onload="this.media='all'">
+<noscript><link rel=stylesheet href="https://fonts.loli.net/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400;1,700&family=Noto+Serif+SC:wght@400;500;700&family=Source+Code+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap"></noscript>
+<meta name=author content="Jiachen Zhang"><meta name=description content="本来是打算跟着 CS140e-win19的，但无奈资料不全，跟不下去，就弃坑了。感兴趣可以看看这个 笔记 | Stanford CS140e - 1：LED闪烁 [post cid=&#34;491&#34; /] ​ 第一节课主要是熟悉树莓派的硬件，使用 bootloader 进行程序刷入等基本操作，但是作业要求的是实现点亮任意的pin（除保留以外），这一部分需要对基本的硬件知识有一些了解。 ​ 关于内存映射的……">
+<link rel="shortcut icon" href=/favicon.ico type=image/x-icon>
+<link rel=mask-icon href=/icons/safari-pinned-tab.svg color=#2a6df4>
+<link rel=apple-touch-icon sizes=180x180 href=/icons/apple-touch-icon.png>
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-title content="The Daily Awesome">
+<meta name=apple-mobile-web-app-status-bar-style content="black">
+<meta name=mobile-web-app-capable content="yes">
+<meta name=application-name content="The Daily Awesome">
+<meta name=msapplication-starturl content="../">
+<meta name=msapplication-TileColor content="#fff">
+<meta name=msapplication-TileImage content="../icons/mstile-150x150.png">
+<link rel=manifest href=/manifest.json>
+<link rel=canonical href=https://www.zhangjc.site/archives-517/>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","datePublished":"2019-06-13T19:12:00+00:00","dateModified":"2021-10-01T20:54:44+08:00","url":"https://www.zhangjc.site/archives-517/","headline":"笔记 | Stanford CS49n 学习笔记：0 - blink 【LED闪烁】","description":"本来是打算跟着 CS140e-win19的，但无奈资料不全，跟不下去，就弃坑了。感兴趣可以看看这个 笔记 | Stanford CS140e - 1：LED闪烁 [post cid=\"491\" /] ​ 第一节课主要是熟悉树莓派的硬件，使用 bootloader 进行程序刷入等基本操作，但是作业要求的是实现点亮任意的pin（除保留以外），这一部分需要对基本的硬件知识有一些了解。 ​ 关于内存映射的……","inLanguage":"zh-CN","articleSection":"tech","wordCount":4565,"image":["https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1728760857.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/666026146.png"],"author":{"@type":"Person","description":"The Daily Awesome","email":"zhangjc1999@gmail.com","image":"https://www.zhangjc.site/icons/apple-touch-icon.png","url":"https://www.zhangjc.site/","name":"Jiachen"},"license":"[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh)","publisher":{"@type":"Organization","name":"The Daily Awesome","logo":{"@type":"ImageObject","url":"https://www.zhangjc.site/icons/apple-touch-icon.png"},"url":"https://www.zhangjc.site/"},"mainEntityOfPage":{"@type":"WebSite","@id":"https://www.zhangjc.site/"}}</script>
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:site content="@JiachenZhang5">
+<meta name=twitter:creator content="@JiachenZhang5">
+<meta property="og:title" content="笔记 | Stanford CS49n 学习笔记：0 - blink 【LED闪烁】">
+<meta property="og:description" content="本来是打算跟着 CS140e-win19的，但无奈资料不全，跟不下去，就弃坑了。感兴趣可以看看这个 笔记 | Stanford CS140e - 1：LED闪烁 [post cid=&#34;491&#34; /] ​ 第一节课主要是熟悉树莓派的硬件，使用 bootloader 进行程序刷入等基本操作，但是作业要求的是实现点亮任意的pin（除保留以外），这一部分需要对基本的硬件知识有一些了解。 ​ 关于内存映射的……">
+<meta property="og:url" content="https://www.zhangjc.site/archives-517/">
+<meta property="og:site_name" content="The Daily Awesome">
+<meta property="og:locale" content="zh"><meta property="og:image" content="https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1728760857.png">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2019-06-13T19:12:00+00:00">
+<meta property="article:modified_time" content="2021-10-01T20:54:44+08:00">
+<meta property="article:section" content="tech">
+<script type=text/javascript src="https://s4.cnzz.com/z_stat.php?id=1279769355&web_id=1279769355"></script>
+</head>
+<body>
+<div class=container>
+<header class=header>
+<div class=header-wrapper>
+<div class="header-inner single">
+<div class=site-brand>
+<a href=/ class=brand>The Daily Awesome</a>
+</div>
+<nav class=nav>
+<ul class=menu id=menu>
+<li class=menu-item><a href=/life/><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon archive"><path d="M32 448c0 17.7 14.3 32 32 32h384c17.7.0 32-14.3 32-32V160H32v288zm160-212c0-6.6 5.4-12 12-12h104c6.6.0 12 5.4 12 12v8c0 6.6-5.4 12-12 12H204c-6.6.0-12-5.4-12-12v-8zM480 32H32C14.3 32 0 46.3.0 64v48c0 8.8 7.2 16 16 16h480c8.8.0 16-7.2 16-16V64c0-17.7-14.3-32-32-32z"/></svg><span class=menu-item-name>生活</span></a>
+</li>
+<li class=menu-item><a href=/tech/><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon th"><path d="M149.333 56v80c0 13.255-10.745 24-24 24H24c-13.255.0-24-10.745-24-24V56c0-13.255 10.745-24 24-24h101.333c13.255.0 24 10.745 24 24zm181.334 240v-80c0-13.255-10.745-24-24-24H205.333c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256.0 24.001-10.745 24.001-24zm32-240v80c0 13.255 10.745 24 24 24H488c13.255.0 24-10.745 24-24V56c0-13.255-10.745-24-24-24H386.667c-13.255.0-24 10.745-24 24zm-32 80V56c0-13.255-10.745-24-24-24H205.333c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256.0 24.001-10.745 24.001-24zm-205.334 56H24c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24zM0 376v80c0 13.255 10.745 24 24 24h101.333c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H24c-13.255.0-24 10.745-24 24zm386.667-56H488c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zm0 160H488c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zM181.333 376v80c0 13.255 10.745 24 24 24h101.333c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H205.333c-13.255.0-24 10.745-24 24z"/></svg><span class=menu-item-name>技术</span></a>
+</li>
+<li class=menu-item><a href=/about/><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" class="icon user-circle"><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 96c48.6.0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 344c-58.7.0-111.3-26.6-146.5-68.2 18.8-35.4 55.6-59.8 98.5-59.8 2.4.0 4.8.4 7.1 1.1 13 4.2 26.6 6.9 40.9 6.9s28-2.7 40.9-6.9c2.3-.7 4.7-1.1 7.1-1.1 42.9.0 79.7 24.4 98.5 59.8C359.3 421.4 306.7 448 248 448z"/></svg><span class=menu-item-name>关于</span></a>
+</li>
+<li class=menu-item>
+<a id=theme-switcher href=#><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon theme-icon-light"><path d="M193.2 104.5 242 7a18 18 0 0128 0l48.8 97.5L422.2 70A18 18 0 01442 89.8l-34.5 103.4L505 242a18 18 0 010 28l-97.5 48.8L442 422.2A18 18 0 01422.2 442l-103.4-34.5L270 505a18 18 0 01-28 0l-48.8-97.5L89.8 442A18 18 0 0170 422.2l34.5-103.4-97.5-48.8a18 18 0 010-28l97.5-48.8L70 89.8A18 18 0 0189.8 70zM256 128a128 128 0 10.01.0M256 160a96 96 0 10.01.0"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon theme-icon-dark"><path d="M27 412A256 256 0 10181 5a11.5 11.5.0 00-5 20A201.5 201.5.0 0142 399a11.5 11.5.0 00-15 13"/></svg></a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+<input type=checkbox id=nav-toggle aria-hidden=true>
+<label for=nav-toggle class=nav-toggle></label>
+<label for=nav-toggle class=nav-curtain></label>
+</header>
+<main class="main single" id=main>
+<div class=main-inner>
+<article class="content post h-entry" data-align=justify data-type=tech data-toc-num=true>
+<h1 class="post-title p-name">笔记 | Stanford CS49n 学习笔记：0 - blink 【LED闪烁】</h1>
+<div class=post-meta>
+<time datetime=2019-06-13T19:12:00+00:00 class="post-meta-item published dt-published"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon post-meta-icon"><path d="M148 288h-40c-6.6.0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6.0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5.0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6.0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6.0 12 5.4 12 12v52h48c26.5.0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3.0 6-2.7 6-6z"/></svg>&nbsp;2019.6.13</time>
+<span class="post-meta-item category"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49.0 112v288c0 26.51 21.49 48 48 48h416c26.51.0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>&nbsp;<a href=/tech/ class="category-link p-category">Tech</a></span>
+</div>
+<nav class=contents>
+<ol class=toc>
+<li><a id=contents:1-手动点亮-led href=#1-手动点亮-led>1. 手动点亮 LED</a></li>
+<li><a id=contents:2-载入预编译程序 href=#2-载入预编译程序>2. 载入预编译程序</a></li>
+<li><a id=contents:3-使用bootloader烧录程序 href=#3-使用bootloader烧录程序>3. 使用bootloader烧录程序</a></li>
+<li><a id=contents:4-编译给定汇编烧录程序-检查工具链-tool-chain-环境交叉编译 href=#4-编译给定汇编烧录程序-检查工具链-tool-chain-环境交叉编译>4. 编译给定汇编，烧录程序 （检查工具链 tool chain 环境）【交叉编译】</a></li>
+<li><a id=contents:5-编写自己的程序并烧录 href=#5-编写自己的程序并烧录>5. 编写自己的程序并烧录</a></li>
+<li><a id=contents:6-额外内容 href=#6-额外内容>6. 额外内容</a></li>
+<li><a id=contents:7-gpio检测输入 href=#7-gpio检测输入>7. GPIO检测输入</a></li>
+</ol>
+</nav><div class="post-body e-content">
+<p>本来是打算跟着 CS140e-win19的，但无奈资料不全，跟不下去，就弃坑了。感兴趣可以看看这个</p>
+<p><a href=/archives/491.html>笔记 | Stanford CS140e - 1：LED闪烁</a></p>
+<p>[post cid="491" /]</p>
+<p>​ 第一节课主要是熟悉树莓派的硬件，使用 bootloader 进行程序刷入等基本操作，但是作业要求的是实现点亮任意的pin（除保留以外），这一部分需要对基本的硬件知识有一些了解。</p>
+<p>​ 关于内存映射的概念在计算机组成原理中基本了解，这里也算是一次复习，后面会详细整理思路。</p>
+<p>​ 此次Lab的课程说明链接：<a href=https://github.com/Jiachen-Zhang/cs49n-19spr/tree/master/labs/0-blink target=_blank rel=noopener>Link</a></p>
+<p>基本分为5个步骤：</p>
+<ul>
+<li>手动点亮LED（确保灯泡硬件正常）</li>
+<li>载入预编译程序 （检查内存卡及树莓派硬件是否正常）</li>
+<li>使用bootloader烧录程序（检查<a href=https://zh.wikipedia.org/zh-hans/UART target=_blank rel=noopener>UART</a>连接是否正常）</li>
+<li>编译给定汇编，烧录程序 （检查工具链 tool chain 环境）</li>
+<li>编写自己的程序并烧录</li>
+</ul>
+<p>!> 一个额外的内容： 使用GPIO检测输入</p>
+<p>从这个步骤来看，环环相扣，尽可能避免了错误的发生（或者说能够定位问题，不至于一头雾水不知道哪里错了）</p>
+<p>这门课多了两个实现，第一个是两个LED的交替闪烁，会牵扯到对内存映射的准确理解</p>
+<p>第二个是使用GPIO 作为输入端，我卡了好久，后面也记录了具体的思路。</p>
+<p>!> 由于前面3部分的内容基本相同，因此只区分了不同的地方</p>
+<h2 id=1-手动点亮-led><a href=#1-手动点亮-led class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:1-手动点亮-led class=headings>1. 手动点亮 LED</a></h2>
+<p>​ 这里课程建议使用 <code>CP2102</code> 来为树莓派供电，（这是一个让桌面整洁的好点子，我买的带有短路保险，如果没有的话一定要注意手动接电阻，或者采用usb供电稳妥一些）。</p>
+<p>​ 首先看一下树莓派的 <code>GPIO</code> 管脚图示：</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1728760857.png>
+</figure>
+<p>!> 其中左上角的3.3v端口，在电路板上的焊接位置为方形</p>
+<p>只需要将树莓派和 <code>CP2102</code> 连接对应的 <code>5V</code> 和接地的 <code>GND</code> 即可完成供电，可以观察到主办的电源灯点亮。</p>
+<p>然后将 <code>LED</code> 与树莓派连接进行测试：</p>
+<ul>
+<li><code>LED</code> 的长脚为正极，与树莓派上的 <code>3.3V</code> 相连 （我试了试 <code>5V</code>， 没有烧坏嘻嘻嘻）</li>
+<li><code>LED</code> 的短脚为负极，连接树莓派上的 <code>GND</code></li>
+</ul>
+<p>此时可以观察到 <code>LED</code> 常亮，说明 <code>LED</code> 工作正常，可以进行下一步操作。</p>
+<h2 id=2-载入预编译程序><a href=#2-载入预编译程序 class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:2-载入预编译程序 class=headings>2. 载入预编译程序</a></h2>
+<p>按照要求操作即可（简单翻译下）</p>
+<ul>
+<li>将 <code>firmware</code> 目录下的所有程序拷贝至格式化后的 SD 卡中</li>
+<li>将预编译程序 <code>part/blink-pin20.bin</code> 拷贝至 SD卡中并重命名为 <code>kernel.img</code> (替换原有的文件)</li>
+<li>安全弹出 SD 卡 （防止数据丢失）</li>
+<li>将 LED 连接到树莓派，正极接 <code>GPIO20</code> (<code>pin38</code>)</li>
+<li>将 SD 卡插入树莓派并通电</li>
+</ul>
+<p>可以观察到 LED 开始闪烁，频率大概是 <code>2Hz</code>。</p>
+<h2 id=3-使用bootloader烧录程序><a href=#3-使用bootloader烧录程序 class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:3-使用bootloader烧录程序 class=headings>3. 使用bootloader烧录程序</a></h2>
+<p>i> 由于我使用的是 WSL， 因此不能检测到端口，（我的是 COM6 映射到 ttyS6）， 而这节课直接给出了可执行文件没法改，所以我用了上节课的 rip-install.py 魔改了适用我的机器的 bootloader：<a href=https://github.com/Jiachen-Zhang/cs49n-19spr/blob/master/labs/0-blink/rpi-install-wsl.py target=_blank rel=noopener>rpi-install-wsl.py</a></p>
+<p>如果每次烧板子都要取卡会疯的（有些板子内存还是嵌入的）</p>
+<p>接下来可以使用 <code>CP2102</code> 传输数据，（它终于不是一个只会供电的小玩意了）</p>
+<p>CP2102 的驱动安装网上资料一大堆，win10 还可以在设备管理器中单独设置下电源管理，不要自动关闭</p>
+<p>简单说下操作：（LED的接线不需要改变，关闭电源取下内存卡即可）</p>
+<p>将 <code>firmware/bootloader.bin</code> 文件拷贝至 SD 卡并命名为 <code>kernel.img</code></p>
+<p>连接 UART</p>
+<ul>
+<li>TX: 数据发送</li>
+<li>RX: 数据接收</li>
+</ul>
+<p>所以交叉连一下就好</p>
+<p>（和lab说明不太一样）将<code>bin/rpi-install.py</code>拷贝至 <code>labs\lab1-blink</code>，直接相对路径运行即可</p>
+<p>在 <code>lab1-blink</code>文件夹打开 <code>powershell</code> 运行 <code>python ./rpi-install.py part1/blink-pin20.bin</code></p>
+<p>此时会将程序发送至树莓派，可以观察到传输成功后 LED 开始闪烁</p>
+<p>可能需要补充的python库：<code>sudo pip install {pyserial,xmodem,serial}</code>， 用于检测计算机的usb设备。</p>
+<h2 id=4-编译给定汇编烧录程序-检查工具链-tool-chain-环境交叉编译><a href=#4-编译给定汇编烧录程序-检查工具链-tool-chain-环境交叉编译 class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:4-编译给定汇编烧录程序-检查工具链-tool-chain-环境交叉编译 class=headings>4. 编译给定汇编，烧录程序 （检查工具链 tool chain 环境）【交叉编译】</a></h2>
+<p>这里需要将汇编语言编译为树莓派使用的二进制代码（ARM）</p>
+<p>环境配置：</p>
+<p>For a mac: (<a href=http://cs107e.github.io/guides/mac_toolchain/ target=_blank rel=noopener>http://cs107e.github.io/guides/mac_toolchain/</a>)</p>
+<p>For ubuntu/linux (from: (<a href=https://github.com/eistec/mulle/wiki/Installing-toolchain-(GCC) target=_blank rel=noopener>https://github.com/eistec/mulle/wiki/Installing-toolchain-%28GCC%29</a>)):</p>
+<pre tabindex=0><code>  sudo add-apt-repository ppa:team-gcc-arm-embedded/ppa
+  sudo apt-get update
+  sudo apt-get install gcc-arm-none-eabi
+
+</code></pre><p>编译 <code>part2/blink-pin20.s</code></p>
+<ol>
+<li><code>cd part2</code>. 运行<code>make.sh</code>.</li>
+<li>重新连接树莓派（必须断电（否则之前的程序一直在运行），且 <code>CP2102</code> 拔下来（否则会有端口占用的问题？））.</li>
+<li>在 <code>lab1-blink</code>文件夹打开 <code>powershell</code> 运行<code>rpi-install.py part2/blink-pin20.bin</code></li>
+</ol>
+<p>此时 LED 继续闪烁。</p>
+<h2 id=5-编写自己的程序并烧录><a href=#5-编写自己的程序并烧录 class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:5-编写自己的程序并烧录 class=headings>5. 编写自己的程序并烧录</a></h2>
+<p>这里需要用到一些硬件知识，参考 broadcom 文档: <code>docs/BCM2835-ARM-Peripherals.pdf</code> 90-96页.</p>
+<p>NOTE: where the broadcom document uses addresses <code>0x7420xxxx</code>, you'll use <code>0x2020xxxx</code>.</p>
+<p>给出的提示要求我们在赋值时采用位运算：</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=c1>// assume: we want to set the bits 7,8,9 in &lt;x&gt; to &lt;v&gt; and
+</span><span class=c1>// leave everything else undisturbed.
+</span><span class=c1></span>
+<span class=n>x</span> <span class=o>&amp;=</span>  <span class=o>~</span><span class=p>(</span><span class=mi>0</span><span class=n>b111</span> <span class=o>&lt;&lt;</span> <span class=mi>7</span><span class=p>);</span> <span class=c1>// clear the bits 7, 8, 9  in x
+</span><span class=c1></span><span class=n>x</span> <span class=o>|=</span> <span class=p>(</span><span class=n>v</span> <span class=o>&lt;&lt;</span> <span class=mi>7</span><span class=p>);</span>     <span class=c1>// or in the new bits
+</span><span class=c1></span>
+</code></pre></td></tr></table></div>
+</div>
+</div><p>而不是简单的直接赋值，主要是考虑到多个 LED 同时控制的情况，可以自行尝试直接赋值控制多个LED。</p>
+<p>这里做一点简单的解释：</p>
+<p><code>GPFSELx</code>: 这个32位的寄存器用于记录选择了哪几个pin口，由于每个方法码为3bit，每个寄存器控制10个pin</p>
+<p><code>GPSETx</code>: 这个32位寄存器记录对于pin口是否输出，每一位按顺序控制一个pin口</p>
+<p><code>GPCLR0</code>: 这个32位寄存器记录是否清空pin口的输出，每一位按顺序控制一个pin口</p>
+<p>通过观察后面的表格可知，前面提到过方法码为3bit也在这里：</p>
+<p>000 = GPIO Pin is an input，对应输入001 = GPIO Pin is an output，对应输出</p>
+<p>其中[31:30]位保留，[29:0]位每三位控制一个gpio口，对于gpio有20多个的树莓派来说，使用<code>GPFSEL0</code>，<code>GPFSEL1</code>，<code>GPFSEL2</code>即可</p>
+<p>即: <code>GPFSEL0</code>控制 GPIO9 - 0;<code>GPFSEL1</code>控制 GPIO19 - 10;<code>GPFSEL2</code>控制 GPIO29 - 20</p>
+<p>这里顺序是反的，学过组成原理应该都懂，有点不清楚就多看看上面的pdf</p>
+<p>到这里也就搞清楚了所有的对应关系，简单的求余计算 FSEL的编号，取模计算对应的3比特的位置即可。</p>
+<p>下面放上代码，完成了任意端口的点亮，但是地址赋值这里也许可以改进，总之我想对指定地址的引用数据修改出现各种错误，就换了一种方式实现。</p>
+<p>（设置评论再查看主要是鼓励自己动手</p>
+<p>[hide]</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>  1
+</span><span class=lnt>  2
+</span><span class=lnt>  3
+</span><span class=lnt>  4
+</span><span class=lnt>  5
+</span><span class=lnt>  6
+</span><span class=lnt>  7
+</span><span class=lnt>  8
+</span><span class=lnt>  9
+</span><span class=lnt> 10
+</span><span class=lnt> 11
+</span><span class=lnt> 12
+</span><span class=lnt> 13
+</span><span class=lnt> 14
+</span><span class=lnt> 15
+</span><span class=lnt> 16
+</span><span class=lnt> 17
+</span><span class=lnt> 18
+</span><span class=lnt> 19
+</span><span class=lnt> 20
+</span><span class=lnt> 21
+</span><span class=lnt> 22
+</span><span class=lnt> 23
+</span><span class=lnt> 24
+</span><span class=lnt> 25
+</span><span class=lnt> 26
+</span><span class=lnt> 27
+</span><span class=lnt> 28
+</span><span class=lnt> 29
+</span><span class=lnt> 30
+</span><span class=lnt> 31
+</span><span class=lnt> 32
+</span><span class=lnt> 33
+</span><span class=lnt> 34
+</span><span class=lnt> 35
+</span><span class=lnt> 36
+</span><span class=lnt> 37
+</span><span class=lnt> 38
+</span><span class=lnt> 39
+</span><span class=lnt> 40
+</span><span class=lnt> 41
+</span><span class=lnt> 42
+</span><span class=lnt> 43
+</span><span class=lnt> 44
+</span><span class=lnt> 45
+</span><span class=lnt> 46
+</span><span class=lnt> 47
+</span><span class=lnt> 48
+</span><span class=lnt> 49
+</span><span class=lnt> 50
+</span><span class=lnt> 51
+</span><span class=lnt> 52
+</span><span class=lnt> 53
+</span><span class=lnt> 54
+</span><span class=lnt> 55
+</span><span class=lnt> 56
+</span><span class=lnt> 57
+</span><span class=lnt> 58
+</span><span class=lnt> 59
+</span><span class=lnt> 60
+</span><span class=lnt> 61
+</span><span class=lnt> 62
+</span><span class=lnt> 63
+</span><span class=lnt> 64
+</span><span class=lnt> 65
+</span><span class=lnt> 66
+</span><span class=lnt> 67
+</span><span class=lnt> 68
+</span><span class=lnt> 69
+</span><span class=lnt> 70
+</span><span class=lnt> 71
+</span><span class=lnt> 72
+</span><span class=lnt> 73
+</span><span class=lnt> 74
+</span><span class=lnt> 75
+</span><span class=lnt> 76
+</span><span class=lnt> 77
+</span><span class=lnt> 78
+</span><span class=lnt> 79
+</span><span class=lnt> 80
+</span><span class=lnt> 81
+</span><span class=lnt> 82
+</span><span class=lnt> 83
+</span><span class=lnt> 84
+</span><span class=lnt> 85
+</span><span class=lnt> 86
+</span><span class=lnt> 87
+</span><span class=lnt> 88
+</span><span class=lnt> 89
+</span><span class=lnt> 90
+</span><span class=lnt> 91
+</span><span class=lnt> 92
+</span><span class=lnt> 93
+</span><span class=lnt> 94
+</span><span class=lnt> 95
+</span><span class=lnt> 96
+</span><span class=lnt> 97
+</span><span class=lnt> 98
+</span><span class=lnt> 99
+</span><span class=lnt>100
+</span><span class=lnt>101
+</span><span class=lnt>102
+</span><span class=lnt>103
+</span><span class=lnt>104
+</span><span class=lnt>105
+</span><span class=lnt>106
+</span><span class=lnt>107
+</span><span class=lnt>108
+</span><span class=lnt>109
+</span><span class=lnt>110
+</span><span class=lnt>111
+</span><span class=lnt>112
+</span><span class=lnt>113
+</span><span class=lnt>114
+</span><span class=lnt>115
+</span><span class=lnt>116
+</span><span class=lnt>117
+</span><span class=lnt>118
+</span><span class=lnt>119
+</span><span class=lnt>120
+</span><span class=lnt>121
+</span><span class=lnt>122
+</span><span class=lnt>123
+</span><span class=lnt>124
+</span><span class=lnt>125
+</span><span class=lnt>126
+</span><span class=lnt>127
+</span><span class=lnt>128
+</span><span class=lnt>129
+</span><span class=lnt>130
+</span><span class=lnt>131
+</span><span class=lnt>132
+</span><span class=lnt>133
+</span><span class=lnt>134
+</span><span class=lnt>135
+</span><span class=lnt>136
+</span><span class=lnt>137
+</span><span class=lnt>138
+</span><span class=lnt>139
+</span><span class=lnt>140
+</span><span class=lnt>141
+</span><span class=lnt>142
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cm>/*
+</span><span class=cm> * write code to allow blinking using arbitrary pins.    
+</span><span class=cm> * Implement:
+</span><span class=cm> *	- gpio_set_output(pin) --- set GPIO &lt;pin&gt; as an output (vs input) pin.
+</span><span class=cm> *	- gpio_set_on(pin) --- set the GPIO &lt;pin&gt; on.
+</span><span class=cm> * 	- gpio_set_off(pin) --- set the GPIO &lt;pin&gt; off.
+</span><span class=cm> * Use the minimal number of loads and stores to GPIO memory.  
+</span><span class=cm> *
+</span><span class=cm> * start.s defines a of helper functions (feel free to look at the assembly!  it&#39;s
+</span><span class=cm> *  not tricky):
+</span><span class=cm> *      uint32_t get32(volatile uint32_t *addr) 
+</span><span class=cm> *              --- return the 32-bit value held at &lt;addr&gt;.
+</span><span class=cm> *
+</span><span class=cm> *      void put32(volatile uint32_t *addr, uint32_t v) 
+</span><span class=cm> *              -- write the 32-bit quantity &lt;v&gt; to &lt;addr&gt;
+</span><span class=cm> * 
+</span><span class=cm> * Check-off:
+</span><span class=cm> *  1. get a single LED to blink.
+</span><span class=cm> *  2. attach an LED to pin 19 and another to pin 20 and blink in opposite order (i.e.,
+</span><span class=cm> *     one should be on, while the other is off).   Note, if they behave weirdly, look
+</span><span class=cm> *     carefully at the wording for GPIO set.
+</span><span class=cm> */</span>
+
+<span class=c1>// these are in start.s
+</span><span class=c1></span><span class=kt>void</span> <span class=nf>put32</span><span class=p>(</span><span class=k>volatile</span> <span class=kt>void</span> <span class=o>*</span><span class=n>addr</span><span class=p>,</span> <span class=kt>unsigned</span> <span class=n>v</span><span class=p>);</span>
+<span class=c1>//void PUT32(int addr, unsigned v);
+</span><span class=c1></span><span class=kt>unsigned</span> <span class=nf>get32</span><span class=p>(</span><span class=k>const</span> <span class=k>volatile</span> <span class=kt>void</span> <span class=o>*</span><span class=n>addr</span><span class=p>);</span>
+<span class=c1>//unsigned GET32(int addr);
+</span><span class=c1></span><span class=kt>void</span> <span class=nf>dumpy</span><span class=p>(</span><span class=kt>int</span> <span class=n>addr</span><span class=p>);</span>
+
+<span class=c1>// see broadcomm documents for magic addresses.
+</span><span class=c1></span><span class=cp>#define GPIO_BASE 0x20200000
+</span><span class=cp></span><span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=n>gpio_fsel0</span> <span class=o>=</span> <span class=p>(</span><span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=p>)(</span><span class=n>GPIO_BASE</span><span class=p>);</span>
+<span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=n>gpio_fsel1</span> <span class=o>=</span> <span class=p>(</span><span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=p>)(</span><span class=n>GPIO_BASE</span> <span class=o>+</span> <span class=mh>0x04</span><span class=p>);</span>
+<span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=n>gpio_fsel2</span> <span class=o>=</span> <span class=p>(</span><span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=p>)(</span><span class=n>GPIO_BASE</span> <span class=o>+</span> <span class=mh>0x08</span><span class=p>);</span>
+<span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=n>gpio_set0</span>  <span class=o>=</span> <span class=p>(</span><span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=p>)(</span><span class=n>GPIO_BASE</span> <span class=o>+</span> <span class=mh>0x1C</span><span class=p>);</span>
+<span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=n>gpio_clr0</span>  <span class=o>=</span> <span class=p>(</span><span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=p>)(</span><span class=n>GPIO_BASE</span> <span class=o>+</span> <span class=mh>0x28</span><span class=p>);</span> 
+
+<span class=c1>// set &lt;pin&gt; to output.  note: fsel0, fsel1, fsel2 are contiguous in memory,
+</span><span class=c1>// so you can use array calculations!
+</span><span class=c1></span><span class=kt>void</span> <span class=nf>gpio_set_output</span><span class=p>(</span><span class=kt>unsigned</span> <span class=n>pin</span><span class=p>)</span> <span class=p>{</span>
+    <span class=c1>// use gpio_fsel0
+</span><span class=c1></span>    <span class=kt>int</span> <span class=n>FSEL_offset</span> <span class=o>=</span> <span class=n>pin</span> <span class=o>/</span> <span class=mi>10</span><span class=p>;</span>
+
+    <span class=c1>//*gpio_fsel1 = (0b001 &lt;&lt; 18);
+</span><span class=c1></span>    <span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=n>gpio_fsel</span><span class=p>;</span> 
+    <span class=k>switch</span> <span class=p>(</span><span class=n>FSEL_offset</span><span class=p>)</span> <span class=p>{</span>
+        <span class=k>case</span> <span class=mi>0</span><span class=o>:</span>
+            <span class=n>gpio_fsel</span> <span class=o>=</span> <span class=n>gpio_fsel0</span><span class=p>;</span>
+            <span class=k>break</span><span class=p>;</span>
+        <span class=k>case</span> <span class=mi>1</span><span class=o>:</span>
+            <span class=n>gpio_fsel</span> <span class=o>=</span> <span class=n>gpio_fsel1</span><span class=p>;</span>
+            <span class=k>break</span><span class=p>;</span>
+        <span class=k>case</span> <span class=mi>2</span><span class=o>:</span>
+            <span class=n>gpio_fsel</span> <span class=o>=</span> <span class=n>gpio_fsel2</span><span class=p>;</span>
+            <span class=k>break</span><span class=p>;</span>
+        <span class=k>default</span><span class=o>:</span>
+            <span class=n>gpio_fsel</span> <span class=o>=</span> <span class=n>gpio_fsel0</span><span class=p>;</span>
+    <span class=p>}</span>
+    <span class=o>*</span><span class=n>gpio_fsel</span> <span class=o>&amp;=</span> <span class=o>~</span><span class=p>(</span><span class=mi>0</span><span class=n>b111</span> <span class=o>&lt;&lt;</span> <span class=p>((</span><span class=n>pin</span> <span class=o>%</span> <span class=mi>10</span><span class=p>)</span> <span class=o>*</span> <span class=mi>3</span><span class=p>));</span> 
+    <span class=o>*</span><span class=n>gpio_fsel</span> <span class=o>|=</span> <span class=mi>0</span><span class=n>b001</span> <span class=o>&lt;&lt;</span> <span class=p>((</span><span class=n>pin</span> <span class=o>%</span> <span class=mi>10</span><span class=p>)</span> <span class=o>*</span> <span class=mi>3</span><span class=p>);</span>  <span class=c1>// set the pin outset &lt;pin&gt; on.
+</span><span class=c1></span>    
+<span class=p>}</span>
+
+<span class=kt>void</span> <span class=nf>gpio_set_on</span><span class=p>(</span><span class=kt>unsigned</span> <span class=n>pin</span><span class=p>)</span> <span class=p>{</span>
+    <span class=c1>// use gpio_set0
+</span><span class=c1></span>	<span class=o>*</span><span class=n>gpio_set0</span> <span class=o>=</span> <span class=mi>1</span> <span class=o>&lt;&lt;</span> <span class=n>pin</span><span class=p>;</span>
+<span class=p>}</span>
+
+<span class=c1>// set &lt;pin&gt; off
+</span><span class=c1></span><span class=kt>void</span> <span class=nf>gpio_set_off</span><span class=p>(</span><span class=kt>unsigned</span> <span class=n>pin</span><span class=p>)</span> <span class=p>{</span>
+    <span class=c1>// use gpio_clr0
+</span><span class=c1></span>	<span class=o>*</span><span class=n>gpio_clr0</span> <span class=o>=</span> <span class=mi>1</span> <span class=o>&lt;&lt;</span> <span class=n>pin</span><span class=p>;</span>
+<span class=p>}</span>
+
+<span class=c1>// For later labs, write these routines as well.
+</span><span class=c1></span>
+<span class=c1>// set &lt;pin&gt; to input.
+</span><span class=c1></span><span class=kt>void</span> <span class=nf>gpio_set_input</span><span class=p>(</span><span class=kt>unsigned</span> <span class=n>pin</span><span class=p>)</span> <span class=p>{</span>
+    <span class=c1>// use gpio_fsel0 
+</span><span class=c1></span>    <span class=kt>int</span> <span class=n>FSEL_offset</span> <span class=o>=</span> <span class=n>pin</span> <span class=o>/</span> <span class=mi>10</span><span class=p>;</span>
+    <span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=n>gpio_fsel</span><span class=p>;</span>
+    <span class=k>switch</span> <span class=p>(</span><span class=n>FSEL_offset</span><span class=p>)</span> <span class=p>{</span>
+        <span class=k>case</span> <span class=mi>0</span><span class=o>:</span>
+            <span class=n>gpio_fsel</span> <span class=o>=</span> <span class=n>gpio_fsel0</span><span class=p>;</span>
+            <span class=k>break</span><span class=p>;</span>
+        <span class=k>case</span> <span class=mi>1</span><span class=o>:</span>
+            <span class=n>gpio_fsel</span> <span class=o>=</span> <span class=n>gpio_fsel1</span><span class=p>;</span>
+            <span class=k>break</span><span class=p>;</span>
+        <span class=k>case</span> <span class=mi>2</span><span class=o>:</span>
+            <span class=n>gpio_fsel</span> <span class=o>=</span> <span class=n>gpio_fsel2</span><span class=p>;</span>
+            <span class=k>break</span><span class=p>;</span>
+        <span class=k>default</span><span class=o>:</span>
+            <span class=n>gpio_fsel</span> <span class=o>=</span> <span class=n>gpio_fsel0</span><span class=p>;</span>
+    <span class=p>}</span>
+    <span class=o>*</span><span class=n>gpio_fsel</span> <span class=o>&amp;=</span> <span class=o>~</span><span class=p>(</span><span class=mi>0</span><span class=n>b111</span> <span class=o>&lt;&lt;</span> <span class=p>((</span><span class=n>pin</span> <span class=o>%</span> <span class=mi>10</span><span class=p>)</span> <span class=o>*</span> <span class=mi>3</span><span class=p>));</span> 
+    <span class=o>*</span><span class=n>gpio_fsel</span> <span class=o>|=</span> <span class=mi>0</span><span class=n>b000</span> <span class=o>&lt;&lt;</span> <span class=p>((</span><span class=n>pin</span> <span class=o>%</span> <span class=mi>10</span><span class=p>)</span> <span class=o>*</span> <span class=mi>3</span><span class=p>);</span>  <span class=c1>// set the pin outt &lt;pin&gt; to &lt;v&gt; (v \in {0,1})
+</span><span class=c1></span><span class=p>}</span>
+
+<span class=kt>void</span> <span class=nf>gpio_write</span><span class=p>(</span><span class=kt>unsigned</span> <span class=n>pin</span><span class=p>,</span> <span class=kt>unsigned</span> <span class=n>v</span><span class=p>)</span> <span class=p>{</span>
+    <span class=c1>// 
+</span><span class=c1></span>	<span class=k>return</span><span class=p>;</span>
+<span class=p>}</span>
+
+<span class=c1>// countdown &#39;ticks&#39; cycles; the asm probably isn&#39;t necessary.
+</span><span class=c1></span><span class=kt>void</span> <span class=nf>delay</span><span class=p>(</span><span class=kt>unsigned</span> <span class=n>ticks</span><span class=p>)</span> <span class=p>{</span>
+    <span class=k>while</span><span class=p>(</span><span class=n>ticks</span><span class=o>--</span> <span class=o>&gt;</span> <span class=mi>0</span><span class=p>)</span>
+        <span class=k>asm</span><span class=p>(</span><span class=s>&#34;add r1, r1, #0&#34;</span><span class=p>);</span>
+<span class=p>}</span>
+
+<span class=cm>/*
+</span><span class=cm>void reboot(void) {
+</span><span class=cm>    const int PM_RSTC = 0x2010001c;
+</span><span class=cm>    const int PM_WDOG = 0x20100024;
+</span><span class=cm>    const int PM_PASSWORD = 0x5a000000;
+</span><span class=cm>    const int PM_RSTC_WRCFG_FULL_RESET = 0x00000020;
+</span><span class=cm>    int i;
+</span><span class=cm>    for(i = 0; i &lt; 100000; i++)
+</span><span class=cm>         dummy(i);
+</span><span class=cm>    PUT32(PM_WDOG, PM_PASSWORD | 1);
+</span><span class=cm>    PUT32(PM_RSTC, PM_PASSWORD | PM_RSTC_WRCFG_FULL_RESET);
+</span><span class=cm>    while(1);
+</span><span class=cm>}
+</span><span class=cm>*/</span>
+
+<span class=c1>// when you run should blink 10 times. will have to restart the pi by pulling the usb connection out.
+</span><span class=c1></span><span class=kt>void</span> <span class=nf>notmain</span><span class=p>(</span><span class=kt>void</span><span class=p>)</span> <span class=p>{</span>
+    <span class=kt>int</span> <span class=n>led</span> <span class=o>=</span> <span class=mi>16</span><span class=p>;</span>
+    <span class=kt>int</span> <span class=n>led2</span> <span class=o>=</span> <span class=mi>20</span><span class=p>;</span>
+    <span class=n>gpio_set_output</span><span class=p>(</span><span class=n>led</span><span class=p>);</span>
+    <span class=n>gpio_set_output</span><span class=p>(</span><span class=n>led2</span><span class=p>);</span>
+    <span class=k>for</span><span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=mi>10</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
+        <span class=n>gpio_set_on</span><span class=p>(</span><span class=n>led</span><span class=p>);</span>
+        <span class=n>gpio_set_off</span><span class=p>(</span><span class=n>led2</span><span class=p>);</span>
+        <span class=n>delay</span><span class=p>(</span><span class=mi>1000000</span><span class=p>);</span>
+        <span class=n>gpio_set_on</span><span class=p>(</span><span class=n>led2</span><span class=p>);</span>
+        <span class=n>gpio_set_off</span><span class=p>(</span><span class=n>led</span><span class=p>);</span>
+        <span class=n>delay</span><span class=p>(</span><span class=mi>1000000</span><span class=p>);</span>
+    <span class=p>}</span>
+<span class=c1>//	reboot();
+</span><span class=c1></span><span class=p>}</span>
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p>[/hide]</p>
+<h2 id=6-额外内容><a href=#6-额外内容 class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:6-额外内容 class=headings>6. 额外内容</a></h2>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=kt>int</span> <span class=nf>main</span><span class=p>(</span><span class=kt>void</span><span class=p>)</span> <span class=p>{</span>
+	<span class=kt>int</span> <span class=n>v</span> <span class=o>=</span> <span class=mi>5</span><span class=p>;</span>
+	<span class=kt>int</span> <span class=o>*</span><span class=n>p</span> <span class=o>=</span> <span class=o>&amp;</span><span class=n>v</span><span class=p>;</span>
+    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+<span class=p>}</span>
+
+</code></pre></td></tr></table></div>
+</div>
+</div><pre tabindex=0><code class=language-assembly data-lang=assembly>        .file   &quot;foo.c&quot; 
+        .text
+        .section        .text.startup,&quot;ax&quot;,@progbits
+        .p2align 4,,15
+        .globl  main
+        .type   main, @function
+main:
+.LFB0:
+        .cfi_startproc
+        xorl    %eax, %eax
+        ret
+        .cfi_endproc
+.LFE0: 
+        .size   main, .-main
+        .ident  &quot;GCC: (Ubuntu 7.4.0-1ubuntu1~18.04) 7.4.0&quot;
+        .section        .note.GNU-stack,&quot;&quot;,@progbits
+
+</code></pre><div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=kt>int</span> <span class=nf>main</span><span class=p>(</span><span class=kt>void</span><span class=p>)</span> <span class=p>{</span>
+	<span class=k>volatile</span> <span class=kt>int</span> <span class=n>v</span> <span class=o>=</span> <span class=mi>5</span><span class=p>;</span>
+	<span class=k>volatile</span> <span class=kt>int</span> <span class=o>*</span><span class=n>p</span> <span class=o>=</span> <span class=o>&amp;</span><span class=n>v</span><span class=p>;</span>
+    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+<span class=p>}</span>
+
+</code></pre></td></tr></table></div>
+</div>
+</div><pre tabindex=0><code class=language-assembly data-lang=assembly>        .file   &quot;foo.c&quot; 
+        .text
+        .section        .text.startup,&quot;ax&quot;,@progbits
+        .p2align 4,,15
+        .globl  main
+        .type   main, @function
+main:
+.LFB0:
+        .cfi_startproc
+        movl    $5, -4(%rsp) 
+        xorl    %eax, %eax
+        ret
+        .cfi_endproc
+.LFE0:
+        .size   main, .-main
+        .ident  &quot;GCC: (Ubuntu 7.4.0-1ubuntu1~18.04) 7.4.0&quot;
+        .section        .note.GNU-stack,&quot;&quot;,@progbits
+
+</code></pre><p>可以注意到不加 <code>volitale</code> 时编译器省略了赋值的步骤，但简单地加上输出，就不会省略（优化）赋值步骤，如下</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#include</span><span class=cpf>&lt;stdio.h&gt;</span><span class=cp>
+</span><span class=cp></span><span class=kt>int</span> <span class=nf>main</span><span class=p>(</span><span class=kt>void</span><span class=p>)</span> <span class=p>{</span>
+	<span class=kt>int</span> <span class=n>v</span> <span class=o>=</span> <span class=mi>5</span><span class=p>;</span>
+	<span class=kt>int</span> <span class=o>*</span><span class=n>p</span> <span class=o>=</span> <span class=o>&amp;</span><span class=n>v</span><span class=p>;</span>
+	<span class=n>printf</span><span class=p>(</span><span class=s>&#34;%d&#34;</span><span class=p>,</span> <span class=n>v</span><span class=p>);</span>
+    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+<span class=p>}</span>
+
+</code></pre></td></tr></table></div>
+</div>
+</div><pre tabindex=0><code class=language-assembly data-lang=assembly>        .file   &quot;foo.c&quot;
+        .text
+        .section        .rodata.str1.1,&quot;aMS&quot;,@progbits,1
+.LC0:
+        .string &quot;%d&quot;
+        .section        .text.startup,&quot;ax&quot;,@progbits
+        .p2align 4,,15
+        .globl  main
+        .type   main, @function
+main:
+.LFB23:
+        .cfi_startproc
+        leaq    .LC0(%rip), %rsi
+        subq    $8, %rsp
+        .cfi_def_cfa_offset 16
+        movl    $5, %edx
+        movl    $1, %edi
+        xorl    %eax, %eax
+        call    __printf_chk@PLT
+        xorl    %eax, %eax
+        addq    $8, %rsp
+        .cfi_def_cfa_offset 8
+        ret
+        .cfi_endproc
+.LFE23:
+        .size   main, .-main
+        .ident  &quot;GCC: (Ubuntu 7.4.0-1ubuntu1~18.04) 7.4.0&quot;
+        .section        .note.GNU-stack,&quot;&quot;,@progbits
+
+</code></pre><p>添加重启代码部分不是很清楚，大概后面还会讲就先跳过了。。。如果有完成了所有extra部分的欢迎交流。</p>
+<h2 id=7-gpio检测输入><a href=#7-gpio检测输入 class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:7-gpio检测输入 class=headings>7. GPIO检测输入</a></h2>
+<p>最后在<code>part4</code>文件夹下，有关于使用GPIO作为输入端的lab说明<a href=https://github.com/Jiachen-Zhang/cs49n-19spr/tree/master/labs/0-blink/part4 target=_blank rel=noopener>Link</a></p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/666026146.png>
+</figure>
+<p>观察图示可知，对于检测输入，首先需要设置 <code>Pull Up Down</code>。</p>
+<p>Up： 3.3v</p>
+<p>Down: 内部有一个很大的电阻，类似断路？</p>
+<p>其次，我采用了<code>Level Detect</code>，检测电平状态。</p>
+<p>Edge Detect 我理解的是就是时钟沿信号的翻转敏感</p>
+<p>因此思路就是，将端口设置为<code>Pull Down</code>, 检测高电平<code>High Level Detect</code>来打开Led。</p>
+<p>不过<code>Level Detect</code>可以认为是使能信号，最终的检测还需要在 <code>Event Detect</code>中查看。</p>
+<p>关于信号的设置，相信看了前面的内容应该都知道怎么用了，就不再赘述，再放下pdf</p>
+<p>!> 可能是我理解不对，这么做下去灯点亮之后不会灭，因此我又交替进行高低电平的检测，在低电平时关闭LED， 如果有更好的方案欢迎私戳</p>
+<p>最后放下代码，默认隐藏：</p>
+<p>[hide]</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>  1
+</span><span class=lnt>  2
+</span><span class=lnt>  3
+</span><span class=lnt>  4
+</span><span class=lnt>  5
+</span><span class=lnt>  6
+</span><span class=lnt>  7
+</span><span class=lnt>  8
+</span><span class=lnt>  9
+</span><span class=lnt> 10
+</span><span class=lnt> 11
+</span><span class=lnt> 12
+</span><span class=lnt> 13
+</span><span class=lnt> 14
+</span><span class=lnt> 15
+</span><span class=lnt> 16
+</span><span class=lnt> 17
+</span><span class=lnt> 18
+</span><span class=lnt> 19
+</span><span class=lnt> 20
+</span><span class=lnt> 21
+</span><span class=lnt> 22
+</span><span class=lnt> 23
+</span><span class=lnt> 24
+</span><span class=lnt> 25
+</span><span class=lnt> 26
+</span><span class=lnt> 27
+</span><span class=lnt> 28
+</span><span class=lnt> 29
+</span><span class=lnt> 30
+</span><span class=lnt> 31
+</span><span class=lnt> 32
+</span><span class=lnt> 33
+</span><span class=lnt> 34
+</span><span class=lnt> 35
+</span><span class=lnt> 36
+</span><span class=lnt> 37
+</span><span class=lnt> 38
+</span><span class=lnt> 39
+</span><span class=lnt> 40
+</span><span class=lnt> 41
+</span><span class=lnt> 42
+</span><span class=lnt> 43
+</span><span class=lnt> 44
+</span><span class=lnt> 45
+</span><span class=lnt> 46
+</span><span class=lnt> 47
+</span><span class=lnt> 48
+</span><span class=lnt> 49
+</span><span class=lnt> 50
+</span><span class=lnt> 51
+</span><span class=lnt> 52
+</span><span class=lnt> 53
+</span><span class=lnt> 54
+</span><span class=lnt> 55
+</span><span class=lnt> 56
+</span><span class=lnt> 57
+</span><span class=lnt> 58
+</span><span class=lnt> 59
+</span><span class=lnt> 60
+</span><span class=lnt> 61
+</span><span class=lnt> 62
+</span><span class=lnt> 63
+</span><span class=lnt> 64
+</span><span class=lnt> 65
+</span><span class=lnt> 66
+</span><span class=lnt> 67
+</span><span class=lnt> 68
+</span><span class=lnt> 69
+</span><span class=lnt> 70
+</span><span class=lnt> 71
+</span><span class=lnt> 72
+</span><span class=lnt> 73
+</span><span class=lnt> 74
+</span><span class=lnt> 75
+</span><span class=lnt> 76
+</span><span class=lnt> 77
+</span><span class=lnt> 78
+</span><span class=lnt> 79
+</span><span class=lnt> 80
+</span><span class=lnt> 81
+</span><span class=lnt> 82
+</span><span class=lnt> 83
+</span><span class=lnt> 84
+</span><span class=lnt> 85
+</span><span class=lnt> 86
+</span><span class=lnt> 87
+</span><span class=lnt> 88
+</span><span class=lnt> 89
+</span><span class=lnt> 90
+</span><span class=lnt> 91
+</span><span class=lnt> 92
+</span><span class=lnt> 93
+</span><span class=lnt> 94
+</span><span class=lnt> 95
+</span><span class=lnt> 96
+</span><span class=lnt> 97
+</span><span class=lnt> 98
+</span><span class=lnt> 99
+</span><span class=lnt>100
+</span><span class=lnt>101
+</span><span class=lnt>102
+</span><span class=lnt>103
+</span><span class=lnt>104
+</span><span class=lnt>105
+</span><span class=lnt>106
+</span><span class=lnt>107
+</span><span class=lnt>108
+</span><span class=lnt>109
+</span><span class=lnt>110
+</span><span class=lnt>111
+</span><span class=lnt>112
+</span><span class=lnt>113
+</span><span class=lnt>114
+</span><span class=lnt>115
+</span><span class=lnt>116
+</span><span class=lnt>117
+</span><span class=lnt>118
+</span><span class=lnt>119
+</span><span class=lnt>120
+</span><span class=lnt>121
+</span><span class=lnt>122
+</span><span class=lnt>123
+</span><span class=lnt>124
+</span><span class=lnt>125
+</span><span class=lnt>126
+</span><span class=lnt>127
+</span><span class=lnt>128
+</span><span class=lnt>129
+</span><span class=lnt>130
+</span><span class=lnt>131
+</span><span class=lnt>132
+</span><span class=lnt>133
+</span><span class=lnt>134
+</span><span class=lnt>135
+</span><span class=lnt>136
+</span><span class=lnt>137
+</span><span class=lnt>138
+</span><span class=lnt>139
+</span><span class=lnt>140
+</span><span class=lnt>141
+</span><span class=lnt>142
+</span><span class=lnt>143
+</span><span class=lnt>144
+</span><span class=lnt>145
+</span><span class=lnt>146
+</span><span class=lnt>147
+</span><span class=lnt>148
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cm>/*
+</span><span class=cm> * write code to allow blinking using arbitrary pins.    
+</span><span class=cm> * Implement:
+</span><span class=cm> *	- gpio_set_output(pin) --- set GPIO &lt;pin&gt; as an output (vs input) pin.
+</span><span class=cm> *	- gpio_set_on(pin) --- set the GPIO &lt;pin&gt; on.
+</span><span class=cm> * 	- gpio_set_off(pin) --- set the GPIO &lt;pin&gt; off.
+</span><span class=cm> * Use the minimal number of loads and stores to GPIO memory.  
+</span><span class=cm> *
+</span><span class=cm> * start.s defines a of helper functions (feel free to look at the assembly!  it&#39;s
+</span><span class=cm> *  not tricky):
+</span><span class=cm> *      uint32_t get32(volatile uint32_t *addr) 
+</span><span class=cm> *              --- return the 32-bit value held at &lt;addr&gt;.
+</span><span class=cm> *
+</span><span class=cm> *      void put32(volatile uint32_t *addr, uint32_t v) 
+</span><span class=cm> *              -- write the 32-bit quantity &lt;v&gt; to &lt;addr&gt;
+</span><span class=cm> * 
+</span><span class=cm> * Check-off:
+</span><span class=cm> *  1. get a single LED to blink.
+</span><span class=cm> *  2. attach an LED to pin 19 and another to pin 20 and blink in opposite order (i.e.,
+</span><span class=cm> *     one should be on, while the other is off).   Note, if they behave weirdly, look
+</span><span class=cm> *     carefully at the wording for GPIO set.
+</span><span class=cm> */</span>
+
+<span class=c1>// these are in start.s
+</span><span class=c1></span><span class=kt>void</span> <span class=nf>put32</span><span class=p>(</span><span class=k>volatile</span> <span class=kt>void</span> <span class=o>*</span><span class=n>addr</span><span class=p>,</span> <span class=kt>unsigned</span> <span class=n>v</span><span class=p>);</span>
+<span class=c1>//void PUT32(int addr, unsigned v);
+</span><span class=c1></span><span class=kt>unsigned</span> <span class=nf>get32</span><span class=p>(</span><span class=k>const</span> <span class=k>volatile</span> <span class=kt>void</span> <span class=o>*</span><span class=n>addr</span><span class=p>);</span>
+<span class=c1>//unsigned GET32(int addr);
+</span><span class=c1></span><span class=kt>void</span> <span class=nf>dumpy</span><span class=p>(</span><span class=kt>int</span> <span class=n>addr</span><span class=p>);</span>
+
+<span class=c1>// see broadcomm documents for magic addresses.
+</span><span class=c1></span><span class=cp>#define GPIO_BASE 0x20200000
+</span><span class=cp></span><span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=n>gpio_fsel0</span> <span class=o>=</span> <span class=p>(</span><span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=p>)(</span><span class=n>GPIO_BASE</span><span class=p>);</span>
+<span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=n>gpio_fsel1</span> <span class=o>=</span> <span class=p>(</span><span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=p>)(</span><span class=n>GPIO_BASE</span> <span class=o>+</span> <span class=mh>0x04</span><span class=p>);</span>
+<span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=n>gpio_fsel2</span> <span class=o>=</span> <span class=p>(</span><span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=p>)(</span><span class=n>GPIO_BASE</span> <span class=o>+</span> <span class=mh>0x08</span><span class=p>);</span>
+<span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=n>gpio_set0</span>  <span class=o>=</span> <span class=p>(</span><span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=p>)(</span><span class=n>GPIO_BASE</span> <span class=o>+</span> <span class=mh>0x1C</span><span class=p>);</span>
+<span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=n>gpio_clr0</span>  <span class=o>=</span> <span class=p>(</span><span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=p>)(</span><span class=n>GPIO_BASE</span> <span class=o>+</span> <span class=mh>0x28</span><span class=p>);</span> 
+<span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=n>gpio_lev0</span> <span class=o>=</span> <span class=p>(</span><span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=p>)(</span><span class=n>GPIO_BASE</span> <span class=o>+</span> <span class=mh>0x34</span><span class=p>);</span>
+<span class=c1>// set &lt;pin&gt; to output.  note: fsel0, fsel1, fsel2 are contiguous in memory,
+</span><span class=c1>// so you can use array calculations!
+</span><span class=c1></span><span class=kt>void</span> <span class=nf>gpio_set_output</span><span class=p>(</span><span class=kt>unsigned</span> <span class=n>pin</span><span class=p>)</span> <span class=p>{</span>
+    <span class=c1>// use gpio_fsel0
+</span><span class=c1></span>    <span class=kt>int</span> <span class=n>FSEL_offset</span> <span class=o>=</span> <span class=n>pin</span> <span class=o>/</span> <span class=mi>10</span><span class=p>;</span>
+
+    <span class=c1>//*gpio_fsel1 = (0b001 &lt;&lt; 18);
+</span><span class=c1></span>    <span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=n>gpio_fsel</span><span class=p>;</span> 
+    <span class=k>switch</span> <span class=p>(</span><span class=n>FSEL_offset</span><span class=p>)</span> <span class=p>{</span>
+        <span class=k>case</span> <span class=mi>0</span><span class=o>:</span>
+            <span class=n>gpio_fsel</span> <span class=o>=</span> <span class=n>gpio_fsel0</span><span class=p>;</span>
+            <span class=k>break</span><span class=p>;</span>
+        <span class=k>case</span> <span class=mi>1</span><span class=o>:</span>
+            <span class=n>gpio_fsel</span> <span class=o>=</span> <span class=n>gpio_fsel1</span><span class=p>;</span>
+            <span class=k>break</span><span class=p>;</span>
+        <span class=k>case</span> <span class=mi>2</span><span class=o>:</span>
+            <span class=n>gpio_fsel</span> <span class=o>=</span> <span class=n>gpio_fsel2</span><span class=p>;</span>
+            <span class=k>break</span><span class=p>;</span>
+        <span class=k>default</span><span class=o>:</span>
+            <span class=n>gpio_fsel</span> <span class=o>=</span> <span class=n>gpio_fsel0</span><span class=p>;</span>
+    <span class=p>}</span>
+    <span class=o>*</span><span class=n>gpio_fsel</span> <span class=o>&amp;=</span> <span class=o>~</span><span class=p>(</span><span class=mi>0</span><span class=n>b111</span> <span class=o>&lt;&lt;</span> <span class=p>((</span><span class=n>pin</span> <span class=o>%</span> <span class=mi>10</span><span class=p>)</span> <span class=o>*</span> <span class=mi>3</span><span class=p>));</span> 
+    <span class=o>*</span><span class=n>gpio_fsel</span> <span class=o>|=</span> <span class=mi>0</span><span class=n>b001</span> <span class=o>&lt;&lt;</span> <span class=p>((</span><span class=n>pin</span> <span class=o>%</span> <span class=mi>10</span><span class=p>)</span> <span class=o>*</span> <span class=mi>3</span><span class=p>);</span>  <span class=c1>// set the pin outset &lt;pin&gt; on.
+</span><span class=c1></span>    
+<span class=p>}</span>
+
+<span class=kt>void</span> <span class=nf>gpio_set_on</span><span class=p>(</span><span class=kt>unsigned</span> <span class=n>pin</span><span class=p>)</span> <span class=p>{</span>
+    <span class=c1>// use gpio_set0
+</span><span class=c1></span>	<span class=o>*</span><span class=n>gpio_set0</span> <span class=o>=</span> <span class=mi>1</span> <span class=o>&lt;&lt;</span> <span class=n>pin</span><span class=p>;</span>
+<span class=p>}</span>
+
+<span class=c1>// set &lt;pin&gt; off
+</span><span class=c1></span><span class=kt>void</span> <span class=nf>gpio_set_off</span><span class=p>(</span><span class=kt>unsigned</span> <span class=n>pin</span><span class=p>)</span> <span class=p>{</span>
+    <span class=c1>// use gpio_clr0
+</span><span class=c1></span>	<span class=o>*</span><span class=n>gpio_clr0</span> <span class=o>=</span> <span class=mi>1</span> <span class=o>&lt;&lt;</span> <span class=n>pin</span><span class=p>;</span>
+<span class=p>}</span>
+
+<span class=c1>// For later labs, write these routines as well.
+</span><span class=c1></span>
+<span class=c1>// set &lt;pin&gt; to input.
+</span><span class=c1></span><span class=kt>void</span> <span class=nf>gpio_set_input</span><span class=p>(</span><span class=kt>unsigned</span> <span class=n>pin</span><span class=p>)</span> <span class=p>{</span>
+    <span class=c1>// use gpio_fsel0 
+</span><span class=c1></span>    <span class=kt>int</span> <span class=n>FSEL_offset</span> <span class=o>=</span> <span class=n>pin</span> <span class=o>/</span> <span class=mi>10</span><span class=p>;</span>
+    <span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=n>gpio_fsel</span><span class=p>;</span>
+    <span class=k>switch</span> <span class=p>(</span><span class=n>FSEL_offset</span><span class=p>)</span> <span class=p>{</span>
+        <span class=k>case</span> <span class=mi>0</span><span class=o>:</span>
+            <span class=n>gpio_fsel</span> <span class=o>=</span> <span class=n>gpio_fsel0</span><span class=p>;</span>
+            <span class=k>break</span><span class=p>;</span>
+        <span class=k>case</span> <span class=mi>1</span><span class=o>:</span>
+            <span class=n>gpio_fsel</span> <span class=o>=</span> <span class=n>gpio_fsel1</span><span class=p>;</span>
+            <span class=k>break</span><span class=p>;</span>
+        <span class=k>case</span> <span class=mi>2</span><span class=o>:</span>
+            <span class=n>gpio_fsel</span> <span class=o>=</span> <span class=n>gpio_fsel2</span><span class=p>;</span>
+            <span class=k>break</span><span class=p>;</span>
+        <span class=k>default</span><span class=o>:</span>
+            <span class=n>gpio_fsel</span> <span class=o>=</span> <span class=n>gpio_fsel0</span><span class=p>;</span>
+    <span class=p>}</span>
+    <span class=o>*</span><span class=n>gpio_fsel</span> <span class=o>&amp;=</span> <span class=o>~</span><span class=p>(</span><span class=mi>0</span><span class=n>b111</span> <span class=o>&lt;&lt;</span> <span class=p>((</span><span class=n>pin</span> <span class=o>%</span> <span class=mi>10</span><span class=p>)</span> <span class=o>*</span> <span class=mi>3</span><span class=p>));</span> 
+    <span class=o>*</span><span class=n>gpio_fsel</span> <span class=o>|=</span> <span class=mi>0</span><span class=n>b000</span> <span class=o>&lt;&lt;</span> <span class=p>((</span><span class=n>pin</span> <span class=o>%</span> <span class=mi>10</span><span class=p>)</span> <span class=o>*</span> <span class=mi>3</span><span class=p>);</span>  <span class=c1>// set the pin outt &lt;pin&gt; to &lt;v&gt; (v \in {0,1})
+</span><span class=c1></span><span class=p>}</span>
+
+<span class=kt>void</span> <span class=nf>gpio_write</span><span class=p>(</span><span class=kt>unsigned</span> <span class=n>pin</span><span class=p>,</span> <span class=kt>unsigned</span> <span class=n>v</span><span class=p>)</span> <span class=p>{</span>
+    <span class=o>*</span><span class=n>gpio_lev0</span> <span class=o>|=</span> <span class=p>(</span><span class=n>v</span> <span class=o>&lt;&lt;</span> <span class=n>pin</span><span class=p>);</span> 
+	<span class=k>return</span><span class=p>;</span>
+<span class=p>}</span>
+
+<span class=c1>// countdown &#39;ticks&#39; cycles; the asm probably isn&#39;t necessary.
+</span><span class=c1></span><span class=kt>void</span> <span class=nf>delay</span><span class=p>(</span><span class=kt>unsigned</span> <span class=n>ticks</span><span class=p>)</span> <span class=p>{</span>
+    <span class=k>while</span><span class=p>(</span><span class=n>ticks</span><span class=o>--</span> <span class=o>&gt;</span> <span class=mi>0</span><span class=p>)</span>
+        <span class=k>asm</span><span class=p>(</span><span class=s>&#34;add r1, r1, #0&#34;</span><span class=p>);</span>
+<span class=p>}</span>
+
+<span class=c1>// when you run should blink 10 times. will have to restart the pi by pulling the usb connection out.
+</span><span class=c1></span><span class=kt>void</span> <span class=nf>notmain</span><span class=p>(</span><span class=kt>void</span><span class=p>)</span> <span class=p>{</span>
+    <span class=kt>int</span> <span class=n>led_in</span> <span class=o>=</span> <span class=mi>20</span><span class=p>;</span>
+    <span class=kt>int</span> <span class=n>led_out</span> <span class=o>=</span> <span class=mi>21</span><span class=p>;</span>
+    <span class=n>gpio_set_output</span><span class=p>(</span><span class=n>led_out</span><span class=p>);</span>
+    <span class=n>gpio_set_input</span><span class=p>(</span><span class=n>led_in</span><span class=p>);</span>
+    <span class=k>volatile</span> <span class=kt>unsigned</span> <span class=n>tmp</span> <span class=o>=</span> <span class=mi>1</span> <span class=o>&lt;&lt;</span> <span class=n>led_in</span><span class=p>;</span>
+
+    <span class=c1>// event detected
+</span><span class=c1></span>    <span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=n>gpio_eds0</span> <span class=o>=</span> <span class=p>(</span><span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=p>)(</span><span class=n>GPIO_BASE</span> <span class=o>+</span> <span class=mh>0x40</span><span class=p>);</span> <span class=c1>// gpio event detect status register0
+</span><span class=c1></span>    <span class=o>*</span><span class=n>gpio_eds0</span> <span class=o>|=</span> <span class=p>(</span><span class=mi>1</span> <span class=o>&lt;&lt;</span> <span class=n>led_in</span><span class=p>);</span>
+    <span class=c1>// high detect enable 
+</span><span class=c1></span>    <span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=n>gpio_hen0</span> <span class=o>=</span> <span class=p>(</span><span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=p>)(</span><span class=n>GPIO_BASE</span> <span class=o>+</span> <span class=mh>0x64</span><span class=p>);</span>
+    <span class=o>*</span><span class=n>gpio_hen0</span> <span class=o>=</span> <span class=mi>1</span> <span class=o>&lt;&lt;</span> <span class=n>led_in</span><span class=p>;</span>
+    <span class=c1>// low detect enable 
+</span><span class=c1></span>    <span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=n>gpio_len0</span> <span class=o>=</span> <span class=p>(</span><span class=k>volatile</span> <span class=kt>unsigned</span> <span class=o>*</span><span class=p>)(</span><span class=n>GPIO_BASE</span> <span class=o>+</span> <span class=mh>0x70</span><span class=p>);</span>
+    <span class=c1>//gio_set_output(12);
+</span><span class=c1></span>    <span class=k>while</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span> <span class=p>{</span>
+        <span class=o>*</span><span class=n>gpio_eds0</span> <span class=o>=</span> <span class=n>tmp</span><span class=p>;</span>
+        <span class=c1>// high level detected
+</span><span class=c1></span>        <span class=k>if</span> <span class=p>(</span><span class=o>*</span><span class=n>gpio_eds0</span> <span class=o>==</span> <span class=n>tmp</span> <span class=o>&amp;&amp;</span> <span class=o>*</span><span class=n>gpio_hen0</span> <span class=o>==</span> <span class=n>tmp</span><span class=p>)</span> <span class=p>{</span>
+            <span class=o>*</span><span class=n>gpio_hen0</span> <span class=o>=</span> <span class=mi>0</span> <span class=o>&lt;&lt;</span> <span class=n>led_in</span><span class=p>;</span>   <span class=c1>// disable high detected
+</span><span class=c1></span>            <span class=o>*</span><span class=n>gpio_len0</span> <span class=o>=</span> <span class=mi>1</span> <span class=o>&lt;&lt;</span> <span class=n>led_in</span><span class=p>;</span>   <span class=c1>// enable low detected
+</span><span class=c1></span>            <span class=n>gpio_set_on</span><span class=p>(</span><span class=n>led_out</span><span class=p>);</span>       <span class=c1>// turn on led
+</span><span class=c1></span>        <span class=p>}</span> <span class=k>else</span>
+        <span class=c1>// low level detected
+</span><span class=c1></span>        <span class=k>if</span> <span class=p>(</span><span class=o>*</span><span class=n>gpio_eds0</span> <span class=o>==</span> <span class=n>tmp</span> <span class=o>&amp;&amp;</span> <span class=o>*</span><span class=n>gpio_len0</span> <span class=o>==</span> <span class=n>tmp</span><span class=p>)</span> <span class=p>{</span>
+            <span class=o>*</span><span class=n>gpio_len0</span> <span class=o>=</span> <span class=mi>0</span> <span class=o>&lt;&lt;</span> <span class=n>led_in</span><span class=p>;</span>   <span class=c1>// disable low detected
+</span><span class=c1></span>            <span class=o>*</span><span class=n>gpio_hen0</span> <span class=o>=</span> <span class=mi>1</span> <span class=o>&lt;&lt;</span> <span class=n>led_in</span><span class=p>;</span>   <span class=c1>// enable hign detected
+</span><span class=c1></span>            <span class=n>gpio_set_off</span><span class=p>(</span><span class=n>led_out</span><span class=p>);</span>
+        <span class=p>}</span>
+        <span class=o>*</span><span class=n>gpio_eds0</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+        <span class=n>delay</span><span class=p>(</span><span class=mi>1000000</span><span class=p>);</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p>[/hide]</p>
+<p>这里我设置了<code>pin20</code>为输出端， <code>pin21</code>为输入端，结果就是，当连接<code>3.3v</code>和<code>pin21</code>时，LED 会点亮</p>
+<p>x> 最后要提示的是，这里 pin21 设置为 Pull down，因此本身有电阻保护，但是安全起见，建议结合<a href=https://github.com/Jiachen-Zhang/cs49n-19spr/tree/master/labs/0-blink/part4 target=_blank rel=noopener>Link</a>中的说明使用面包板和电阻。</p>
+<p>i> 我使用的cp2102自带短路保护，所以不担心，直接连的（甚至用短路来辅助重启。。。划掉）</p>
+<p>i> 建议手头材料不足的朋友可以将led作为电阻使用（反正能够满足电平检测），但我不小心烧坏了一只，好像是不小心接反了。【电路就不画了，中学物理】</p>
+</div>
+</article>
+<div class=related-posts>
+<h2 class=related-title>相关文章：<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon related-icon"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm144 276c0 6.6-5.4 12-12 12h-92v92c0 6.6-5.4 12-12 12h-56c-6.6.0-12-5.4-12-12v-92h-92c-6.6.0-12-5.4-12-12v-56c0-6.6 5.4-12 12-12h92v-92c0-6.6 5.4-12 12-12h56c6.6.0 12 5.4 12 12v92h92c6.6.0 12 5.4 12 12v56z"/></svg></h2>
+<ul class=related-list>
+<li class=related-item>
+<a href=/learn-linux-link/ class=related-link>深入理解 Linux 链接</a>
+</li>
+<li class=related-item>
+<a href=/archives-604/ class=related-link>MIT6.828 | Lec6: Virtual Memory - 1</a>
+</li>
+<li class=related-item>
+<a href=/archives-602/ class=related-link>MIT6.828 | hw5: xv6 system calls 【待填坑 dup2】</a>
+</li>
+<li class=related-item>
+<a href=/archives-601/ class=related-link>MIT6.828 | Lec 5: Isolation mechanisms</a>
+</li>
+<li class=related-item>
+<a href=/archives-592/ class=related-link>MIT6.828 | Lec4: Shell & OS organization</a>
+</li>
+</ul>
+</div>
+<div class=post-tags>
+<a href=/tags/note/ rel=tag class=post-tags-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon tag-icon"><path d="M0 252.118V48C0 21.49 21.49.0 48 0h204.118a48 48 0 0133.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137.0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882.0L14.059 286.059A48 48 0 010 252.118zM112 64c-26.51.0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"/></svg>note</a>
+</div>
+<footer class=minimal-footer>
+<div class=post-tag><a href=/tags/note/ rel=tag class=post-tag-link>#note</a></div>
+<div class=post-category>
+<a href=/tech/ class="post-category-link active">tech</a>
+</div>
+</footer>
+<ul class=post-nav>
+<li class=post-nav-prev>
+<a href=/archives-534/ rel=prev>&lt; MIT6.828 | Lab 1: Booting a PC - Part 1: PC Bootstrap</a>
+</li>
+<li class=post-nav-next>
+<a href=/archives-488/ rel=next>美化 | 为 WSL 配置 Hyper.js + Oh My ZSH + Angoster主题 ></a>
+</li>
+</ul>
+</div>
+</main>
+<div id=back-to-top class=back-to-top>
+<a href=#><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon arrow-up"><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6.0-33.9L207 39c9.4-9.4 24.6-9.4 33.9.0l194.3 194.3c9.4 9.4 9.4 24.6.0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3.0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"/></svg></a>
+</div>
+<footer id=footer class=footer>
+<div class=footer-inner>
+<div class=site-info>©&nbsp;2019–2021&nbsp;&nbsp;Jiachen</div><div class=site-copyright><a href=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh target=_blank rel=noopener>CC BY-NC-SA 4.0</a></div>
+</div>
+</footer>
+</div>
+<script>'serviceWorker'in navigator&&window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js')})</script>
+<script src=https://cdn.jsdelivr.net/npm/medium-zoom@latest/dist/medium-zoom.min.js></script>
+<script>mediumZoom(document.querySelectorAll('div.post-body img'),{background:'hsla(var(--color-bg-h), var(--color-bg-s), var(--color-bg-l), 0.95)'})</script>
+<script src=https://cdn.jsdelivr.net/npm/instant.page@5.1.0/instantpage.min.js type=module defer></script>
+</body>
+</html>

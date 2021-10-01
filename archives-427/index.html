@@ -1,0 +1,353 @@
+<!doctype html><html lang=zh-cn>
+<head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+<meta charset=utf-8>
+<meta name=generator content="Hugo 0.88.1"><meta name=theme-color content="#16171d">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=format-detection content="telephone=no, date=no, address=no, email=no">
+<meta http-equiv=cache-control content="no-transform">
+<meta http-equiv=cache-control content="no-siteapp">
+<title>算法 | 贪心算法 - Greedy Algorithm | The Daily Awesome</title>
+<link rel=stylesheet href=/css/meme.min.c7b66d8ab937ea5489e87c6d96c470e3f5e7b5a21a385e18c358b7b3be61b6de.css>
+<script src=/js/meme.min.8cbe976441b5181abfd3093c9beee209b19cdbb1fa77c48d225a83ba81fa3fb1.js></script>
+<link rel=preconnect href=https://fonts.gstatic.com crossorigin>
+<link rel=stylesheet href="https://fonts.loli.net/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400;1,700&family=Noto+Serif+SC:wght@400;500;700&family=Source+Code+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap" media=print onload="this.media='all'">
+<noscript><link rel=stylesheet href="https://fonts.loli.net/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400;1,700&family=Noto+Serif+SC:wght@400;500;700&family=Source+Code+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap"></noscript>
+<meta name=author content="Jiachen Zhang"><meta name=description content="Greedy Algorithm Interval Scheduling Job j starts at $s_j$ and finishes at $f_j$. Two jobs compatible if they don't overlap. Goal: find maximum subset of mutually compatible jobs. Greedy algorithm. Consider jobs in increasing order of finish time.Take each job provided it's compatible with the ones already taken. 按照结束时间升序排列： 先完成 DDL 早的 $$\text{Sort jobs by finish times so that }f_1 < f_2 < ... < f_n.\A \leftarrow \emptyset\for, j = 1\text{to n} { \qquad if (job j compatible with A)\qquad A \leftarrow A \cup {j}}\return A $$ Implementation. $O(n log n)$. Remember job j* that was added last to A. Job j is compatible with A if $s_j < f_{j^*}$. Analysis: Theorem. Greedy algorithm is optimal. Pf. (by contradiction) Assume greedy is not optimal, and let's see what happens. Let $i_1, i_2, ... i_k$ denote set of……">
+<link rel="shortcut icon" href=/favicon.ico type=image/x-icon>
+<link rel=mask-icon href=/icons/safari-pinned-tab.svg color=#2a6df4>
+<link rel=apple-touch-icon sizes=180x180 href=/icons/apple-touch-icon.png>
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-title content="The Daily Awesome">
+<meta name=apple-mobile-web-app-status-bar-style content="black">
+<meta name=mobile-web-app-capable content="yes">
+<meta name=application-name content="The Daily Awesome">
+<meta name=msapplication-starturl content="../">
+<meta name=msapplication-TileColor content="#fff">
+<meta name=msapplication-TileImage content="../icons/mstile-150x150.png">
+<link rel=manifest href=/manifest.json>
+<link rel=canonical href=https://www.zhangjc.site/archives-427/>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","datePublished":"2019-06-04T19:11:00+00:00","dateModified":"2021-10-01T20:54:44+08:00","url":"https://www.zhangjc.site/archives-427/","headline":"算法 | 贪心算法 - Greedy Algorithm","description":"Greedy Algorithm Interval Scheduling Job j starts at $s_j$ and finishes at $f_j$. Two jobs compatible if they don't overlap. Goal: find maximum subset of mutually compatible jobs. Greedy algorithm. Consider jobs in increasing order of finish time.Take each job provided it's compatible with the ones already taken. 按照结束时间升序排列： 先完成 DDL 早的 $$\\text{Sort jobs by finish times so that }f_1 \u003c f_2 \u003c ... \u003c f_n.\\A \\leftarrow \\emptyset\\for, j = 1\\text{to n} { \\qquad if (job j compatible with A)\\qquad A \\leftarrow A \\cup {j}}\\return A $$ Implementation. $O(n log n)$. Remember job j* that was added last to A. Job j is compatible with A if $s_j \u003c f_{j^*}$. Analysis: Theorem. Greedy algorithm is optimal. Pf. (by contradiction) Assume greedy is not optimal, and let's see what happens. Let $i_1, i_2, ... i_k$ denote set of……","inLanguage":"zh-CN","articleSection":"tech","wordCount":1892,"image":["https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1946997616.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/3259085117.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/84836483.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/220746407.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/3692238667.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/2699424292.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1477566124.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/3598297575.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/3744124077.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1870653438.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1127787427.png"],"author":{"@type":"Person","description":"The Daily Awesome","email":"zhangjc1999@gmail.com","image":"https://www.zhangjc.site/icons/apple-touch-icon.png","url":"https://www.zhangjc.site/","name":"Jiachen"},"license":"[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh)","publisher":{"@type":"Organization","name":"The Daily Awesome","logo":{"@type":"ImageObject","url":"https://www.zhangjc.site/icons/apple-touch-icon.png"},"url":"https://www.zhangjc.site/"},"mainEntityOfPage":{"@type":"WebSite","@id":"https://www.zhangjc.site/"}}</script>
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:site content="@JiachenZhang5">
+<meta name=twitter:creator content="@JiachenZhang5">
+<meta property="og:title" content="算法 | 贪心算法 - Greedy Algorithm">
+<meta property="og:description" content="Greedy Algorithm Interval Scheduling Job j starts at $s_j$ and finishes at $f_j$. Two jobs compatible if they don't overlap. Goal: find maximum subset of mutually compatible jobs. Greedy algorithm. Consider jobs in increasing order of finish time.Take each job provided it's compatible with the ones already taken. 按照结束时间升序排列： 先完成 DDL 早的 $$\text{Sort jobs by finish times so that }f_1 < f_2 < ... < f_n.\A \leftarrow \emptyset\for, j = 1\text{to n} { \qquad if (job j compatible with A)\qquad A \leftarrow A \cup {j}}\return A $$ Implementation. $O(n log n)$. Remember job j* that was added last to A. Job j is compatible with A if $s_j < f_{j^*}$. Analysis: Theorem. Greedy algorithm is optimal. Pf. (by contradiction) Assume greedy is not optimal, and let's see what happens. Let $i_1, i_2, ... i_k$ denote set of……">
+<meta property="og:url" content="https://www.zhangjc.site/archives-427/">
+<meta property="og:site_name" content="The Daily Awesome">
+<meta property="og:locale" content="zh"><meta property="og:image" content="https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1946997616.png">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2019-06-04T19:11:00+00:00">
+<meta property="article:modified_time" content="2021-10-01T20:54:44+08:00">
+<meta property="article:section" content="tech">
+<script type=text/javascript src="https://s4.cnzz.com/z_stat.php?id=1279769355&web_id=1279769355"></script>
+</head>
+<body>
+<div class=container>
+<header class=header>
+<div class=header-wrapper>
+<div class="header-inner single">
+<div class=site-brand>
+<a href=/ class=brand>The Daily Awesome</a>
+</div>
+<nav class=nav>
+<ul class=menu id=menu>
+<li class=menu-item><a href=/life/><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon archive"><path d="M32 448c0 17.7 14.3 32 32 32h384c17.7.0 32-14.3 32-32V160H32v288zm160-212c0-6.6 5.4-12 12-12h104c6.6.0 12 5.4 12 12v8c0 6.6-5.4 12-12 12H204c-6.6.0-12-5.4-12-12v-8zM480 32H32C14.3 32 0 46.3.0 64v48c0 8.8 7.2 16 16 16h480c8.8.0 16-7.2 16-16V64c0-17.7-14.3-32-32-32z"/></svg><span class=menu-item-name>生活</span></a>
+</li>
+<li class=menu-item><a href=/tech/><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon th"><path d="M149.333 56v80c0 13.255-10.745 24-24 24H24c-13.255.0-24-10.745-24-24V56c0-13.255 10.745-24 24-24h101.333c13.255.0 24 10.745 24 24zm181.334 240v-80c0-13.255-10.745-24-24-24H205.333c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256.0 24.001-10.745 24.001-24zm32-240v80c0 13.255 10.745 24 24 24H488c13.255.0 24-10.745 24-24V56c0-13.255-10.745-24-24-24H386.667c-13.255.0-24 10.745-24 24zm-32 80V56c0-13.255-10.745-24-24-24H205.333c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256.0 24.001-10.745 24.001-24zm-205.334 56H24c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24zM0 376v80c0 13.255 10.745 24 24 24h101.333c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H24c-13.255.0-24 10.745-24 24zm386.667-56H488c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zm0 160H488c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zM181.333 376v80c0 13.255 10.745 24 24 24h101.333c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H205.333c-13.255.0-24 10.745-24 24z"/></svg><span class=menu-item-name>技术</span></a>
+</li>
+<li class=menu-item><a href=/about/><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" class="icon user-circle"><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 96c48.6.0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 344c-58.7.0-111.3-26.6-146.5-68.2 18.8-35.4 55.6-59.8 98.5-59.8 2.4.0 4.8.4 7.1 1.1 13 4.2 26.6 6.9 40.9 6.9s28-2.7 40.9-6.9c2.3-.7 4.7-1.1 7.1-1.1 42.9.0 79.7 24.4 98.5 59.8C359.3 421.4 306.7 448 248 448z"/></svg><span class=menu-item-name>关于</span></a>
+</li>
+<li class=menu-item>
+<a id=theme-switcher href=#><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon theme-icon-light"><path d="M193.2 104.5 242 7a18 18 0 0128 0l48.8 97.5L422.2 70A18 18 0 01442 89.8l-34.5 103.4L505 242a18 18 0 010 28l-97.5 48.8L442 422.2A18 18 0 01422.2 442l-103.4-34.5L270 505a18 18 0 01-28 0l-48.8-97.5L89.8 442A18 18 0 0170 422.2l34.5-103.4-97.5-48.8a18 18 0 010-28l97.5-48.8L70 89.8A18 18 0 0189.8 70zM256 128a128 128 0 10.01.0M256 160a96 96 0 10.01.0"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon theme-icon-dark"><path d="M27 412A256 256 0 10181 5a11.5 11.5.0 00-5 20A201.5 201.5.0 0142 399a11.5 11.5.0 00-15 13"/></svg></a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+<input type=checkbox id=nav-toggle aria-hidden=true>
+<label for=nav-toggle class=nav-toggle></label>
+<label for=nav-toggle class=nav-curtain></label>
+</header>
+<main class="main single" id=main>
+<div class=main-inner>
+<article class="content post h-entry" data-align=justify data-type=tech data-toc-num=true>
+<h1 class="post-title p-name">算法 | 贪心算法 - Greedy Algorithm</h1>
+<div class=post-meta>
+<time datetime=2019-06-04T19:11:00+00:00 class="post-meta-item published dt-published"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon post-meta-icon"><path d="M148 288h-40c-6.6.0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6.0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5.0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6.0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6.0 12 5.4 12 12v52h48c26.5.0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3.0 6-2.7 6-6z"/></svg>&nbsp;2019.6.4</time>
+<span class="post-meta-item category"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49.0 112v288c0 26.51 21.49 48 48 48h416c26.51.0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>&nbsp;<a href=/tech/ class="category-link p-category">Tech</a></span>
+</div>
+<nav class=contents>
+<ol class=toc>
+<li><a id=contents:interval-scheduling href=#interval-scheduling>Interval Scheduling</a></li>
+<li><a id=contents:interval-partitioning href=#interval-partitioning>Interval Partitioning</a></li>
+<li><a id=contents:scheduling-to-minimize-lateness href=#scheduling-to-minimize-lateness>Scheduling to Minimize Lateness</a></li>
+<li><a id=contents:optimal-caching href=#optimal-caching>Optimal Caching</a></li>
+<li><a id=contents:shortest-paths-in-a-graph href=#shortest-paths-in-a-graph>Shortest Paths in a Graph</a></li>
+<li><a id=contents:minimum-spanning-tree href=#minimum-spanning-tree>Minimum Spanning Tree</a>
+<ol>
+<li><a id=contents:kruskals-algorithm href=#kruskals-algorithm>Kruskal's algorithm.</a></li>
+<li><a id=contents:reverse-delete-algorithm href=#reverse-delete-algorithm>Reverse-Delete algorithm.</a></li>
+<li><a id=contents:prims-algorithm href=#prims-algorithm>Prim's algorithm</a></li>
+<li><a id=contents:优化 href=#优化>优化</a></li>
+</ol>
+</li>
+<li><a id=contents:clustering href=#clustering>Clustering</a></li>
+<li><a id=contents:huffman-codes href=#huffman-codes>Huffman Codes</a></li>
+</ol>
+</nav><div class="post-body e-content">
+<h1 id=greedy-algorithm><a href=#greedy-algorithm class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:greedy-algorithm class=headings>Greedy Algorithm</a></h1>
+<h2 id=interval-scheduling><a href=#interval-scheduling class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:interval-scheduling class=headings>Interval Scheduling</a></h2>
+<ul>
+<li>Job j starts at $s_j$ and finishes at $f_j$.</li>
+<li>Two jobs compatible if they don't overlap.</li>
+<li>Goal: find maximum subset of mutually compatible jobs.</li>
+</ul>
+<p><strong>Greedy algorithm</strong>.</p>
+<p>Consider jobs in increasing order of <strong>finish time</strong>.Take each job provided it's compatible with the ones already taken.</p>
+<p>按照结束时间升序排列： 先完成 DDL 早的</p>
+<hr>
+<p>$$\text{Sort jobs by finish times so that }f_1 &lt; f_2 &lt; ... &lt; f_n.\A \leftarrow \emptyset\for, j = 1\text{to n} { \qquad if (job j compatible with A)\qquad A \leftarrow A \cup {j}}\return A $$</p>
+<hr>
+<p>Implementation. $O(n log n)$.</p>
+<ul>
+<li>Remember job j* that was added last to A.</li>
+<li>Job j is compatible with A if $s_j &lt; f_{j^*}$.</li>
+</ul>
+<p>Analysis:</p>
+<p><strong>Theorem</strong>. <strong>Greedy algorithm is optimal</strong>.</p>
+<p>Pf. (by contradiction)</p>
+<p>Assume greedy is not optimal, and let's see what happens.</p>
+<p>Let $i_1, i_2, ... i_k$ denote set of jobs selected by greedy.</p>
+<p>Let $j_1, j_2, ... j_m$ denote set of jobs in the optimal solution with $i_1 = j_1, i_2 = j_2, ..., i_r = j_r$ for the largest possible value of r.</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1946997616.png>
+</figure>
+<h2 id=interval-partitioning><a href=#interval-partitioning class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:interval-partitioning class=headings>Interval Partitioning</a></h2>
+<ul>
+<li>Lecture j starts at $s_j$ and finishes at $f_j$.</li>
+<li>Goal: find minimum number of classrooms to schedule all lectures so that no two occur at the same time in the same room.</li>
+</ul>
+<p><strong>Def</strong>. The depth of a set of open intervals is the maximum number that contain any given time.</p>
+<p>同一时间发生任务的最大数量是需要的教室数量的上限</p>
+<p><strong>Greedy algorithm</strong>：</p>
+<p>Consider lectures in increasing order of start time: assign lecture to any compatible classroom</p>
+<p>按照开始时间升序排列</p>
+<hr>
+<p>$$\text{Sort intervals by starting time so that} s1 &lt; s2 &lt; ... &lt; sn.\d \leftarrow 0\for, j = 1, to, n, {\qquad \text{if (lecture j is compatible with some classroom k)}\qquad \qquad \text{schedule lecture j in classroom k}\qquad else\qquad \qquad \text{allocate a new classroom d + 1}\qquad \qquad \text{schedule lecture j in classroom d + 1}\qquad \qquad d \leftarrow d + 1} $$</p>
+<hr>
+<p><strong>Implementation</strong>. $O(n log n)$.</p>
+<ul>
+<li>For each classroom k, maintain the finish time of the last job added.</li>
+<li>Keep the classrooms in a priority queue.</li>
+</ul>
+<p><strong>Analysis</strong>:</p>
+<p>Greedy algorithm never schedules two incompatible lectures in the same classroom.</p>
+<p>**Theorem. Greedy algorithm is optimal.**Pf.</p>
+<ul>
+<li>Let d = number of classrooms that the greedy algorithm allocates.</li>
+<li>Classroom d is opened because we needed to schedule a job, say j, that is incompatible with all d-1 other classrooms.</li>
+<li>These d jobs each end after $s_j$.</li>
+<li>Since we sorted by start time, all these incompatibilities are caused by lectures that start no later than $s_j$.</li>
+<li>Thus, we have d lectures overlapping at time $s_j$.</li>
+<li>Key observation => all schedules use >= d classrooms. ▪</li>
+</ul>
+<h2 id=scheduling-to-minimize-lateness><a href=#scheduling-to-minimize-lateness class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:scheduling-to-minimize-lateness class=headings>Scheduling to Minimize Lateness</a></h2>
+<p>前面描述的是如何合理安排好任务，这里主要关注，在不可避免会拖延的时候，如何减少拖延损失。</p>
+<ul>
+<li>Single resource processes one job at a time.</li>
+<li>Job j requires $t_j$ units of processing time and is due at time $d_j$.</li>
+<li>If j starts at time $s_j$, it finishes at time $f_j= s_j + t_j$.</li>
+<li>Lateness: $l_j = max{0, fj - dj}$.</li>
+<li>Goal: schedule all jobs to minimize <strong>maximum</strong> lateness $L = max, l_j$.</li>
+</ul>
+<p>Greedy Algorithms：<strong>Earliest deadline first.</strong> 仍然是按照 DDL 先后排序</p>
+<hr>
+<p>$$\text{Sort n jobs by deadline so that} d_1 &lt; d2 &lt; … &lt; d_n\t \leftarrow 0\for, j = 1, to, n\qquad \text{Assign job j to interval} [t, t + t_j]\qquad s_j \leftarrow t, f_j \leftarrow t + t_j\qquad t \leftarrow t + t_j\text{output intervals} [s_j, f_j]$$</p>
+<hr>
+<p>Observation. There exists an optimal schedule with no idle time.</p>
+<p>Observation. The greedy schedule has no idle time.</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/3259085117.png>
+</figure>
+<p>由于贪心算法尽可能直接完成任务，因此没有的间隙 (在不限制开始时间的情况下)</p>
+<p><strong>Def</strong>.</p>
+<p><strong>Inversion</strong>: Given a schedule S, an inversion is a pair of jobs i and j such that: i &lt; j but j scheduled before i.</p>
+<p>Observation. Greedy schedule has no inversions.Observation. If a schedule (with no idle time) has an inversion, it has one with a pair of inverted jobs scheduled consecutively.</p>
+<p>已经按照结束时间排序了，因此贪心算法不会出现 Inversion</p>
+<p>Claim. Swapping two consecutive, inverted jobs reduces the number of inversions by one and does not increase the max lateness</p>
+<p>Pf. Let $l$ be the lateness before the swap, and let $l'$ be it afterwards.</p>
+<ul>
+<li>$l'_k = l_k$ for all $k \neq i, j$</li>
+<li>$l'_i \leq l_i$</li>
+<li>If job j is late:</li>
+</ul>
+<h2 id=optimal-caching><a href=#optimal-caching class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:optimal-caching class=headings>Optimal Caching</a></h2>
+<p>Caching.</p>
+<ul>
+<li>Cache with capacity to store k items.</li>
+<li>Sequence of m item requests $d_1, d_2, …, d_m$.</li>
+<li><strong>Cache hit</strong>: item already in cache when requested.</li>
+<li><strong>Cache miss</strong>: item not already in cache when requested: must bring requested item into cache, and evict some existing item, if full.</li>
+</ul>
+<p>Goal. Eviction schedule that <strong>minimizes number of cache misses</strong>.</p>
+<p><strong>Farthest-in-future:</strong> Evict item in the cache that is not requested until farthest in the future</p>
+<p>Theorem. [Bellady, 1960s] FF is optimal eviction schedule.Pf. Algorithm and theorem are intuitive; proof is subtle.</p>
+<p>Def. A <strong>reduced schedule</strong> is a schedule that only inserts an item intothe cache in a step in which that item is requested.</p>
+<p>Intuition. Can transform an unreduced schedule into a reduced onewith no more cache misses.</p>
+<p>Claim. Given any unreduced schedule S, can transform it into a reducedschedule S' with no more cache misses.</p>
+<p>Pf. <em>(by induction on number of unreduced items)</em></p>
+<p>Suppose S brings d into the cache at time t, without a request.</p>
+<p>Let c be the item S evicts when i t brings d into the cache.</p>
+<ul>
+<li>Case 1: d evicted at time t', before next request for d.</li>
+<li>Case 2: d requested at time t' before d is evicted. ▪</li>
+</ul>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/84836483.png>
+</figure>
+<p><strong>Theorem. FF is optimal eviction algorithm</strong></p>
+<p>Pf: // TODO: p30 greedy</p>
+<h2 id=shortest-paths-in-a-graph><a href=#shortest-paths-in-a-graph class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:shortest-paths-in-a-graph class=headings>Shortest Paths in a Graph</a></h2>
+<p>略</p>
+<h2 id=minimum-spanning-tree><a href=#minimum-spanning-tree class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:minimum-spanning-tree class=headings>Minimum Spanning Tree</a></h2>
+<p>Given a connected graph G = (V, E) with real-valued edge weights $c_e$, an MST is a subset of the edges T  E such that T is a spanning tree whose sum of edge weights is minimized.</p>
+<p>本质是寻找权重最小且能使这个图保持连通性的 <code>n-1</code> 条边</p>
+<h3 id=kruskals-algorithm><a href=#kruskals-algorithm class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:kruskals-algorithm class=headings>Kruskal's algorithm.</a></h3>
+<p>Start with $T = \emptyset $. Consider edges in ascending order of cost.</p>
+<p>Insert edge e in T unless doing so would create a cycle.</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/220746407.png>
+</figure>
+<p>Implementation. Use the <strong>union-find</strong> data structure.</p>
+<ul>
+<li>Build set T of edges in the MST.</li>
+<li>Maintain set for each connected component.</li>
+<li>O(m log n) for sorting and O(m  (m, n)) for union-find.</li>
+</ul>
+<h3 id=reverse-delete-algorithm><a href=#reverse-delete-algorithm class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:reverse-delete-algorithm class=headings>Reverse-Delete algorithm.</a></h3>
+<p>Start with T = E. Consider edges in descending order of cost.</p>
+<p>Delete edge e from T unless doing so would disconnect T.</p>
+<h3 id=prims-algorithm><a href=#prims-algorithm class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:prims-algorithm class=headings>Prim's algorithm</a></h3>
+<p>Start with some root node s and greedily grow a tree T from s outward.</p>
+<p>At each step, add the cheapest edge e to T that has exactly one endpoint in T.</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/3692238667.png>
+</figure>
+<p>Implementation. Use a priority queue ala Dijkstra.</p>
+<ul>
+<li>Maintain set of explored nodes S.</li>
+<li>For each unexplored node v, maintain attachment cost a[v] = cost of cheapest edge v to a node in S.</li>
+<li>O(n2) with an array; O(m log n) with a binary heap.</li>
+</ul>
+<p>Def:</p>
+<p>Cut property:</p>
+<p>Let S be any subset of nodes, and let e be the min cost edge with exactly one endpoint in S. Then the MST contains e.</p>
+<p>Cycle property:</p>
+<p>Let C be any cycle, and let f be the max cost edge belonging to C. Then the MST does not contain f.</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/2699424292.png>
+</figure>
+<p>Cycle</p>
+<p>Set of edges the form a-b, b-c, c-d, …, y-z, z-a.</p>
+<p>Cutset</p>
+<p>A cut S is a subset of nodes. The corresponding cutset D is the subset of edges with exactly one endpoint in S</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1477566124.png>
+</figure>
+<p>Claim. A cycle and a cutset intersect in an even number of edges.</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/3598297575.png>
+</figure>
+<p>证明：略 p10 MST</p>
+<h3 id=优化><a href=#优化 class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:优化 class=headings>优化</a></h3>
+<p>Kruskal 和 Prim 都只能计算权重不同的情况，若存在权重相同的边，则在比较阶段优化即可：</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/3744124077.png>
+</figure>
+<h2 id=clustering><a href=#clustering class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:clustering class=headings>Clustering</a></h2>
+<p>聚类的本质和最小生成树差不多，无非是最小生成树是一个类，需要 n-1 条边</p>
+<p>对于聚类数k，需要 n-k 条边，及在最小生成树的基础上删去 (k-1) 条权重最高的边即可</p>
+<p><strong>k-clustering</strong>: Divide objects into k non-empty groups.</p>
+<p><strong>Distance function</strong>: Assume it satisfies several natural properties.</p>
+<ul>
+<li>$d(p_i, p_j) = 0$ iff $p_i = p_j$ (identity of indiscernibles)</li>
+<li>$d(p_i, p_j) \geq 0$ (nonnegativity)</li>
+<li>$d(p_i, p_j) = d(p_j, p_i)$ (symmetry)</li>
+</ul>
+<p><strong>Spacing</strong>: Min distance between any pair of points in different clusters.</p>
+<p><strong>Clustering of maximum spacing</strong>: Given an integer k, find a k-clustering of maximum spacing.</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1870653438.png>
+</figure>
+<p><strong>Single-link k-clustering algorithm</strong></p>
+<p>Form a graph on the vertex set U, corresponding to n clusters.</p>
+<p>Find the closest pair of objects such that each object is in a different cluster, and add an edge between them to merge these two clusters into a new cluster.</p>
+<p>Repeat n-k times until there are exactly k clusters.</p>
+<p><strong>Key observation</strong>. This procedure is precisely Kruskal's algorithm (except we stop when there are k connected components).</p>
+<p><strong>Remark</strong>. Equivalent to finding an MST and deleting the k-1 most expensive edges.</p>
+<p>证明：反证法</p>
+<h2 id=huffman-codes><a href=#huffman-codes class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:huffman-codes class=headings>Huffman Codes</a></h2>
+<p>省略了证明部分</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1127787427.png>
+</figure>
+<p>T(n) = T(n-1) + O(n)</p>
+<p>so time complexity is $O(N^2)$</p>
+<p>Using priority queue: $T(n) = T(n-1) + O(logn) => O(NlogN)$</p>
+<p><strong>Claim. Huffman code for S achieves the minimum ABL of any prefix code.</strong></p>
+<p>**Pf. (by induction)**<strong>Base</strong>: For n=2 there is no shorter code than root and two leaves.<strong>Hypothesis</strong>: Suppose Huffman tree T’ for S’ with $\omega$ instead of y and z is optimal. (IH)<strong>Step</strong>: (by contradiction)</p>
+<ul>
+<li>Suppose Huffman tree T for S is not optimal.</li>
+<li>So there is some tree Z such that ABL(Z) &lt; ABL(T).</li>
+<li>Then there is also a tree Z for which leaves y and z exist that aresiblings and have the lowest frequency (see observation).</li>
+<li>Let Z’ be Z with y and z deleted, and their former parent labeled $\omega $.</li>
+<li>Similar T’ is derived from S’ in our algorithm.</li>
+<li>We know that $ABL(Z’)=ABL(Z)-f_\omega$, as well as $ABL(T’)=ABL(T)-f_\omega$.</li>
+<li>But also ABL(Z) &lt; ABL(T), so ABL(Z’) &lt; ABL(T’).</li>
+<li>Contradiction with IH.</li>
+</ul>
+</div>
+</article>
+<div class=related-posts>
+<h2 class=related-title>相关文章：<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon related-icon"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm144 276c0 6.6-5.4 12-12 12h-92v92c0 6.6-5.4 12-12 12h-56c-6.6.0-12-5.4-12-12v-92h-92c-6.6.0-12-5.4-12-12v-56c0-6.6 5.4-12 12-12h92v-92c0-6.6 5.4-12 12-12h56c6.6.0 12 5.4 12 12v92h92c6.6.0 12 5.4 12 12v56z"/></svg></h2>
+<ul class=related-list>
+<li class=related-item>
+<a href=/learn-linux-link/ class=related-link>深入理解 Linux 链接</a>
+</li>
+<li class=related-item>
+<a href=/archives-604/ class=related-link>MIT6.828 | Lec6: Virtual Memory - 1</a>
+</li>
+<li class=related-item>
+<a href=/archives-602/ class=related-link>MIT6.828 | hw5: xv6 system calls 【待填坑 dup2】</a>
+</li>
+<li class=related-item>
+<a href=/archives-601/ class=related-link>MIT6.828 | Lec 5: Isolation mechanisms</a>
+</li>
+<li class=related-item>
+<a href=/archives-592/ class=related-link>MIT6.828 | Lec4: Shell & OS organization</a>
+</li>
+</ul>
+</div>
+<div class=post-tags>
+<a href=/tags/note/ rel=tag class=post-tags-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon tag-icon"><path d="M0 252.118V48C0 21.49 21.49.0 48 0h204.118a48 48 0 0133.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137.0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882.0L14.059 286.059A48 48 0 010 252.118zM112 64c-26.51.0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"/></svg>note</a>
+</div>
+<footer class=minimal-footer>
+<div class=post-tag><a href=/tags/note/ rel=tag class=post-tag-link>#note</a></div>
+<div class=post-category>
+<a href=/tech/ class="post-category-link active">tech</a>
+</div>
+</footer>
+<ul class=post-nav>
+<li class=post-nav-prev>
+<a href=/archives-439/ rel=prev>&lt; 算法 | 分治 - Divide and Conquer</a>
+</li>
+<li class=post-nav-next>
+<a href=/archives-419/ rel=next>算法 | 图 - Graph ></a>
+</li>
+</ul>
+</div>
+</main>
+<div id=back-to-top class=back-to-top>
+<a href=#><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon arrow-up"><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6.0-33.9L207 39c9.4-9.4 24.6-9.4 33.9.0l194.3 194.3c9.4 9.4 9.4 24.6.0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3.0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"/></svg></a>
+</div>
+<footer id=footer class=footer>
+<div class=footer-inner>
+<div class=site-info>©&nbsp;2019–2021&nbsp;&nbsp;Jiachen</div><div class=site-copyright><a href=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh target=_blank rel=noopener>CC BY-NC-SA 4.0</a></div>
+</div>
+</footer>
+</div>
+<script>'serviceWorker'in navigator&&window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js')})</script>
+<script src=https://cdn.jsdelivr.net/npm/medium-zoom@latest/dist/medium-zoom.min.js></script>
+<script>mediumZoom(document.querySelectorAll('div.post-body img'),{background:'hsla(var(--color-bg-h), var(--color-bg-s), var(--color-bg-l), 0.95)'})</script>
+<script src=https://cdn.jsdelivr.net/npm/instant.page@5.1.0/instantpage.min.js type=module defer></script>
+</body>
+</html>

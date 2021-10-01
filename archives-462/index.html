@@ -1,0 +1,350 @@
+<!doctype html><html lang=zh-cn>
+<head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+<meta charset=utf-8>
+<meta name=generator content="Hugo 0.88.1"><meta name=theme-color content="#16171d">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=format-detection content="telephone=no, date=no, address=no, email=no">
+<meta http-equiv=cache-control content="no-transform">
+<meta http-equiv=cache-control content="no-siteapp">
+<title>数据库 | 数据库系统概念及架构-Database System Concepts and Architecture | The Daily Awesome</title>
+<link rel=stylesheet href=/css/meme.min.c7b66d8ab937ea5489e87c6d96c470e3f5e7b5a21a385e18c358b7b3be61b6de.css>
+<script src=/js/meme.min.8cbe976441b5181abfd3093c9beee209b19cdbb1fa77c48d225a83ba81fa3fb1.js></script>
+<link rel=preconnect href=https://fonts.gstatic.com crossorigin>
+<link rel=stylesheet href="https://fonts.loli.net/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400;1,700&family=Noto+Serif+SC:wght@400;500;700&family=Source+Code+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap" media=print onload="this.media='all'">
+<noscript><link rel=stylesheet href="https://fonts.loli.net/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400;1,700&family=Noto+Serif+SC:wght@400;500;700&family=Source+Code+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap"></noscript>
+<meta name=author content="Jiachen Zhang"><meta name=description content="Database System Concepts and Architecture [TOC] Data Abstraction --> !!!View!!! A major purpose of a DBS: providing abstract view of data Data abstraction at several levels DBS: retrieve data efficiently [new view means new index -> quick search] Need for efficiency has led designers to use complex data structures to represent data in DB. View can simplify user's interaction with the system. Physical (internal) level: ​ The lowest level of abstraction describes complex low-level data structures in detail (HOW the data are stored). Covers the physical implementation of the database to achieve optimal runtime performance and storage space utilization; the data structures and file organizations used to store data on storage devices; Interfaces with the OS access methods to place the data on the storage devices, build the indexes, retrieve the data, and so on. Logic (conceptual) level: ​ The next-higher level of abstraction describes WHAT data are stored in……">
+<link rel="shortcut icon" href=/favicon.ico type=image/x-icon>
+<link rel=mask-icon href=/icons/safari-pinned-tab.svg color=#2a6df4>
+<link rel=apple-touch-icon sizes=180x180 href=/icons/apple-touch-icon.png>
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-title content="The Daily Awesome">
+<meta name=apple-mobile-web-app-status-bar-style content="black">
+<meta name=mobile-web-app-capable content="yes">
+<meta name=application-name content="The Daily Awesome">
+<meta name=msapplication-starturl content="../">
+<meta name=msapplication-TileColor content="#fff">
+<meta name=msapplication-TileImage content="../icons/mstile-150x150.png">
+<link rel=manifest href=/manifest.json>
+<link rel=canonical href=https://www.zhangjc.site/archives-462/>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","datePublished":"2019-06-08T00:45:00+00:00","dateModified":"2021-10-01T20:54:44+08:00","url":"https://www.zhangjc.site/archives-462/","headline":"数据库 | 数据库系统概念及架构-Database System Concepts and Architecture","description":"Database System Concepts and Architecture [TOC] Data Abstraction --\u003e !!!View!!! A major purpose of a DBS: providing abstract view of data Data abstraction at several levels DBS: retrieve data efficiently [new view means new index -\u003e quick search] Need for efficiency has led designers to use complex data structures to represent data in DB. View can simplify user's interaction with the system. Physical (internal) level: ​ The lowest level of abstraction describes complex low-level data structures in detail (HOW the data are stored). Covers the physical implementation of the database to achieve optimal runtime performance and storage space utilization; the data structures and file organizations used to store data on storage devices; Interfaces with the OS access methods to place the data on the storage devices, build the indexes, retrieve the data, and so on. Logic (conceptual) level: ​ The next-higher level of abstraction describes WHAT data are stored in……","inLanguage":"zh-CN","articleSection":"tech","wordCount":1639,"image":["https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/58391047.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/811137987.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/4035384855.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/2383903961.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1566421444.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1901443470.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1974614628.png"],"author":{"@type":"Person","description":"The Daily Awesome","email":"zhangjc1999@gmail.com","image":"https://www.zhangjc.site/icons/apple-touch-icon.png","url":"https://www.zhangjc.site/","name":"Jiachen"},"license":"[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh)","publisher":{"@type":"Organization","name":"The Daily Awesome","logo":{"@type":"ImageObject","url":"https://www.zhangjc.site/icons/apple-touch-icon.png"},"url":"https://www.zhangjc.site/"},"mainEntityOfPage":{"@type":"WebSite","@id":"https://www.zhangjc.site/"}}</script>
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:site content="@JiachenZhang5">
+<meta name=twitter:creator content="@JiachenZhang5">
+<meta property="og:title" content="数据库 | 数据库系统概念及架构-Database System Concepts and Architecture">
+<meta property="og:description" content="Database System Concepts and Architecture [TOC] Data Abstraction --> !!!View!!! A major purpose of a DBS: providing abstract view of data Data abstraction at several levels DBS: retrieve data efficiently [new view means new index -> quick search] Need for efficiency has led designers to use complex data structures to represent data in DB. View can simplify user's interaction with the system. Physical (internal) level: ​ The lowest level of abstraction describes complex low-level data structures in detail (HOW the data are stored). Covers the physical implementation of the database to achieve optimal runtime performance and storage space utilization; the data structures and file organizations used to store data on storage devices; Interfaces with the OS access methods to place the data on the storage devices, build the indexes, retrieve the data, and so on. Logic (conceptual) level: ​ The next-higher level of abstraction describes WHAT data are stored in……">
+<meta property="og:url" content="https://www.zhangjc.site/archives-462/">
+<meta property="og:site_name" content="The Daily Awesome">
+<meta property="og:locale" content="zh"><meta property="og:image" content="https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/58391047.png">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2019-06-08T00:45:00+00:00">
+<meta property="article:modified_time" content="2021-10-01T20:54:44+08:00">
+<meta property="article:section" content="tech">
+<script type=text/javascript src="https://s4.cnzz.com/z_stat.php?id=1279769355&web_id=1279769355"></script>
+</head>
+<body>
+<div class=container>
+<header class=header>
+<div class=header-wrapper>
+<div class="header-inner single">
+<div class=site-brand>
+<a href=/ class=brand>The Daily Awesome</a>
+</div>
+<nav class=nav>
+<ul class=menu id=menu>
+<li class=menu-item><a href=/life/><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon archive"><path d="M32 448c0 17.7 14.3 32 32 32h384c17.7.0 32-14.3 32-32V160H32v288zm160-212c0-6.6 5.4-12 12-12h104c6.6.0 12 5.4 12 12v8c0 6.6-5.4 12-12 12H204c-6.6.0-12-5.4-12-12v-8zM480 32H32C14.3 32 0 46.3.0 64v48c0 8.8 7.2 16 16 16h480c8.8.0 16-7.2 16-16V64c0-17.7-14.3-32-32-32z"/></svg><span class=menu-item-name>生活</span></a>
+</li>
+<li class=menu-item><a href=/tech/><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon th"><path d="M149.333 56v80c0 13.255-10.745 24-24 24H24c-13.255.0-24-10.745-24-24V56c0-13.255 10.745-24 24-24h101.333c13.255.0 24 10.745 24 24zm181.334 240v-80c0-13.255-10.745-24-24-24H205.333c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256.0 24.001-10.745 24.001-24zm32-240v80c0 13.255 10.745 24 24 24H488c13.255.0 24-10.745 24-24V56c0-13.255-10.745-24-24-24H386.667c-13.255.0-24 10.745-24 24zm-32 80V56c0-13.255-10.745-24-24-24H205.333c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256.0 24.001-10.745 24.001-24zm-205.334 56H24c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24zM0 376v80c0 13.255 10.745 24 24 24h101.333c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H24c-13.255.0-24 10.745-24 24zm386.667-56H488c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zm0 160H488c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zM181.333 376v80c0 13.255 10.745 24 24 24h101.333c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H205.333c-13.255.0-24 10.745-24 24z"/></svg><span class=menu-item-name>技术</span></a>
+</li>
+<li class=menu-item><a href=/about/><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" class="icon user-circle"><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 96c48.6.0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 344c-58.7.0-111.3-26.6-146.5-68.2 18.8-35.4 55.6-59.8 98.5-59.8 2.4.0 4.8.4 7.1 1.1 13 4.2 26.6 6.9 40.9 6.9s28-2.7 40.9-6.9c2.3-.7 4.7-1.1 7.1-1.1 42.9.0 79.7 24.4 98.5 59.8C359.3 421.4 306.7 448 248 448z"/></svg><span class=menu-item-name>关于</span></a>
+</li>
+<li class=menu-item>
+<a id=theme-switcher href=#><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon theme-icon-light"><path d="M193.2 104.5 242 7a18 18 0 0128 0l48.8 97.5L422.2 70A18 18 0 01442 89.8l-34.5 103.4L505 242a18 18 0 010 28l-97.5 48.8L442 422.2A18 18 0 01422.2 442l-103.4-34.5L270 505a18 18 0 01-28 0l-48.8-97.5L89.8 442A18 18 0 0170 422.2l34.5-103.4-97.5-48.8a18 18 0 010-28l97.5-48.8L70 89.8A18 18 0 0189.8 70zM256 128a128 128 0 10.01.0M256 160a96 96 0 10.01.0"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon theme-icon-dark"><path d="M27 412A256 256 0 10181 5a11.5 11.5.0 00-5 20A201.5 201.5.0 0142 399a11.5 11.5.0 00-15 13"/></svg></a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+<input type=checkbox id=nav-toggle aria-hidden=true>
+<label for=nav-toggle class=nav-toggle></label>
+<label for=nav-toggle class=nav-curtain></label>
+</header>
+<main class="main single" id=main>
+<div class=main-inner>
+<article class="content post h-entry" data-align=justify data-type=tech data-toc-num=true>
+<h1 class="post-title p-name">数据库 | 数据库系统概念及架构-Database System Concepts and Architecture</h1>
+<div class=post-meta>
+<time datetime=2019-06-08T00:45:00+00:00 class="post-meta-item published dt-published"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon post-meta-icon"><path d="M148 288h-40c-6.6.0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6.0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5.0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6.0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6.0 12 5.4 12 12v52h48c26.5.0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3.0 6-2.7 6-6z"/></svg>&nbsp;2019.6.8</time>
+<span class="post-meta-item category"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49.0 112v288c0 26.51 21.49 48 48 48h416c26.51.0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>&nbsp;<a href=/tech/ class="category-link p-category">Tech</a></span>
+</div>
+<nav class=contents>
+<ol class=toc>
+<li><a id=contents:data-abstraction----view href=#data-abstraction----view>Data Abstraction --> !!!View!!!</a></li>
+<li><a id=contents:instances-and-schemas-of-db href=#instances-and-schemas-of-db>Instances and Schemas of DB</a></li>
+<li><a id=contents:the-ansi-sparc-three-level-architecture href=#the-ansi-sparc-three-level-architecture>The ANSI-SPARC Three-level Architecture</a></li>
+<li><a id=contents:mapping-between-schemas-of-the-dbs href=#mapping-between-schemas-of-the-dbs>Mapping between Schemas of the DBs.</a></li>
+<li><a id=contents:data-models href=#data-models>Data Models</a></li>
+<li><a id=contents:database-language href=#database-language>Database Language</a></li>
+<li><a id=contents:database-design href=#database-design>Database Design</a></li>
+<li><a id=contents:functional-components-of-a-database-system href=#functional-components-of-a-database-system>Functional Components of a Database System</a></li>
+<li><a id=contents:dbms-architetures href=#dbms-architetures>DBMS Architetures</a>
+<ol>
+<li><a id=contents:functions--services-of-any-full-scale-dbms href=#functions--services-of-any-full-scale-dbms>Functions / Services of any Full-scale DBMS</a></li>
+</ol>
+</li>
+<li><a id=contents:database-application-architetures href=#database-application-architetures>Database Application Architetures</a>
+<ol>
+<li><a id=contents:database-users-and-user-interface href=#database-users-and-user-interface>Database Users and User Interface</a></li>
+</ol>
+</li>
+<li><a id=contents:database-administrators href=#database-administrators>Database Administrators</a></li>
+</ol>
+</nav><div class="post-body e-content">
+<h1 id=database-system-concepts-and-architecture><a href=#database-system-concepts-and-architecture class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:database-system-concepts-and-architecture class=headings>Database System Concepts and Architecture</a></h1>
+<p>[TOC]</p>
+<h2 id=data-abstraction----view><a href=#data-abstraction----view class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:data-abstraction----view class=headings>Data Abstraction --> !!!View!!!</a></h2>
+<p>A major purpose of a DBS: providing abstract view of data</p>
+<p>Data abstraction at several levels</p>
+<p>DBS: retrieve data efficiently [new view means new index -> quick search]</p>
+<p>Need for efficiency has led designers to use complex data structures to represent data in DB.</p>
+<p>View can simplify user's interaction with the system.</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/58391047.png>
+</figure>
+<p><strong>Physical (internal) level</strong>:</p>
+<p>​ The lowest level of abstraction describes <strong>complex low-level data structures</strong> in detail (HOW the data are stored).</p>
+<p>Covers the physical implementation of the database to <strong>achieve optimal runtime performance</strong> and <strong>storage space utilization</strong>; the <strong>data structures</strong> and <strong>file organizations</strong> used to store data on storage devices;</p>
+<p>Interfaces with the OS access methods to <strong>place the data</strong> on the storage devices, <strong>build the indexes</strong>, <strong>retrieve the data</strong>, and so on.</p>
+<p><strong>Logic (conceptual) level</strong>:</p>
+<p>​ The next-higher level of abstraction describes <strong>WHAT data are stored in the DB</strong>, and <strong>WHAT relationships exist</strong> among the data.</p>
+<p>Describes the entire DB in terms of a small number of relatively simple structures.</p>
+<p>The community view of the database, seen by the database application.</p>
+<p>Represent: <strong>all entities, their attributes and their relationships, the constraints on the data, semantic information about the data, security and integrity information.</strong></p>
+<p><strong>View (external) Level</strong>:</p>
+<p>​ Describe <strong>various parts of the entire DB</strong>. Simplify the interaction with the system. DBMS may provide many views for the same DB.</p>
+<p>Describe the part of the DB that is relevant to each user, includes only those entities, attributes and relationships in the real world that the user is interested in, others will not be unaware by the user.</p>
+<h2 id=instances-and-schemas-of-db><a href=#instances-and-schemas-of-db class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:instances-and-schemas-of-db class=headings>Instances and Schemas of DB</a></h2>
+<p><strong>Instances of DBs</strong>: 【实例】【特定时刻的数据统称】【动态】【快照】</p>
+<p>​ The collection of data stored in the DB at a particular moment is called an <strong>instance</strong> of the DB.</p>
+<p><strong>Schemas of DBs</strong>: 【数据库应该是什么样的】【静态】</p>
+<p>​ The overall design / description of the DB is called the DB <strong>schema</strong>.</p>
+<p><strong>External schema</strong>: (view level, corresponding to different views)</p>
+<p>​ Describe different views of the DB.</p>
+<p><strong>The Logic (conceptual) schema</strong>: (logic level) 【提供对整个概念的抽象，不必考虑具体实现】</p>
+<p>​ Describes all the <strong>entities</strong>, <strong>attributes</strong>, and <strong>relationships</strong> together with <strong>integrity constraints</strong>.</p>
+<p>Most important! Programmers construct applications based on this schema.</p>
+<p><strong>Logical data independence</strong>:</p>
+<p>​ The immunity of the external-schemas to changes in the logical schema. (addition or removal of new entities, attributes, relationships not require the rewriting of application. )</p>
+<p><strong>The physical (internal) schema</strong>: (physical level)</p>
+<p>​ Complete describe the <strong>definition of the stored records</strong>, the <strong>method of representation</strong>, the <strong>data fields</strong>, and the <strong>indexes</strong> and <strong>storage structures used</strong>.</p>
+<p>Hidden beneath the logical schema, can usually be change easily without affecting application programs.</p>
+<p><strong>Physical data independence</strong>: If programs do not depend on the physical schema, thus no need for rewritten if physical schema changed. 【物理数据的独立性】</p>
+<h2 id=the-ansi-sparc-three-level-architecture><a href=#the-ansi-sparc-three-level-architecture class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:the-ansi-sparc-three-level-architecture class=headings>The ANSI-SPARC Three-level Architecture</a></h2>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/811137987.png>
+</figure>
+<ul>
+<li>Objective of this architecture</li>
+<li>Separate each user's view of the DB from the way the DB is physically represented.</li>
+<li>Reason why Separate</li>
+<li>Different user should be able to access the same data, but have a <strong>different customized view</strong> of the data.</li>
+<li>Each user should be able to change the way he or she views the data. and this change <strong>should not affect other</strong> users.</li>
+<li>User should not have to deal directly with physical database storage details. (indexing, hashing)</li>
+<li>The DBA should be able to change the <strong>database storage structures</strong> or <strong>conceptual structure</strong> without affecting the user's views.</li>
+<li>The internal structure of the database should be unaffected be changes to the physical aspects of storage. (迁移硬盘)</li>
+</ul>
+<h2 id=mapping-between-schemas-of-the-dbs><a href=#mapping-between-schemas-of-the-dbs class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:mapping-between-schemas-of-the-dbs class=headings>Mapping between Schemas of the DBs.</a></h2>
+<p><strong>The two stage mapping between schemas</strong>:</p>
+<ul>
+<li><strong>Logical-physical mapping</strong>: enable DBMS to find the actual record or combination of records in physical schema, together with any constraints to be enforced on the operations for that logical record.</li>
+<li><strong>External-conceptual mapping</strong>: enable the DBMS to map names in the user's view to the relevant part of the logical schema.</li>
+</ul>
+<h2 id=data-models><a href=#data-models class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:data-models class=headings>Data Models</a></h2>
+<p><strong>Data model</strong>: Underlying the structure of a DB</p>
+<p>​ A collection of conceptual tools for describing data, data relationship, data semantics, and consistency constraints.</p>
+<p>​ Provides a way to describe the design of the database at the physical, logical, and view level.</p>
+<p><strong>Components of data model</strong>:</p>
+<ul>
+<li>Structure of the data</li>
+<li>Operation on the data</li>
+<li>Constraint on the data</li>
+</ul>
+<p><strong>Relational Model</strong>: uses a set of <strong>tables (relations)</strong> to represent both data and the relationships among those data.</p>
+<p><strong>Record-based model</strong>: The DB is structured in fixed-format records of several types. (Relational Model is an example of a record-based model)</p>
+<p><strong>Entity-Relationship Model</strong>: uses a collection of basic objects, called entities, and relationships among these objects.</p>
+<p><strong>Objected-oriented data model</strong>:</p>
+<p>​ can be seen as extending the ER model with notions of encapsulation, methods(functions), and objects identity.</p>
+<p>​ combines features of the object-oriented data model and relational data model.</p>
+<p><strong>Semi-structured data model</strong>:</p>
+<p>​ permits the specification of data where individual data items of the same type may have different sets of attributes.</p>
+<p><strong>Network data model and hierarchical data model</strong>: [preceded the relational data model]</p>
+<p>​ were tied closely to the underlying implementation, and complicated the task of modeling data.</p>
+<h2 id=database-language><a href=#database-language class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:database-language class=headings>Database Language</a></h2>
+<p>DDL: Data-definition Language => specify the DB schema</p>
+<p>Specify a DB schema by a set of definitions and additional properties of the data.</p>
+<p>Data storage and definition language:</p>
+<p>​ specify the storage structure and access methods used by the DB system by a set of statements, which define the implementation details of the DB schemas, which are usually hidden from the user.</p>
+<p>Specify constraints:</p>
+<ul>
+<li>Consistency constraints. 一致性约束</li>
+<li>Domain constraints. 域约束 【变量声明、列定义】</li>
+<li>Referential integrity 参照完整性约束 【外键】</li>
+<li>Assertions 断言 【数据库需要某时刻满足某一条件。实例约束。】</li>
+<li>Authorization (read, insert, update, delete) 授权 【对于不同用户在数据库中不同数据值上允许不同的访问类型】</li>
+</ul>
+<p>DML: Data-manipulation Language => express DB queries and updates</p>
+<ul>
+<li><strong>Retrieval</strong> of data stored in the DB</li>
+<li><strong>Insertion</strong> of new data into the DB</li>
+<li><strong>Deletion</strong> of data from the DB</li>
+<li><strong>Modification</strong> of data stored in the DB</li>
+<li><strong>Procedural DMLs</strong>: requires a user to specify WHAT data are needed and HOW to get the data. 过程化DML 要求用户指定需要什么数据,以及如何获得数据库。</li>
+<li><strong>Declarative DMLs</strong>: requires a user to specify WHAT data are needed WITHOUT SPECIFYING HOW to get those data. 声明式DML 只要求用户指定需要什么数据,而不指明如何获得这些数据。</li>
+</ul>
+<h2 id=database-design><a href=#database-design class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:database-design class=headings>Database Design</a></h2>
+<p><strong>Database design</strong>: mainly involves the design of the DB schemas</p>
+<p><strong>Design process</strong>:</p>
+<ul>
+<li><strong>Initial phase</strong>: Characterize fully the data needs of the prospective DB users.</li>
+<li><strong>Conceptual-design phase</strong>: Choose a data model, and by applying it into a conceptual schema of the DB</li>
+<li><strong>Logical-design phase</strong>: Map the high-level conceptual schema onto the implementation data model.</li>
+<li><strong>Physical-design phase</strong>: Specify the physical features if the DB</li>
+</ul>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/4035384855.png>
+</figure>
+<h2 id=functional-components-of-a-database-system><a href=#functional-components-of-a-database-system class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:functional-components-of-a-database-system class=headings>Functional Components of a Database System</a></h2>
+<p><strong>Storage manager</strong></p>
+<p><strong>Authorization and integrity manager:</strong> tests the constraints, check the authorization.</p>
+<p><strong>Transaction manager</strong>: ensure consistent.</p>
+<p>a collection of operations that performs a single logical function in a DB application.</p>
+<p><strong>responsibilities</strong>:</p>
+<ul>
+<li>Ensure atomicity and durability (recovery manager)</li>
+<li>Ensure interactions amount concurrent transaction (concurrency-control manager)</li>
+</ul>
+<p>ACID:</p>
+<ul>
+<li>Atomicity</li>
+<li>Consistency: 数据库事务不能破坏关系数据的完整性以及业务逻辑上的一致性。</li>
+<li>Isolation 事务不会查看到中间状态的数据</li>
+<li>Durability 持久性：只要事务成功结束，它对数据库所做的更新就必须永久保存下来</li>
+</ul>
+<p><strong>File manager</strong>: allocation of space, data structure</p>
+<p>Data structure:</p>
+<ul>
+<li><strong>Data files</strong>: DB itself</li>
+<li><strong>Data dictionary</strong>: mete-data about the structure of the DB</li>
+<li><strong>Indices</strong>: fast access to data item</li>
+</ul>
+<p><strong>Buffer manager</strong>: fetching data into main memory, deciding cache.</p>
+<p><strong>Query processor</strong>: Help to simplify and facilitate access to data.</p>
+<ul>
+<li><strong>DDL interpreter</strong></li>
+<li><strong>DML complier</strong>: perform query optimization</li>
+<li><strong>Query evaluation engine</strong>: execute low-level instructions generated by the DML complier</li>
+</ul>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/2383903961.png>
+</figure>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1566421444.png>
+</figure>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1901443470.png>
+</figure>
+<h2 id=dbms-architetures><a href=#dbms-architetures class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:dbms-architetures class=headings>DBMS Architetures</a></h2>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1974614628.png>
+</figure>
+<p>Query processor = Query complier + Execution engine</p>
+<p>Transaction processor = Logging and recovery manager + Concurrency-control manager (scheduler)</p>
+<h3 id=functions--services-of-any-full-scale-dbms><a href=#functions--services-of-any-full-scale-dbms class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:functions--services-of-any-full-scale-dbms class=headings>Functions / Services of any Full-scale DBMS</a></h3>
+<ul>
+<li>Data storage, retrieval and update</li>
+<li>User-accessible catalog</li>
+<li>Transaction support</li>
+<li>Concurrency control services</li>
+<li>Recovery services</li>
+<li>Authorization services</li>
+<li>Support for data communication</li>
+<li>Integrity services</li>
+<li>Services to promote data independence</li>
+<li>Utility services</li>
+</ul>
+<h2 id=database-application-architetures><a href=#database-application-architetures class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:database-application-architetures class=headings>Database Application Architetures</a></h2>
+<ul>
+<li>The two-tier architecture: Client + Server</li>
+<li>The three-tier architecture:</li>
+<li>Client: User interface</li>
+<li>Server (With DBMS) : Business Logic + Data processing Logic</li>
+<li>DBMS: Data Validation + database access</li>
+</ul>
+<h3 id=database-users-and-user-interface><a href=#database-users-and-user-interface class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:database-users-and-user-interface class=headings>Database Users and User Interface</a></h3>
+<ul>
+<li>Naive users (interact with invoking one of the application programs)</li>
+<li>Application programmers (write application programs)</li>
+<li>Sophisticated users (interact without writing program)</li>
+<li>Specialized users (write specialized DB app which not fit into traditional data-processing framework)</li>
+</ul>
+<h2 id=database-administrators><a href=#database-administrators class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:database-administrators class=headings>Database Administrators</a></h2>
+<p>person with central control</p>
+<p>Function:</p>
+<p>Schema definition</p>
+<p>Storage structure and access-method definition</p>
+<p>Schema and physical-organization modification</p>
+<p>Granting of authorization for data access</p>
+<p>Routine maintenance</p>
+<ul>
+<li>Periodically backing up the database</li>
+<li>Ensuring that enough free disk space is available for normal operations, updating disk space as required</li>
+<li>Monitoring jobs running on the database and ensuring the performancec</li>
+</ul>
+</div>
+</article>
+<div class=related-posts>
+<h2 class=related-title>相关文章：<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon related-icon"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm144 276c0 6.6-5.4 12-12 12h-92v92c0 6.6-5.4 12-12 12h-56c-6.6.0-12-5.4-12-12v-92h-92c-6.6.0-12-5.4-12-12v-56c0-6.6 5.4-12 12-12h92v-92c0-6.6 5.4-12 12-12h56c6.6.0 12 5.4 12 12v92h92c6.6.0 12 5.4 12 12v56z"/></svg></h2>
+<ul class=related-list>
+<li class=related-item>
+<a href=/learn-linux-link/ class=related-link>深入理解 Linux 链接</a>
+</li>
+<li class=related-item>
+<a href=/archives-604/ class=related-link>MIT6.828 | Lec6: Virtual Memory - 1</a>
+</li>
+<li class=related-item>
+<a href=/archives-602/ class=related-link>MIT6.828 | hw5: xv6 system calls 【待填坑 dup2】</a>
+</li>
+<li class=related-item>
+<a href=/archives-601/ class=related-link>MIT6.828 | Lec 5: Isolation mechanisms</a>
+</li>
+<li class=related-item>
+<a href=/archives-592/ class=related-link>MIT6.828 | Lec4: Shell & OS organization</a>
+</li>
+</ul>
+</div>
+<div class=post-tags>
+<a href=/tags/note/ rel=tag class=post-tags-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon tag-icon"><path d="M0 252.118V48C0 21.49 21.49.0 48 0h204.118a48 48 0 0133.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137.0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882.0L14.059 286.059A48 48 0 010 252.118zM112 64c-26.51.0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"/></svg>note</a>
+</div>
+<footer class=minimal-footer>
+<div class=post-tag><a href=/tags/note/ rel=tag class=post-tag-link>#note</a></div>
+<div class=post-category>
+<a href=/tech/ class="post-category-link active">tech</a>
+</div>
+</footer>
+<ul class=post-nav>
+<li class=post-nav-prev>
+<a href=/archives-476/ rel=prev>&lt; Project | 单周期CPU报告</a>
+</li>
+<li class=post-nav-next>
+<a href=/archives-458/ rel=next>数据库 | 数据是什么 - Data: What is it? ></a>
+</li>
+</ul>
+</div>
+</main>
+<div id=back-to-top class=back-to-top>
+<a href=#><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon arrow-up"><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6.0-33.9L207 39c9.4-9.4 24.6-9.4 33.9.0l194.3 194.3c9.4 9.4 9.4 24.6.0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3.0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"/></svg></a>
+</div>
+<footer id=footer class=footer>
+<div class=footer-inner>
+<div class=site-info>©&nbsp;2019–2021&nbsp;&nbsp;Jiachen</div><div class=site-copyright><a href=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh target=_blank rel=noopener>CC BY-NC-SA 4.0</a></div>
+</div>
+</footer>
+</div>
+<script>'serviceWorker'in navigator&&window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js')})</script>
+<script src=https://cdn.jsdelivr.net/npm/medium-zoom@latest/dist/medium-zoom.min.js></script>
+<script>mediumZoom(document.querySelectorAll('div.post-body img'),{background:'hsla(var(--color-bg-h), var(--color-bg-s), var(--color-bg-l), 0.95)'})</script>
+<script src=https://cdn.jsdelivr.net/npm/instant.page@5.1.0/instantpage.min.js type=module defer></script>
+</body>
+</html>

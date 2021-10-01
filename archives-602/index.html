@@ -1,0 +1,666 @@
+<!doctype html><html lang=zh-cn>
+<head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+<meta charset=utf-8>
+<meta name=generator content="Hugo 0.88.1"><meta name=theme-color content="#16171d">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=format-detection content="telephone=no, date=no, address=no, email=no">
+<meta http-equiv=cache-control content="no-transform">
+<meta http-equiv=cache-control content="no-siteapp">
+<title>MIT6.828 | hw5: xv6 system calls 【待填坑 dup2】 | The Daily Awesome</title>
+<link rel=stylesheet href=/css/meme.min.c7b66d8ab937ea5489e87c6d96c470e3f5e7b5a21a385e18c358b7b3be61b6de.css>
+<script src=/js/meme.min.8cbe976441b5181abfd3093c9beee209b19cdbb1fa77c48d225a83ba81fa3fb1.js></script>
+<link rel=preconnect href=https://fonts.gstatic.com crossorigin>
+<link rel=stylesheet href="https://fonts.loli.net/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400;1,700&family=Noto+Serif+SC:wght@400;500;700&family=Source+Code+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap" media=print onload="this.media='all'">
+<noscript><link rel=stylesheet href="https://fonts.loli.net/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400;1,700&family=Noto+Serif+SC:wght@400;500;700&family=Source+Code+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap"></noscript>
+<meta name=author content="Jiachen Zhang"><meta name=description content="Part1: System call tracing
+Part 2: Date system call
+实现 dup2">
+<link rel="shortcut icon" href=/favicon.ico type=image/x-icon>
+<link rel=mask-icon href=/icons/safari-pinned-tab.svg color=#2a6df4>
+<link rel=apple-touch-icon sizes=180x180 href=/icons/apple-touch-icon.png>
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-title content="The Daily Awesome">
+<meta name=apple-mobile-web-app-status-bar-style content="black">
+<meta name=mobile-web-app-capable content="yes">
+<meta name=application-name content="The Daily Awesome">
+<meta name=msapplication-starturl content="../">
+<meta name=msapplication-TileColor content="#fff">
+<meta name=msapplication-TileImage content="../icons/mstile-150x150.png">
+<link rel=manifest href=/manifest.json>
+<link rel=canonical href=https://www.zhangjc.site/archives-602/>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","datePublished":"2019-06-28T06:40:00+00:00","dateModified":"2021-10-01T20:54:44+08:00","url":"https://www.zhangjc.site/archives-602/","headline":"MIT6.828 | hw5: xv6 system calls 【待填坑 dup2】","description":"Part1: System call tracing\nPart 2: Date system call\n实现 dup2","inLanguage":"zh-CN","articleSection":"tech","wordCount":1862,"image":["https://www.zhangjc.site/favicon.ico","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/934882281.png"],"author":{"@type":"Person","description":"The Daily Awesome","email":"zhangjc1999@gmail.com","image":"https://www.zhangjc.site/icons/apple-touch-icon.png","url":"https://www.zhangjc.site/","name":"Jiachen"},"license":"[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh)","publisher":{"@type":"Organization","name":"The Daily Awesome","logo":{"@type":"ImageObject","url":"https://www.zhangjc.site/icons/apple-touch-icon.png"},"url":"https://www.zhangjc.site/"},"mainEntityOfPage":{"@type":"WebSite","@id":"https://www.zhangjc.site/"}}</script>
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:site content="@JiachenZhang5">
+<meta name=twitter:creator content="@JiachenZhang5">
+<meta property="og:title" content="MIT6.828 | hw5: xv6 system calls 【待填坑 dup2】">
+<meta property="og:description" content="Part1: System call tracing
+Part 2: Date system call
+实现 dup2">
+<meta property="og:url" content="https://www.zhangjc.site/archives-602/">
+<meta property="og:site_name" content="The Daily Awesome">
+<meta property="og:locale" content="zh"><meta property="og:image" content="https://www.zhangjc.site/favicon.ico">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2019-06-28T06:40:00+00:00">
+<meta property="article:modified_time" content="2021-10-01T20:54:44+08:00">
+<meta property="article:section" content="tech">
+<script type=text/javascript src="https://s4.cnzz.com/z_stat.php?id=1279769355&web_id=1279769355"></script>
+</head>
+<body>
+<div class=container>
+<header class=header>
+<div class=header-wrapper>
+<div class="header-inner single">
+<div class=site-brand>
+<a href=/ class=brand>The Daily Awesome</a>
+</div>
+<nav class=nav>
+<ul class=menu id=menu>
+<li class=menu-item><a href=/life/><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon archive"><path d="M32 448c0 17.7 14.3 32 32 32h384c17.7.0 32-14.3 32-32V160H32v288zm160-212c0-6.6 5.4-12 12-12h104c6.6.0 12 5.4 12 12v8c0 6.6-5.4 12-12 12H204c-6.6.0-12-5.4-12-12v-8zM480 32H32C14.3 32 0 46.3.0 64v48c0 8.8 7.2 16 16 16h480c8.8.0 16-7.2 16-16V64c0-17.7-14.3-32-32-32z"/></svg><span class=menu-item-name>生活</span></a>
+</li>
+<li class=menu-item><a href=/tech/><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon th"><path d="M149.333 56v80c0 13.255-10.745 24-24 24H24c-13.255.0-24-10.745-24-24V56c0-13.255 10.745-24 24-24h101.333c13.255.0 24 10.745 24 24zm181.334 240v-80c0-13.255-10.745-24-24-24H205.333c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256.0 24.001-10.745 24.001-24zm32-240v80c0 13.255 10.745 24 24 24H488c13.255.0 24-10.745 24-24V56c0-13.255-10.745-24-24-24H386.667c-13.255.0-24 10.745-24 24zm-32 80V56c0-13.255-10.745-24-24-24H205.333c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256.0 24.001-10.745 24.001-24zm-205.334 56H24c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24zM0 376v80c0 13.255 10.745 24 24 24h101.333c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H24c-13.255.0-24 10.745-24 24zm386.667-56H488c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zm0 160H488c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zM181.333 376v80c0 13.255 10.745 24 24 24h101.333c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H205.333c-13.255.0-24 10.745-24 24z"/></svg><span class=menu-item-name>技术</span></a>
+</li>
+<li class=menu-item><a href=/about/><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" class="icon user-circle"><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 96c48.6.0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 344c-58.7.0-111.3-26.6-146.5-68.2 18.8-35.4 55.6-59.8 98.5-59.8 2.4.0 4.8.4 7.1 1.1 13 4.2 26.6 6.9 40.9 6.9s28-2.7 40.9-6.9c2.3-.7 4.7-1.1 7.1-1.1 42.9.0 79.7 24.4 98.5 59.8C359.3 421.4 306.7 448 248 448z"/></svg><span class=menu-item-name>关于</span></a>
+</li>
+<li class=menu-item>
+<a id=theme-switcher href=#><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon theme-icon-light"><path d="M193.2 104.5 242 7a18 18 0 0128 0l48.8 97.5L422.2 70A18 18 0 01442 89.8l-34.5 103.4L505 242a18 18 0 010 28l-97.5 48.8L442 422.2A18 18 0 01422.2 442l-103.4-34.5L270 505a18 18 0 01-28 0l-48.8-97.5L89.8 442A18 18 0 0170 422.2l34.5-103.4-97.5-48.8a18 18 0 010-28l97.5-48.8L70 89.8A18 18 0 0189.8 70zM256 128a128 128 0 10.01.0M256 160a96 96 0 10.01.0"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon theme-icon-dark"><path d="M27 412A256 256 0 10181 5a11.5 11.5.0 00-5 20A201.5 201.5.0 0142 399a11.5 11.5.0 00-15 13"/></svg></a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+<input type=checkbox id=nav-toggle aria-hidden=true>
+<label for=nav-toggle class=nav-toggle></label>
+<label for=nav-toggle class=nav-curtain></label>
+</header>
+<main class="main single" id=main>
+<div class=main-inner>
+<article class="content post h-entry" data-align=justify data-type=tech data-toc-num=true>
+<h1 class="post-title p-name">MIT6.828 | hw5: xv6 system calls 【待填坑 dup2】</h1>
+<div class=post-meta>
+<time datetime=2019-06-28T06:40:00+00:00 class="post-meta-item published dt-published"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon post-meta-icon"><path d="M148 288h-40c-6.6.0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6.0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5.0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6.0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6.0 12 5.4 12 12v52h48c26.5.0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3.0 6-2.7 6-6z"/></svg>&nbsp;2019.6.28</time>
+<span class="post-meta-item category"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49.0 112v288c0 26.51 21.49 48 48 48h416c26.51.0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>&nbsp;<a href=/tech/ class="category-link p-category">Tech</a></span>
+</div>
+<nav class=contents>
+<ol class=toc>
+<li><a id=contents:part1-system-call-tracing href=#part1-system-call-tracing>Part1: System call tracing</a></li>
+<li><a id=contents:part-2-date-system-call href=#part-2-date-system-call>Part 2: Date system call</a>
+<ol>
+<li><a id=contents:实现-dup2 href=#实现-dup2>实现 <code>dup2</code></a></li>
+</ol>
+</li>
+</ol>
+</nav><div class="post-body e-content">
+<h2 id=part1-system-call-tracing><a href=#part1-system-call-tracing class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:part1-system-call-tracing class=headings>Part1: System call tracing</a></h2>
+<p>第一个任务是修改xv6内核，为每个系统调用调用打印输出。（ 输出系统调用的名称和返回值就足够了; 不需要打印系统调用参数）</p>
+<p>样例：</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>...
+fork -&gt; <span class=m>2</span>
+<span class=nb>exec</span> -&gt; <span class=m>0</span>
+open -&gt; <span class=m>3</span>
+close -&gt; <span class=m>0</span>
+<span class=nv>$write</span> -&gt; <span class=m>1</span>
+ write -&gt; <span class=m>1</span>
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p>这是初始化和执行<code>sh</code>，确保只打开两个文件描述符，并写入<code>$prompt</code>。 （注意：<code>shell</code>的输出和系统调用跟踪是混合的，因为<code>shell</code>使用<code>write syscall</code>来打印它的输出。）</p>
+<p>提示：修改<code>syscall.c</code> 中的 <code>syscall()</code></p>
+<p>可选挑战：打印系统调用参数</p>
+<hr>
+<p>通过观察 <code>xv6-public/syscall.c</code> 可知，系统调用使用了方法指针来实现不同的系统调用入口，因此添加了一个数组保存方法名：</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=k>static</span> <span class=kt>char</span> <span class=n>syscalls_name</span><span class=p>[][</span><span class=mi>7</span><span class=p>]</span> <span class=o>=</span> <span class=p>{</span>
+<span class=p>[</span><span class=n>SYS_fork</span><span class=p>]</span>    <span class=s>&#34;fork&#34;</span><span class=p>,</span>
+<span class=p>[</span><span class=n>SYS_exit</span><span class=p>]</span>    <span class=s>&#34;exit&#34;</span><span class=p>,</span>
+<span class=p>[</span><span class=n>SYS_wait</span><span class=p>]</span>    <span class=s>&#34;wait&#34;</span><span class=p>,</span>
+<span class=p>[</span><span class=n>SYS_pipe</span><span class=p>]</span>    <span class=s>&#34;pipe&#34;</span><span class=p>,</span>
+<span class=p>[</span><span class=n>SYS_read</span><span class=p>]</span>    <span class=s>&#34;read&#34;</span><span class=p>,</span>
+<span class=p>[</span><span class=n>SYS_kill</span><span class=p>]</span>    <span class=s>&#34;kill&#34;</span><span class=p>,</span>
+<span class=p>[</span><span class=n>SYS_exec</span><span class=p>]</span>    <span class=s>&#34;exec&#34;</span><span class=p>,</span>
+<span class=p>[</span><span class=n>SYS_fstat</span><span class=p>]</span>   <span class=s>&#34;fstat&#34;</span><span class=p>,</span>
+<span class=p>[</span><span class=n>SYS_chdir</span><span class=p>]</span>   <span class=s>&#34;chdir&#34;</span><span class=p>,</span>
+<span class=p>[</span><span class=n>SYS_dup</span><span class=p>]</span>     <span class=s>&#34;dup&#34;</span><span class=p>,</span>
+<span class=p>[</span><span class=n>SYS_getpid</span><span class=p>]</span>  <span class=s>&#34;getpid&#34;</span><span class=p>,</span>
+<span class=p>[</span><span class=n>SYS_sbrk</span><span class=p>]</span>    <span class=s>&#34;sbrk&#34;</span><span class=p>,</span>
+<span class=p>[</span><span class=n>SYS_sleep</span><span class=p>]</span>   <span class=s>&#34;sleep&#34;</span><span class=p>,</span>
+<span class=p>[</span><span class=n>SYS_uptime</span><span class=p>]</span>  <span class=s>&#34;uptime&#34;</span><span class=p>,</span>
+<span class=p>[</span><span class=n>SYS_open</span><span class=p>]</span>    <span class=s>&#34;open&#34;</span><span class=p>,</span>
+<span class=p>[</span><span class=n>SYS_write</span><span class=p>]</span>   <span class=s>&#34;write&#34;</span><span class=p>,</span>
+<span class=p>[</span><span class=n>SYS_mknod</span><span class=p>]</span>   <span class=s>&#34;mknod&#34;</span><span class=p>,</span>
+<span class=p>[</span><span class=n>SYS_unlink</span><span class=p>]</span>  <span class=s>&#34;unlink&#34;</span><span class=p>,</span>
+<span class=p>[</span><span class=n>SYS_link</span><span class=p>]</span>    <span class=s>&#34;link&#34;</span><span class=p>,</span>
+<span class=p>[</span><span class=n>SYS_mkdir</span><span class=p>]</span>   <span class=s>&#34;mkdir&#34;</span><span class=p>,</span>
+<span class=p>[</span><span class=n>SYS_close</span><span class=p>]</span>   <span class=s>&#34;close&#34;</span>
+<span class=p>};</span>
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p>观察 <code>syscall()</code> 函数，在保存返回值后进行打印系统调用名称及返回值：</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=kt>void</span>
+<span class=nf>syscall</span><span class=p>(</span><span class=kt>void</span><span class=p>)</span>
+<span class=p>{</span>
+  <span class=kt>int</span> <span class=n>num</span><span class=p>;</span>
+  <span class=k>struct</span> <span class=n>proc</span> <span class=o>*</span><span class=n>curproc</span> <span class=o>=</span> <span class=n>myproc</span><span class=p>();</span>
+
+  <span class=n>num</span> <span class=o>=</span> <span class=n>curproc</span><span class=o>-&gt;</span><span class=n>tf</span><span class=o>-&gt;</span><span class=n>eax</span><span class=p>;</span>
+  <span class=k>if</span><span class=p>(</span><span class=n>num</span> <span class=o>&gt;</span> <span class=mi>0</span> <span class=o>&amp;&amp;</span> <span class=n>num</span> <span class=o>&lt;</span> <span class=n>NELEM</span><span class=p>(</span><span class=n>syscalls</span><span class=p>)</span> <span class=o>&amp;&amp;</span> <span class=n>syscalls</span><span class=p>[</span><span class=n>num</span><span class=p>])</span> <span class=p>{</span>
+    <span class=n>curproc</span><span class=o>-&gt;</span><span class=n>tf</span><span class=o>-&gt;</span><span class=n>eax</span> <span class=o>=</span> <span class=n>syscalls</span><span class=p>[</span><span class=n>num</span><span class=p>]();</span> <span class=c1>// save the return value
+</span><span class=c1></span>    <span class=c1>// My code Here
+</span><span class=c1></span>    <span class=n>cprintf</span><span class=p>(</span><span class=s>&#34;%s -&gt; %d</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>syscalls_name</span><span class=p>[</span><span class=n>num</span><span class=p>],</span> <span class=n>curproc</span><span class=o>-&gt;</span><span class=n>tf</span><span class=o>-&gt;</span><span class=n>eax</span><span class=p>);</span>
+  <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+    <span class=n>cprintf</span><span class=p>(</span><span class=s>&#34;%d %s: unknown sys call %d</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span>
+            <span class=n>curproc</span><span class=o>-&gt;</span><span class=n>pid</span><span class=p>,</span> <span class=n>curproc</span><span class=o>-&gt;</span><span class=n>name</span><span class=p>,</span> <span class=n>num</span><span class=p>);</span>
+    <span class=n>curproc</span><span class=o>-&gt;</span><span class=n>tf</span><span class=o>-&gt;</span><span class=n>eax</span> <span class=o>=</span> <span class=o>-</span><span class=mi>1</span><span class=p>;</span>
+  <span class=p>}</span>
+<span class=p>}</span>
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p>其中 <code>fetchint</code> 和 <code>fetchstr</code> 函数为根据 <code>arg*</code> 函数计算的地址，打印对应堆栈数据的函数，在其中添加输出即可：</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=c1>// Fetch the int at addr from the current process.
+</span><span class=c1></span><span class=kt>int</span>
+<span class=nf>fetchint</span><span class=p>(</span><span class=n>uint</span> <span class=n>addr</span><span class=p>,</span> <span class=kt>int</span> <span class=o>*</span><span class=n>ip</span><span class=p>)</span>
+<span class=p>{</span>
+  <span class=k>struct</span> <span class=n>proc</span> <span class=o>*</span><span class=n>curproc</span> <span class=o>=</span> <span class=n>myproc</span><span class=p>();</span>
+
+  <span class=k>if</span><span class=p>(</span><span class=n>addr</span> <span class=o>&gt;=</span> <span class=n>curproc</span><span class=o>-&gt;</span><span class=n>sz</span> <span class=o>||</span> <span class=n>addr</span><span class=o>+</span><span class=mi>4</span> <span class=o>&gt;</span> <span class=n>curproc</span><span class=o>-&gt;</span><span class=n>sz</span><span class=p>)</span>
+    <span class=k>return</span> <span class=o>-</span><span class=mi>1</span><span class=p>;</span>
+  <span class=o>*</span><span class=n>ip</span> <span class=o>=</span> <span class=o>*</span><span class=p>(</span><span class=kt>int</span><span class=o>*</span><span class=p>)(</span><span class=n>addr</span><span class=p>);</span>
+  <span class=n>cprintf</span><span class=p>(</span><span class=s>&#34;&lt;int&gt;: %d</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=o>*</span><span class=n>ip</span><span class=p>);</span>
+  <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+<span class=p>}</span>
+
+<span class=c1>// Fetch the nul-terminated string at addr from the current process.
+</span><span class=c1>// Doesn&#39;t actually copy the string - just sets *pp to point at it.
+</span><span class=c1>// Returns length of string, not including nul.
+</span><span class=c1></span><span class=kt>int</span>
+<span class=nf>fetchstr</span><span class=p>(</span><span class=n>uint</span> <span class=n>addr</span><span class=p>,</span> <span class=kt>char</span> <span class=o>**</span><span class=n>pp</span><span class=p>)</span>
+<span class=p>{</span>
+  <span class=kt>char</span> <span class=o>*</span><span class=n>s</span><span class=p>,</span> <span class=o>*</span><span class=n>ep</span><span class=p>;</span>
+  <span class=k>struct</span> <span class=n>proc</span> <span class=o>*</span><span class=n>curproc</span> <span class=o>=</span> <span class=n>myproc</span><span class=p>();</span>
+
+  <span class=k>if</span><span class=p>(</span><span class=n>addr</span> <span class=o>&gt;=</span> <span class=n>curproc</span><span class=o>-&gt;</span><span class=n>sz</span><span class=p>)</span>
+    <span class=k>return</span> <span class=o>-</span><span class=mi>1</span><span class=p>;</span>
+  <span class=n>cprintf</span><span class=p>(</span><span class=s>&#34;&lt;str&gt;: %s</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=o>**</span><span class=n>pp</span><span class=p>);</span>
+  <span class=o>*</span><span class=n>pp</span> <span class=o>=</span> <span class=p>(</span><span class=kt>char</span><span class=o>*</span><span class=p>)</span><span class=n>addr</span><span class=p>;</span>
+  <span class=n>ep</span> <span class=o>=</span> <span class=p>(</span><span class=kt>char</span><span class=o>*</span><span class=p>)</span><span class=n>curproc</span><span class=o>-&gt;</span><span class=n>sz</span><span class=p>;</span>
+  <span class=k>for</span><span class=p>(</span><span class=n>s</span> <span class=o>=</span> <span class=o>*</span><span class=n>pp</span><span class=p>;</span> <span class=n>s</span> <span class=o>&lt;</span> <span class=n>ep</span><span class=p>;</span> <span class=n>s</span><span class=o>++</span><span class=p>){</span>
+    <span class=k>if</span><span class=p>(</span><span class=o>*</span><span class=n>s</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span>
+      <span class=k>return</span> <span class=n>s</span> <span class=o>-</span> <span class=o>*</span><span class=n>pp</span><span class=p>;</span>
+  <span class=p>}</span>
+  <span class=k>return</span> <span class=o>-</span><span class=mi>1</span><span class=p>;</span>
+<span class=p>}</span>
+<span class=c1>// Fetch the nth 32-bit system call argument.
+</span><span class=c1></span><span class=kt>int</span>
+<span class=nf>argint</span><span class=p>(</span><span class=kt>int</span> <span class=n>n</span><span class=p>,</span> <span class=kt>int</span> <span class=o>*</span><span class=n>ip</span><span class=p>)</span>
+<span class=p>{</span>
+  <span class=n>cprintf</span><span class=p>(</span><span class=s>&#34;&gt; args%d  &#34;</span><span class=p>,</span><span class=n>n</span><span class=p>);</span>
+  <span class=k>return</span> <span class=n>fetchint</span><span class=p>((</span><span class=n>myproc</span><span class=p>()</span><span class=o>-&gt;</span><span class=n>tf</span><span class=o>-&gt;</span><span class=n>esp</span><span class=p>)</span> <span class=o>+</span> <span class=mi>4</span> <span class=o>+</span> <span class=mi>4</span><span class=o>*</span><span class=n>n</span><span class=p>,</span> <span class=n>ip</span><span class=p>);</span>
+<span class=p>}</span>
+
+<span class=kt>int</span>
+<span class=nf>argstr</span><span class=p>(</span><span class=kt>int</span> <span class=n>n</span><span class=p>,</span> <span class=kt>char</span> <span class=o>**</span><span class=n>pp</span><span class=p>)</span>
+<span class=p>{</span>
+  <span class=kt>int</span> <span class=n>addr</span><span class=p>;</span>
+  <span class=k>if</span><span class=p>(</span><span class=n>argint</span><span class=p>(</span><span class=n>n</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>addr</span><span class=p>)</span> <span class=o>&lt;</span> <span class=mi>0</span><span class=p>)</span>
+    <span class=k>return</span> <span class=o>-</span><span class=mi>1</span><span class=p>;</span>
+  <span class=n>cprintf</span><span class=p>(</span><span class=s>&#34;&gt; args%d  &#34;</span><span class=p>,</span><span class=n>n</span><span class=p>);</span>
+  <span class=k>return</span> <span class=n>fetchstr</span><span class=p>(</span><span class=n>addr</span><span class=p>,</span> <span class=n>pp</span><span class=p>);</span>
+<span class=p>}</span>
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p>运行 <code>make qemu-nox</code> 重新编译运行：</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>...
+fork -&gt; <span class=m>2</span>
+&gt; args0  &lt;int&gt;: <span class=m>2070</span> 
+&gt; args0  &lt;str&gt;: uZgf
+                    .gf 
+&gt; args1  &lt;int&gt;: <span class=m>2792</span> 
+&lt;int&gt;: <span class=m>2070</span>
+&lt;str&gt;: fC
+         .gf
+&lt;int&gt;: <span class=m>0</span> 
+<span class=nb>exec</span> -&gt; <span class=m>0</span> 
+&gt; args0  &lt;int&gt;: <span class=m>4697</span> 
+&gt; args0  &lt;str&gt;: x7 
+&gt; args1  &lt;int&gt;: <span class=m>2</span> 
+open -&gt; <span class=m>3</span>
+&gt; args0  &lt;int&gt;: <span class=m>3</span> 
+close -&gt; <span class=m>0</span>
+&gt; args0  &lt;int&gt;: <span class=m>2</span> 
+&gt; args2  &lt;int&gt;: <span class=m>1</span> 
+&gt; args1  &lt;int&gt;: <span class=m>16250</span> 
+<span class=nv>$write</span> -&gt; <span class=m>1</span>
+&gt; args0  &lt;int&gt;: <span class=m>2</span> 
+&gt; args2  &lt;int&gt;: <span class=m>1</span>
+&gt; args1  &lt;int&gt;: <span class=m>16250</span> 
+ write -&gt; <span class=m>1</span> 
+&gt; args0  &lt;int&gt;: <span class=m>0</span> 
+&gt; args2  &lt;int&gt;: <span class=m>1</span>
+&gt; args1  &lt;int&gt;: <span class=m>16255</span>
+
+</code></pre></td></tr></table></div>
+</div>
+</div><h2 id=part-2-date-system-call><a href=#part-2-date-system-call class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:part-2-date-system-call class=headings>Part 2: Date system call</a></h2>
+<p>第二个任务是向xv6添加新的系统调用。主要是了解系统调用装置的不同部分。 新的系统调用将获得当前的UTC时间并将其返回给用户程序。 您可能希望使用辅助函数<code>cmostime()</code>（在<code>lapic.c</code>中定义）来读取实时时钟。 <code>date.h</code>包含<code>struct rtcdate</code>结构的定义，您将作为指针提供<code>cmostime()</code>的参数。</p>
+<p>您应该创建一个用户级程序来调用您的新日期系统调用; 这里有一些你应该放在<code>date.c</code>中的代码：</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#include</span> <span class=cpf>&#34;types.h&#34;</span><span class=cp>
+</span><span class=cp>#include</span> <span class=cpf>&#34;user.h&#34;</span><span class=cp>
+</span><span class=cp>#include</span> <span class=cpf>&#34;date.h&#34;</span><span class=cp>
+</span><span class=cp></span>
+<span class=kt>int</span>
+<span class=nf>main</span><span class=p>(</span><span class=kt>int</span> <span class=n>argc</span><span class=p>,</span> <span class=kt>char</span> <span class=o>*</span><span class=n>argv</span><span class=p>[])</span>
+<span class=p>{</span>
+  <span class=k>struct</span> <span class=n>rtcdate</span> <span class=n>r</span><span class=p>;</span>
+
+  <span class=k>if</span> <span class=p>(</span><span class=n>date</span><span class=p>(</span><span class=o>&amp;</span><span class=n>r</span><span class=p>))</span> <span class=p>{</span>
+    <span class=n>printf</span><span class=p>(</span><span class=mi>2</span><span class=p>,</span> <span class=s>&#34;date failed</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>);</span>
+    <span class=n>exit</span><span class=p>();</span>
+  <span class=p>}</span>
+
+  <span class=c1>// your code to print the time in any format you like...
+</span><span class=c1></span>
+  <span class=n>exit</span><span class=p>();</span>
+<span class=p>}</span>
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p>为了使您的新日期程序可以从<code>xv6</code> <code>shell</code>运行，请将<code>_date</code>添加到<code>Makefile</code>中的<code>UPROGS</code>定义中。</p>
+<p>您进行日期系统调用的策略应该是克隆特定于某些现有系统调用的所有代码段，例如“uptime”系统调用。 您应该使用<code>grep -n uptime *.[chS]</code>来查看所有源文件的正常运行时间。</p>
+<p>When you're done, typing <code>date</code> to an xv6 shell prompt should print the current UTC time.</p>
+<p>Write down a few words of explanation for each of the files you had to modify in the process of creating your date system call.</p>
+<p>Optional challenge: add a dup2() system call and modify the shell to use it.</p>
+<hr>
+<p>根据提示可得：</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>$ grep -n uptime *.<span class=o>[</span>c,h<span class=o>]</span>  
+syscall.c:110:extern int sys_uptime<span class=o>(</span>void<span class=o>)</span><span class=p>;</span>
+syscall.c:126:<span class=o>[</span>SYS_uptime<span class=o>]</span>  sys_uptime,
+syscall.c:151:// <span class=o>[</span>SYS_uptime<span class=o>]</span>  <span class=s2>&#34;uptime&#34;</span>,
+syscall.h:15:#define SYS_uptime <span class=m>14</span>
+sysproc.c:83:sys_uptime<span class=o>(</span>void<span class=o>)</span>
+user.h:25:int uptime<span class=o>(</span>void<span class=o>)</span><span class=p>;</span>
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p>模仿 <code>uptime</code> 添加对 <code>date</code> 系统调用的支持</p>
+<p>在 <code>syscall.h</code> 中添加 <code>syscall.h:15:#define SYS_date 22</code></p>
+<p>在 <code>syscall.c</code> 中添加 <code>extern int sys_date(void);</code></p>
+<p>在 <code>syscall.c</code> 中添加 <code>[SYS_uptime] sys_date,</code> 【和上边的编号22对应】</p>
+<p>在 <code>sysproc.c</code> 中添加函数 <code>int sys_date(struct )</code></p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=kt>int</span> <span class=nf>sys_date</span><span class=p>(</span><span class=k>struct</span> <span class=n>rtcdate</span> <span class=o>*</span><span class=n>r</span><span class=p>)</span> <span class=p>{</span>
+  <span class=k>if</span> <span class=p>(</span><span class=n>argptr</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=p>(</span><span class=kt>void</span> <span class=o>*</span><span class=p>)</span><span class=o>&amp;</span><span class=n>r</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=o>*</span><span class=n>r</span><span class=p>))</span> <span class=o>&lt;</span> <span class=mi>0</span><span class=p>)</span>
+    <span class=k>return</span> <span class=o>-</span><span class=mi>1</span><span class=p>;</span>
+  <span class=n>cmostime</span><span class=p>(</span><span class=n>r</span><span class=p>);</span>
+  <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+<span class=p>}</span>
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p>新建文件 <code>date.c</code></p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#include</span> <span class=cpf>&#34;types.h&#34;</span><span class=cp>
+</span><span class=cp>#include</span> <span class=cpf>&#34;user.h&#34;</span><span class=cp>
+</span><span class=cp>#include</span> <span class=cpf>&#34;date.h&#34;</span><span class=cp>
+</span><span class=cp></span>
+<span class=k>static</span> <span class=kt>char</span> <span class=n>month_name</span><span class=p>[</span><span class=mi>12</span><span class=p>][</span><span class=mi>7</span><span class=p>]</span> <span class=o>=</span> <span class=p>{</span>
+    <span class=s>&#34;Jan&#34;</span><span class=p>,</span>
+    <span class=s>&#34;Feb&#34;</span><span class=p>,</span>
+    <span class=s>&#34;Mar&#34;</span><span class=p>,</span>
+    <span class=s>&#34;Apr&#34;</span><span class=p>,</span>
+    <span class=s>&#34;May&#34;</span><span class=p>,</span>
+    <span class=s>&#34;June&#34;</span><span class=p>,</span>
+    <span class=s>&#34;July&#34;</span><span class=p>,</span>
+    <span class=s>&#34;Aug&#34;</span><span class=p>,</span>
+    <span class=s>&#34;Sept&#34;</span><span class=p>,</span>
+    <span class=s>&#34;Oct&#34;</span><span class=p>,</span>
+    <span class=s>&#34;Nov&#34;</span><span class=p>,</span>
+    <span class=s>&#34;Dec&#34;</span>
+<span class=p>};</span>
+<span class=kt>int</span>
+<span class=nf>main</span><span class=p>(</span><span class=kt>int</span> <span class=n>argc</span><span class=p>,</span> <span class=kt>char</span> <span class=o>*</span><span class=n>argv</span><span class=p>[])</span>
+<span class=p>{</span>
+  <span class=k>struct</span> <span class=n>rtcdate</span> <span class=n>r</span><span class=p>;</span>
+  <span class=k>if</span> <span class=p>(</span><span class=n>date</span><span class=p>(</span><span class=o>&amp;</span><span class=n>r</span><span class=p>))</span> <span class=p>{</span>
+    <span class=n>printf</span><span class=p>(</span><span class=mi>2</span><span class=p>,</span> <span class=s>&#34;date failed</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>);</span>
+  <span class=p>}</span>
+  <span class=n>printf</span><span class=p>(</span><span class=mi>1</span><span class=p>,</span> <span class=s>&#34;%s %d %d:%d:%d UTC %d</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>month_name</span><span class=p>[</span><span class=n>r</span><span class=p>.</span><span class=n>month</span><span class=p>],</span> <span class=n>r</span><span class=p>.</span><span class=n>day</span><span class=p>,</span> <span class=n>r</span><span class=p>.</span><span class=n>hour</span><span class=p>,</span> <span class=n>r</span><span class=p>.</span><span class=n>minute</span><span class=p>,</span> <span class=n>r</span><span class=p>.</span><span class=n>second</span><span class=p>,</span> <span class=n>r</span><span class=p>.</span><span class=n>year</span><span class=p>);</span>
+  <span class=n>exit</span><span class=p>();</span>
+<span class=p>}</span>
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p>将<code>_date</code>添加到<code>Makefile</code>中的<code>UPROGS</code>定义:<code>vim Makefile</code></p>
+<pre tabindex=0><code>UPROGS=\
+    _cat\
+    _echo\
+    _forktest\
+    _grep\
+    _init\
+    _kill\
+    _ln\
+    _ls\
+    _mkdir\
+    _rm\
+    _sh\
+    _stressfs\
+    _usertests\
+    _wc\
+    _zombie\
+    _date\
+
+</code></pre><p>编译运行 <code>make qemu-nox</code></p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>$ date 
+July <span class=m>28</span> 14:35:8 UTC <span class=m>2019</span>
+
+</code></pre></td></tr></table></div>
+</div>
+</div><h3 id=实现-dup2><a href=#实现-dup2 class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:实现-dup2 class=headings>实现 <code>dup2</code></a></h3>
+<p>在之前的文章中，提到了 <code>dup</code> 和 <code>dup2</code> 的使用，可以理解 <code>dup2</code> 借助 <code>dup</code> 自动实现了IO重定向中文件描述符的重定向与释放。</p>
+<figure class="kg-card kg-bookmark-card">
+<a href=/archives-548/ class=kg-bookmark-container>
+<div class=kg-bookmark-content>
+<div class=kg-bookmark-title>译 | pipe, fork & dup: 理解命令执行和输入输出流</div>
+<div class=kg-bookmark-description>使用图表清晰的展示了管道的工作方式 原文链接 [http://www.rozmichelle.com/pipes-forks-dups/] i&amp;gt; 注意：理解这篇文章需要基本熟悉Unix命令和C / C ++。 我的目标是在运行命令时解释进程之间的数据流。 如果您想直接跳转到管道内容，请单击此处\n[https://www.zhangjc.site/archives/548.html#%E7%AE%A1%E9%81%93-Pipe]。 在这篇文章中，我们将讨论Unix命令如何通过管道和输入/输出重定向将数据相互传递，并且我将说明执行命令时数据流实际发生的情况。 文件描述符 - File D…</div>
+<div class=kg-bookmark-metadata>
+<img src=https://www.zhangjc.site/favicon.ico class=kg-bookmark-icon>
+<span class=kg-bookmark-author>Jiachen Zhang</span>
+<span class=kg-bookmark-publisher>The Daily Awesome</span>
+</div>
+</div>
+<div class=kg-bookmark-thumbnail>
+<img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/934882281.png>
+</div>
+</a>
+</figure>
+</div>
+</article>
+<div class=related-posts>
+<h2 class=related-title>相关文章：<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon related-icon"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm144 276c0 6.6-5.4 12-12 12h-92v92c0 6.6-5.4 12-12 12h-56c-6.6.0-12-5.4-12-12v-92h-92c-6.6.0-12-5.4-12-12v-56c0-6.6 5.4-12 12-12h92v-92c0-6.6 5.4-12 12-12h56c6.6.0 12 5.4 12 12v92h92c6.6.0 12 5.4 12 12v56z"/></svg></h2>
+<ul class=related-list>
+<li class=related-item>
+<a href=/archives-604/ class=related-link>MIT6.828 | Lec6: Virtual Memory - 1</a>
+</li>
+<li class=related-item>
+<a href=/archives-601/ class=related-link>MIT6.828 | Lec 5: Isolation mechanisms</a>
+</li>
+<li class=related-item>
+<a href=/archives-592/ class=related-link>MIT6.828 | Lec4: Shell & OS organization</a>
+</li>
+<li class=related-item>
+<a href=/archives-579/ class=related-link>MIT6.828 | Lab 2: Memory Management</a>
+</li>
+<li class=related-item>
+<a href=/archives-588/ class=related-link>MIT6.828 | Lab 2: Memory Management - Part 3: Kernel Address Space</a>
+</li>
+</ul>
+</div>
+<div class=post-tags>
+<a href=/tags/note/ rel=tag class=post-tags-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon tag-icon"><path d="M0 252.118V48C0 21.49 21.49.0 48 0h204.118a48 48 0 0133.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137.0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882.0L14.059 286.059A48 48 0 010 252.118zM112 64c-26.51.0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"/></svg>note</a>
+<a href=/tags/mit6.828/ rel=tag class=post-tags-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon tag-icon"><path d="M0 252.118V48C0 21.49 21.49.0 48 0h204.118a48 48 0 0133.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137.0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882.0L14.059 286.059A48 48 0 010 252.118zM112 64c-26.51.0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"/></svg>MIT6.828</a>
+</div>
+<footer class=minimal-footer>
+<div class=post-tag><a href=/tags/note/ rel=tag class=post-tag-link>#note</a> <a href=/tags/mit6.828/ rel=tag class=post-tag-link>#mit6828</a></div>
+<div class=post-category>
+<a href=/tech/ class="post-category-link active">tech</a>
+</div>
+</footer>
+<ul class=post-nav>
+<li class=post-nav-prev>
+<a href=/archives-604/ rel=prev>&lt; MIT6.828 | Lec6: Virtual Memory - 1</a>
+</li>
+<li class=post-nav-next>
+<a href=/archives-601/ rel=next>MIT6.828 | Lec 5: Isolation mechanisms ></a>
+</li>
+</ul>
+</div>
+</main>
+<div id=back-to-top class=back-to-top>
+<a href=#><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon arrow-up"><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6.0-33.9L207 39c9.4-9.4 24.6-9.4 33.9.0l194.3 194.3c9.4 9.4 9.4 24.6.0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3.0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"/></svg></a>
+</div>
+<footer id=footer class=footer>
+<div class=footer-inner>
+<div class=site-info>©&nbsp;2019–2021&nbsp;&nbsp;Jiachen</div><div class=site-copyright><a href=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh target=_blank rel=noopener>CC BY-NC-SA 4.0</a></div>
+</div>
+</footer>
+</div>
+<script>'serviceWorker'in navigator&&window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js')})</script>
+<script src=https://cdn.jsdelivr.net/npm/medium-zoom@latest/dist/medium-zoom.min.js></script>
+<script>mediumZoom(document.querySelectorAll('div.post-body img'),{background:'hsla(var(--color-bg-h), var(--color-bg-s), var(--color-bg-l), 0.95)'})</script>
+<script src=https://cdn.jsdelivr.net/npm/instant.page@5.1.0/instantpage.min.js type=module defer></script>
+</body>
+</html>

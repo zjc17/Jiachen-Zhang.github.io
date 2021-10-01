@@ -1,0 +1,236 @@
+<!doctype html><html lang=zh-cn>
+<head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+<meta charset=utf-8>
+<meta name=generator content="Hugo 0.88.1"><meta name=theme-color content="#16171d">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=format-detection content="telephone=no, date=no, address=no, email=no">
+<meta http-equiv=cache-control content="no-transform">
+<meta http-equiv=cache-control content="no-siteapp">
+<title>脚本 | 利用python自动整理桌面文件 | The Daily Awesome</title>
+<link rel=stylesheet href=/css/meme.min.c7b66d8ab937ea5489e87c6d96c470e3f5e7b5a21a385e18c358b7b3be61b6de.css>
+<script src=/js/meme.min.8cbe976441b5181abfd3093c9beee209b19cdbb1fa77c48d225a83ba81fa3fb1.js></script>
+<link rel=preconnect href=https://fonts.gstatic.com crossorigin>
+<link rel=stylesheet href="https://fonts.loli.net/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400;1,700&family=Noto+Serif+SC:wght@400;500;700&family=Source+Code+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap" media=print onload="this.media='all'">
+<noscript><link rel=stylesheet href="https://fonts.loli.net/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400;1,700&family=Noto+Serif+SC:wght@400;500;700&family=Source+Code+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap"></noscript>
+<meta name=author content="Jiachen Zhang"><meta name=description content="鉴于自己的桌面实在太乱了，所以写了个python脚本自动整理无用文件。">
+<link rel="shortcut icon" href=/favicon.ico type=image/x-icon>
+<link rel=mask-icon href=/icons/safari-pinned-tab.svg color=#2a6df4>
+<link rel=apple-touch-icon sizes=180x180 href=/icons/apple-touch-icon.png>
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-title content="The Daily Awesome">
+<meta name=apple-mobile-web-app-status-bar-style content="black">
+<meta name=mobile-web-app-capable content="yes">
+<meta name=application-name content="The Daily Awesome">
+<meta name=msapplication-starturl content="../">
+<meta name=msapplication-TileColor content="#fff">
+<meta name=msapplication-TileImage content="../icons/mstile-150x150.png">
+<link rel=manifest href=/manifest.json>
+<link rel=canonical href=https://www.zhangjc.site/archives-610/>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","datePublished":"2019-07-09T05:54:00+00:00","dateModified":"2021-10-01T20:54:44+08:00","url":"https://www.zhangjc.site/archives-610/","headline":"脚本 | 利用python自动整理桌面文件","description":"鉴于自己的桌面实在太乱了，所以写了个python脚本自动整理无用文件。","inLanguage":"zh-CN","articleSection":"tech","wordCount":433,"image":"https://www.zhangjc.site/icons/apple-touch-icon.png","author":{"@type":"Person","description":"The Daily Awesome","email":"zhangjc1999@gmail.com","image":"https://www.zhangjc.site/icons/apple-touch-icon.png","url":"https://www.zhangjc.site/","name":"Jiachen"},"license":"[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh)","publisher":{"@type":"Organization","name":"The Daily Awesome","logo":{"@type":"ImageObject","url":"https://www.zhangjc.site/icons/apple-touch-icon.png"},"url":"https://www.zhangjc.site/"},"mainEntityOfPage":{"@type":"WebSite","@id":"https://www.zhangjc.site/"}}</script>
+<meta name=twitter:card content="summary">
+<meta name=twitter:site content="@JiachenZhang5">
+<meta name=twitter:creator content="@JiachenZhang5">
+<meta property="og:title" content="脚本 | 利用python自动整理桌面文件">
+<meta property="og:description" content="鉴于自己的桌面实在太乱了，所以写了个python脚本自动整理无用文件。">
+<meta property="og:url" content="https://www.zhangjc.site/archives-610/">
+<meta property="og:site_name" content="The Daily Awesome">
+<meta property="og:locale" content="zh"><meta property="og:image" content="https://www.zhangjc.site/icons/apple-touch-icon.png">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2019-07-09T05:54:00+00:00">
+<meta property="article:modified_time" content="2021-10-01T20:54:44+08:00">
+<meta property="article:section" content="tech">
+<script type=text/javascript src="https://s4.cnzz.com/z_stat.php?id=1279769355&web_id=1279769355"></script>
+</head>
+<body>
+<div class=container>
+<header class=header>
+<div class=header-wrapper>
+<div class="header-inner single">
+<div class=site-brand>
+<a href=/ class=brand>The Daily Awesome</a>
+</div>
+<nav class=nav>
+<ul class=menu id=menu>
+<li class=menu-item><a href=/life/><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon archive"><path d="M32 448c0 17.7 14.3 32 32 32h384c17.7.0 32-14.3 32-32V160H32v288zm160-212c0-6.6 5.4-12 12-12h104c6.6.0 12 5.4 12 12v8c0 6.6-5.4 12-12 12H204c-6.6.0-12-5.4-12-12v-8zM480 32H32C14.3 32 0 46.3.0 64v48c0 8.8 7.2 16 16 16h480c8.8.0 16-7.2 16-16V64c0-17.7-14.3-32-32-32z"/></svg><span class=menu-item-name>生活</span></a>
+</li>
+<li class=menu-item><a href=/tech/><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon th"><path d="M149.333 56v80c0 13.255-10.745 24-24 24H24c-13.255.0-24-10.745-24-24V56c0-13.255 10.745-24 24-24h101.333c13.255.0 24 10.745 24 24zm181.334 240v-80c0-13.255-10.745-24-24-24H205.333c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256.0 24.001-10.745 24.001-24zm32-240v80c0 13.255 10.745 24 24 24H488c13.255.0 24-10.745 24-24V56c0-13.255-10.745-24-24-24H386.667c-13.255.0-24 10.745-24 24zm-32 80V56c0-13.255-10.745-24-24-24H205.333c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256.0 24.001-10.745 24.001-24zm-205.334 56H24c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24zM0 376v80c0 13.255 10.745 24 24 24h101.333c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H24c-13.255.0-24 10.745-24 24zm386.667-56H488c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zm0 160H488c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zM181.333 376v80c0 13.255 10.745 24 24 24h101.333c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H205.333c-13.255.0-24 10.745-24 24z"/></svg><span class=menu-item-name>技术</span></a>
+</li>
+<li class=menu-item><a href=/about/><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" class="icon user-circle"><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 96c48.6.0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 344c-58.7.0-111.3-26.6-146.5-68.2 18.8-35.4 55.6-59.8 98.5-59.8 2.4.0 4.8.4 7.1 1.1 13 4.2 26.6 6.9 40.9 6.9s28-2.7 40.9-6.9c2.3-.7 4.7-1.1 7.1-1.1 42.9.0 79.7 24.4 98.5 59.8C359.3 421.4 306.7 448 248 448z"/></svg><span class=menu-item-name>关于</span></a>
+</li>
+<li class=menu-item>
+<a id=theme-switcher href=#><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon theme-icon-light"><path d="M193.2 104.5 242 7a18 18 0 0128 0l48.8 97.5L422.2 70A18 18 0 01442 89.8l-34.5 103.4L505 242a18 18 0 010 28l-97.5 48.8L442 422.2A18 18 0 01422.2 442l-103.4-34.5L270 505a18 18 0 01-28 0l-48.8-97.5L89.8 442A18 18 0 0170 422.2l34.5-103.4-97.5-48.8a18 18 0 010-28l97.5-48.8L70 89.8A18 18 0 0189.8 70zM256 128a128 128 0 10.01.0M256 160a96 96 0 10.01.0"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon theme-icon-dark"><path d="M27 412A256 256 0 10181 5a11.5 11.5.0 00-5 20A201.5 201.5.0 0142 399a11.5 11.5.0 00-15 13"/></svg></a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+<input type=checkbox id=nav-toggle aria-hidden=true>
+<label for=nav-toggle class=nav-toggle></label>
+<label for=nav-toggle class=nav-curtain></label>
+</header>
+<main class="main single" id=main>
+<div class=main-inner>
+<article class="content post h-entry" data-align=justify data-type=tech data-toc-num=true>
+<h1 class="post-title p-name">脚本 | 利用python自动整理桌面文件</h1>
+<div class=post-meta>
+<time datetime=2019-07-09T05:54:00+00:00 class="post-meta-item published dt-published"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon post-meta-icon"><path d="M148 288h-40c-6.6.0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6.0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5.0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6.0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6.0 12 5.4 12 12v52h48c26.5.0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3.0 6-2.7 6-6z"/></svg>&nbsp;2019.7.9</time>
+<span class="post-meta-item category"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49.0 112v288c0 26.51 21.49 48 48 48h416c26.51.0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>&nbsp;<a href=/tech/ class="category-link p-category">Tech</a></span>
+</div>
+<nav class=contents></nav><div class="post-body e-content">
+<p>鉴于自己的桌面实在太乱了，所以写了个python脚本自动整理无用文件。</p>
+<p>我将脚本统一放在了桌面内的 <code>script</code> 文件夹内，同时在桌面建立了批处理文件<code>archive_files.bat</code>方便操作：</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=nb>cd</span> ./script
+python archive_files.py <span class=s2>&#34;C:\\Users\\acezj\\Desktop&#34;</span>
+pause
+<span class=nb>exit</span>
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p>脚本运行需要<code>python</code>环境</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=c1># python</span>
+<span class=c1># archive_files.py</span>
+<span class=n>file_doc</span> <span class=o>=</span> <span class=p>[</span><span class=s2>&#34;.doc&#34;</span><span class=p>,</span> <span class=s2>&#34;.pptx&#34;</span><span class=p>,</span> <span class=s2>&#34;.pdf&#34;</span><span class=p>,</span> <span class=s2>&#34;.md&#34;</span><span class=p>,</span> <span class=s2>&#34;.html&#34;</span><span class=p>]</span>
+<span class=c1># 文档 =&gt; Doc</span>
+<span class=n>file_pic</span> <span class=o>=</span> <span class=p>[</span><span class=s2>&#34;.jpg&#34;</span><span class=p>]</span>
+<span class=c1># 图片 =&gt; Pic</span>
+<span class=n>file_tmp</span> <span class=o>=</span> <span class=p>[</span><span class=s2>&#34;.torrent&#34;</span><span class=p>]</span>
+<span class=c1># 其他 =&gt; Tmp</span>
+<span class=n>file_no_move</span> <span class=o>=</span> <span class=p>[</span><span class=s2>&#34;.py&#34;</span><span class=p>,</span> <span class=s2>&#34;.exe&#34;</span><span class=p>,</span> <span class=s2>&#34;.bat&#34;</span><span class=p>,</span>     
+                 <span class=c1># 可执行文件（不移动）</span>
+                 <span class=s2>&#34;.lnk&#34;</span><span class=p>,</span>                    
+                 <span class=c1># 图标（不移动）</span>
+                 <span class=s2>&#34;.ini&#34;</span><span class=p>,</span> <span class=s2>&#34;.drivedownload&#34;</span><span class=p>,</span> <span class=s2>&#34;&#34;</span>
+                 <span class=c1># 不移动</span>
+                <span class=p>]</span>
+<span class=n>file_type_recognized</span> <span class=o>=</span> <span class=n>file_doc</span> <span class=o>+</span> <span class=n>file_pic</span> <span class=o>+</span> <span class=n>file_tmp</span> <span class=o>+</span> <span class=n>file_no_move</span>
+<span class=n>extension_not_exist</span> <span class=o>=</span> <span class=p>[]</span>
+<span class=n>old_path</span><span class=p>,</span> <span class=n>new_path</span> <span class=o>=</span> <span class=s2>&#34;&#34;</span><span class=p>,</span> <span class=s2>&#34;&#34;</span>
+
+<span class=k>def</span> <span class=nf>archive_files</span><span class=p>(</span><span class=n>file_dir</span><span class=p>):</span>
+    <span class=kn>import</span> <span class=nn>os</span>
+    <span class=kn>import</span> <span class=nn>shutil</span>
+    <span class=k>def</span> <span class=nf>getPath</span><span class=p>(</span><span class=n>file_dir</span><span class=p>,</span> <span class=n>file</span><span class=p>,</span> <span class=n>folder</span><span class=p>):</span>
+        <span class=n>old_path</span> <span class=o>=</span> <span class=n>os</span><span class=o>.</span><span class=n>path</span><span class=o>.</span><span class=n>join</span><span class=p>(</span><span class=n>file_dir</span><span class=p>,</span> <span class=n>file</span><span class=p>)</span>
+        <span class=n>new_path</span> <span class=o>=</span> <span class=n>os</span><span class=o>.</span><span class=n>path</span><span class=o>.</span><span class=n>join</span><span class=p>(</span><span class=n>os</span><span class=o>.</span><span class=n>path</span><span class=o>.</span><span class=n>join</span><span class=p>(</span><span class=n>file_dir</span><span class=p>,</span> <span class=n>folder</span><span class=p>),</span> <span class=n>file</span><span class=p>)</span>
+        <span class=k>return</span> <span class=n>old_path</span><span class=p>,</span> <span class=n>new_path</span>
+    <span class=k>for</span> <span class=n>file</span> <span class=ow>in</span> <span class=n>os</span><span class=o>.</span><span class=n>listdir</span><span class=p>(</span><span class=n>file_dir</span><span class=p>):</span>
+        <span class=n>path</span> <span class=o>=</span> <span class=n>os</span><span class=o>.</span><span class=n>path</span><span class=o>.</span><span class=n>join</span><span class=p>(</span><span class=n>file_dir</span><span class=p>,</span> <span class=n>file</span><span class=p>)</span>
+        <span class=n>extension</span> <span class=o>=</span> <span class=n>os</span><span class=o>.</span><span class=n>path</span><span class=o>.</span><span class=n>splitext</span><span class=p>(</span><span class=n>file</span><span class=p>)[</span><span class=mi>1</span><span class=p>]</span> 
+        <span class=c1># 其中os.path.splitext()函数将路径拆分为文件名+扩展名</span>
+        <span class=k>if</span> <span class=n>extension</span> <span class=ow>in</span> <span class=n>file_doc</span><span class=p>:</span>
+            <span class=n>old_path</span><span class=p>,</span> <span class=n>new_path</span> <span class=o>=</span> <span class=n>getPath</span><span class=p>(</span><span class=n>file_dir</span><span class=p>,</span> <span class=n>file</span><span class=p>,</span> <span class=s2>&#34;doc&#34;</span><span class=p>)</span>
+        <span class=k>elif</span> <span class=n>extension</span> <span class=ow>in</span> <span class=n>file_pic</span><span class=p>:</span>
+            <span class=n>old_path</span><span class=p>,</span> <span class=n>new_path</span> <span class=o>=</span> <span class=n>getPath</span><span class=p>(</span><span class=n>file_dir</span><span class=p>,</span> <span class=n>file</span><span class=p>,</span> <span class=s2>&#34;pic&#34;</span><span class=p>)</span>
+        <span class=k>elif</span> <span class=n>extension</span> <span class=ow>in</span> <span class=n>file_tmp</span><span class=p>:</span>
+            <span class=n>old_path</span><span class=p>,</span> <span class=n>new_path</span> <span class=o>=</span> <span class=n>getPath</span><span class=p>(</span><span class=n>file_dir</span><span class=p>,</span> <span class=n>file</span><span class=p>,</span> <span class=s2>&#34;tmp&#34;</span><span class=p>)</span>
+        <span class=k>elif</span> <span class=n>extension</span> <span class=ow>in</span> <span class=n>file_no_move</span><span class=p>:</span>
+            <span class=k>continue</span>
+        <span class=k>elif</span> <span class=n>extension</span> <span class=ow>not</span> <span class=ow>in</span> <span class=n>extension_not_exist</span><span class=p>:</span>
+            <span class=n>extension_not_exist</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>extension</span><span class=p>)</span>
+            <span class=k>continue</span>
+        <span class=n>shutil</span><span class=o>.</span><span class=n>move</span><span class=p>(</span><span class=n>old_path</span><span class=p>,</span> <span class=n>new_path</span><span class=p>)</span>
+        <span class=nb>print</span><span class=p>(</span><span class=s2>&#34;unrecognized:&#34;</span><span class=p>,</span> <span class=n>extension_not_exist</span><span class=p>)</span>
+
+<span class=c1># file_dir = &#34;C:\\Users\\acezj\\Desktop&#34;</span>
+<span class=kn>import</span> <span class=nn>sys</span>
+<span class=n>file_dir</span> <span class=o>=</span> <span class=n>sys</span><span class=o>.</span><span class=n>argv</span><span class=p>[</span><span class=mi>1</span><span class=p>]</span>
+<span class=n>archive_files</span><span class=p>(</span><span class=n>file_dir</span><span class=p>)</span>
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p>和<code>.bat</code>批处理文件同级的 <code>doc</code>, <code>pic</code>, <code>tmp</code> 三个目录需要手动创建</p>
+<p>会自动将设置好的后缀名文件移动至对应目录，同时没有处理过的文件后缀会列出</p>
+</div>
+</article>
+<footer class=minimal-footer>
+<div class=post-category>
+<a href=/tech/ class="post-category-link active">tech</a>
+</div>
+</footer>
+<ul class=post-nav>
+<li class=post-nav-prev>
+<a href=/learn-linux-link/ rel=prev>&lt; 深入理解 Linux 链接</a>
+</li>
+<li class=post-nav-next>
+<a href=/archives-604/ rel=next>MIT6.828 | Lec6: Virtual Memory - 1 ></a>
+</li>
+</ul>
+</div>
+</main>
+<div id=back-to-top class=back-to-top>
+<a href=#><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon arrow-up"><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6.0-33.9L207 39c9.4-9.4 24.6-9.4 33.9.0l194.3 194.3c9.4 9.4 9.4 24.6.0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3.0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"/></svg></a>
+</div>
+<footer id=footer class=footer>
+<div class=footer-inner>
+<div class=site-info>©&nbsp;2019–2021&nbsp;&nbsp;Jiachen</div><div class=site-copyright><a href=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh target=_blank rel=noopener>CC BY-NC-SA 4.0</a></div>
+</div>
+</footer>
+</div>
+<script>'serviceWorker'in navigator&&window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js')})</script>
+<script src=https://cdn.jsdelivr.net/npm/medium-zoom@latest/dist/medium-zoom.min.js></script>
+<script>mediumZoom(document.querySelectorAll('div.post-body img'),{background:'hsla(var(--color-bg-h), var(--color-bg-s), var(--color-bg-l), 0.95)'})</script>
+<script src=https://cdn.jsdelivr.net/npm/instant.page@5.1.0/instantpage.min.js type=module defer></script>
+</body>
+</html>

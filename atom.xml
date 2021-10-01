@@ -1,0 +1,1581 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="zh-CN"><title type="text">The Daily Awesome</title><subtitle type="html">The Daily Awesome</subtitle><updated>2021-10-01T20:54:47+08:00</updated><id>https://www.zhangjc.site/</id><link rel="alternate" type="text/html" href="https://www.zhangjc.site/"/><link rel="self" type="application/atom+xml" href="https://www.zhangjc.site/atom.xml"/><author><name>Jiachen</name><uri>https://www.zhangjc.site/</uri><email>zhangjc1999@gmail.com</email></author><rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh)</rights><generator uri="https://gohugo.io/" version="0.88.1">Hugo</generator><entry><title type="text">MAC上备份（复制）树莓派镜像</title><link rel="alternate" type="text/html" href="https://www.zhangjc.site/backup_or_copy_raspberrypi_image_on_mac/"/><id>https://www.zhangjc.site/backup_or_copy_raspberrypi_image_on_mac/</id><updated>2021-10-01T20:54:44+08:00</updated><published>2021-03-09T22:37:52+08:00</published><summary type="html">1. 命令行方式 查看设备: diskutil list 备份img: sudo dd if=/dev/disk2 of=raspberrypi_0917.img 烧录img: 1 2 diskutil unmountDisk /dev/disk2 # 需要卸载disk2 再烧录 sudo dd bs=4m if=raspberrypi_0917.img of=/dev/disk2 备份gz: 1 sudo dd if=/dev/sdb | gzip&amp;gt;raspberrypi_save.gz 把gz文件解压缩并写入到SD卡2中: 1 sudo gzip -dc raspberrypi_save.gz | sudo dd of=/dev/disk2 2. 开源软件 balena etcher 这应该是最方便的工具了，最开始就是用这个软件安装的官方镜像，最近发现还有一个 clone drive 的选项可以很方便地备份系统……</summary><content type="html">&lt;h2 id="1-命令行方式">1. 命令行方式&lt;/h2>
+&lt;ol>
+&lt;li>查看设备: &lt;code>diskutil list&lt;/code>&lt;/li>
+&lt;li>备份img: &lt;code>sudo dd if=/dev/disk2 of=raspberrypi_0917.img&lt;/code>&lt;/li>
+&lt;li>烧录img:
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">diskutil unmountDisk /dev/disk2 &lt;span class="c1"># 需要卸载disk2 再烧录&lt;/span>
+sudo dd &lt;span class="nv">bs&lt;/span>&lt;span class="o">=&lt;/span>4m &lt;span class="k">if&lt;/span>&lt;span class="o">=&lt;/span>raspberrypi_0917.img &lt;span class="nv">of&lt;/span>&lt;span class="o">=&lt;/span>/dev/disk2
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;/li>
+&lt;li>备份gz:
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">sudo dd &lt;span class="k">if&lt;/span>&lt;span class="o">=&lt;/span>/dev/sdb &lt;span class="p">|&lt;/span> gzip&amp;gt;raspberrypi_save.gz
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;/li>
+&lt;li>把gz文件解压缩并写入到SD卡2中:
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">sudo gzip -dc raspberrypi_save.gz &lt;span class="p">|&lt;/span> sudo dd &lt;span class="nv">of&lt;/span>&lt;span class="o">=&lt;/span>/dev/disk2
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;/li>
+&lt;/ol>
+&lt;h2 id="2-开源软件-balena-etcherhttpswwwbalenaioetcher">2. 开源软件 &lt;a href="https://www.balena.io/etcher/">balena etcher&lt;/a>&lt;/h2>
+&lt;p>这应该是最方便的工具了，最开始就是用这个软件安装的官方镜像，最近发现还有一个 &lt;code>clone drive&lt;/code> 的选项可以很方便地备份系统。&lt;/p>
+&lt;p>&lt;img src="https://image-hosting.zhangjc.tech/ghost/content/images/2021/03/20210309_110004.png" alt="">&lt;/p></content><category scheme="https://www.zhangjc.site/tech/" term="tech" label="tech"/></entry><entry><title type="text">M1 MAC 开发环境配置</title><link rel="alternate" type="text/html" href="https://www.zhangjc.site/setup_develop_environment_on_mac_m1/"/><id>https://www.zhangjc.site/setup_develop_environment_on_mac_m1/</id><updated>2021-10-01T20:54:44+08:00</updated><published>2021-03-08T15:36:20+08:00</published><author><name>Jiachen</name><uri>https://www.zhangjc.site/</uri><email>zhangjc1999@gmail.com</email></author><rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh)</rights><summary type="html">1. 编译 proto 文件 该项目使用 protobuf 作为序列化协议框架，但该框架在 java 环境下暂不兼容使用 m1 芯片的操作系统。 1 2 3 4 5 6 7 8 9 10 protobuf { protoc { // for apple m1, please add protoc_platform=osx-x86_64 in $HOME/.gradle/gradle.properties if (project.hasProperty(&amp;#39;protoc_platform&amp;#39;)) { artifact = &amp;#34;com.google.protobuf:protoc:3.13.0:${protoc_platform}&amp;#34; } else { artifact = &amp;#34;com.google.protobuf:protoc:3.13.0&amp;#34; } } } 解决方案为在m1芯片的开发环境中手动指定所需依赖的平台标签。 使用根目录配置的方式能够避免在 Git 版本管理中对其他环境开发者的影响。 1 2 //……</summary><content type="html">&lt;h2 id="1-编译-proto-文件">1. 编译 proto 文件&lt;/h2>
+&lt;p>该项目使用 protobuf 作为序列化协议框架，但该框架在 java 环境下暂不兼容使用 m1 芯片的操作系统。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-groovy" data-lang="groovy">&lt;span class="n">protobuf&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;span class="n">protoc&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;span class="c1">// for apple m1, please add protoc_platform=osx-x86_64 in $HOME/.gradle/gradle.properties
+&lt;/span>&lt;span class="c1">&lt;/span> &lt;span class="k">if&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">project&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">hasProperty&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s1">&amp;#39;protoc_platform&amp;#39;&lt;/span>&lt;span class="o">))&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;span class="n">artifact&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s2">&amp;#34;com.google.protobuf:protoc:3.13.0:${protoc_platform}&amp;#34;&lt;/span>
+&lt;span class="o">}&lt;/span> &lt;span class="k">else&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;span class="n">artifact&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s2">&amp;#34;com.google.protobuf:protoc:3.13.0&amp;#34;&lt;/span>
+&lt;span class="o">}&lt;/span>
+&lt;span class="o">}&lt;/span>
+&lt;span class="o">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>解决方案为在m1芯片的开发环境中手动指定所需依赖的平台标签。&lt;/p>
+&lt;blockquote>
+&lt;p>使用根目录配置的方式能够避免在 Git 版本管理中对其他环境开发者的影响。&lt;/p>
+&lt;/blockquote>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">// &lt;span class="nv">$HOME&lt;/span>/.gradle/gradle.properties
+&lt;span class="nv">protoc_platform&lt;/span>&lt;span class="o">=&lt;/span>osx-x86_64
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="2-安装-docker-desktop">2. 安装 docker desktop&lt;/h2>
+&lt;p>目前docker没有实现对 m1 芯片的完全支持，但提供了 docker desktop preview 版本的支持。可以从该链接安装 &lt;a href="https://docs.docker.com/docker-for-mac/apple-m1/">https://docs.docker.com/docker-for-mac/apple-m1/&lt;/a> 暂未支持的功能也在该页面进行了列举。&lt;/p>
+&lt;h2 id="3-安装-mysql">3. 安装 mysql&lt;/h2>
+&lt;p>Mysql 官方镜像暂未支持 m1 环境的 arm 标签，但得益于 m1 的兼容性，我们可以使用 &lt;code>--platform&lt;/code> 参数安装 x86 版的镜像，并且能够正常运行&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">docker run --name mysql -d &lt;span class="se">\
+&lt;/span>&lt;span class="se">&lt;/span>-p 3306:3306 &lt;span class="se">\
+&lt;/span>&lt;span class="se">&lt;/span>-e &lt;span class="nv">MYSQL_ALLOW_EMPTY_PASSWORD&lt;/span>&lt;span class="o">=&lt;/span>yes &lt;span class="se">\
+&lt;/span>&lt;span class="se">&lt;/span>--platform linux/x86_64 mysql
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="4-安装-homebrew">4. 安装 homebrew&lt;/h2>
+&lt;p>参考少数派的&lt;a href="https://sspai.com/post/63935">文章&lt;/a>，需要注意路径区分。&lt;/p></content><category scheme="https://www.zhangjc.site/tech/" term="tech" label="tech"/></entry><entry><title type="text">腾讯云，Cloudflare CDN加速方案对比</title><link rel="alternate" type="text/html" href="https://www.zhangjc.site/tencent_cloudflare_global_cdn_compare_20210307/"/><id>https://www.zhangjc.site/tencent_cloudflare_global_cdn_compare_20210307/</id><updated>2021-10-01T20:54:44+08:00</updated><published>2021-03-07T12:26:09+08:00</published><author><name>Jiachen</name><uri>https://www.zhangjc.site/</uri><email>zhangjc1999@gmail.com</email></author><rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh)</rights><summary type="html">目前网站的加速方案是 cloudflare cdn -&amp;gt; github page，同时图床使用腾讯云全球cdn加速。心血来潮对比了下加速方案，据说cloudflare在晚间高峰期的速度会受到一定影响， 于是测试了下腾讯云的不同加速方案（国内加速需要备案域名）同 cloudflare 的对比。ps. 使用了默认的配置，没有对文件过期规则进行优化 中午12点20分，使用cl……</summary><content type="html">&lt;p>目前网站的加速方案是 cloudflare cdn -&amp;gt; github page，同时图床使用腾讯云全球cdn加速。心血来潮对比了下加速方案，据说cloudflare在晚间高峰期的速度会受到一定影响，&lt;/p>
+&lt;p>于是测试了下腾讯云的不同加速方案（国内加速需要备案域名）同 cloudflare 的对比。ps. 使用了默认的配置，没有对文件过期规则进行优化&lt;/p>
+&lt;p>中午12点20分，使用cloudflare 加速（图左）和使用腾讯云海外加速的镜像站（图右）
+&lt;img src="https://image-hosting.zhangjc.tech/ghost/content/images/2021/03/20210307_122634.png" alt="">&lt;/p>
+&lt;p>中午12点40分，使用腾讯云全球加速（图左）和使用腾讯云海外加速（图右）对比
+&lt;img src="https://image-hosting.zhangjc.tech/ghost/content/images/2021/03/20210307_124708.png" alt="">&lt;/p>
+&lt;p>本着精简服务维护的想法（从自建 ghost 迁移到 hugo + github pages ），未来将把博客的域名也加入备案管理，使用腾讯云全球cdn。&lt;/p></content><category scheme="https://www.zhangjc.site/tech/" term="tech" label="tech"/></entry><entry><title type="text">gRPC 接口调试工具 - BloomRpc</title><link rel="alternate" type="text/html" href="https://www.zhangjc.site/grpc_api_debug_tool_bloomrpc/"/><id>https://www.zhangjc.site/grpc_api_debug_tool_bloomrpc/</id><updated>2021-10-01T20:54:44+08:00</updated><published>2021-03-05T23:38:07+08:00</published><author><name>Jiachen</name><uri>https://www.zhangjc.site/</uri><email>zhangjc1999@gmail.com</email></author><rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh)</rights><summary type="html">介绍 由于后面我们会越来越多地使用gRPC接口，寻找合适的接口工具对RD而言非常关键。 这里推荐一款目前测试功能比较完善的调试工具 BloomRPC 使用 基本操作 proto依赖问题 通过加载路径即可，但这里有个坑，由于文件的定义是 package com.example; 即 package 根目录为 $PROJECT_PATH/$SOME_PATH/com.example 中的 $SOME_PATH 参考我的配置 即可正确识别 proto 的文件依赖 请求头参数 gRPC 使用 metadata 来实现 HTTP 请求中 header……</summary><content type="html">&lt;h2 id="介绍">介绍&lt;/h2>
+&lt;p>由于后面我们会越来越多地使用gRPC接口，寻找合适的接口工具对RD而言非常关键。
+这里推荐一款目前测试功能比较完善的调试工具 BloomRPC
+使用&lt;/p>
+&lt;h2 id="基本操作">基本操作&lt;/h2>
+&lt;p>&lt;img src="https://image-hosting.zhangjc.tech/ghost/content/images/2021/03/20210305_113531.png" alt="">&lt;/p>
+&lt;h2 id="proto依赖问题">proto依赖问题&lt;/h2>
+&lt;p>通过加载路径即可，但这里有个坑，由于文件的定义是 &lt;code>package com.example;&lt;/code>
+即 package 根目录为 &lt;code>$PROJECT_PATH/$SOME_PATH/com.example&lt;/code> 中的 &lt;code>$SOME_PATH&lt;/code>
+参考我的配置
+&lt;img src="https://image-hosting.zhangjc.tech/ghost/content/images/2021/03/20210305_113609.png" alt="">
+即可正确识别 proto 的文件依赖&lt;/p>
+&lt;h2 id="请求头参数">请求头参数&lt;/h2>
+&lt;p>gRPC 使用 metadata 来实现 HTTP 请求中 header 的功能，参数可以在 BloomRPC 底部以 json 格式编辑&lt;/p>
+&lt;p>[x] 项目中实现 metadata 的识别与注入&lt;/p>
+&lt;p>&lt;img src="https://image-hosting.zhangjc.tech/ghost/content/images/2021/03/20210305_113632.png" alt="">&lt;/p>
+&lt;h2 id="其他工具">其他工具&lt;/h2>
+&lt;ul>
+&lt;li>&lt;code>grpcc&lt;/code>: 一款命令行调试工具。&lt;/li>
+&lt;/ul>
+&lt;h2 id="final">Final&lt;/h2>
+&lt;p>其他grpc相关的最佳实践或工具推荐欢迎一起分享&lt;/p></content><category scheme="https://www.zhangjc.site/tech/" term="tech" label="tech"/></entry><entry><title type="text">服务迁移常用命令记录</title><link rel="alternate" type="text/html" href="https://www.zhangjc.site/service-migrate-20210215/"/><id>https://www.zhangjc.site/service-migrate-20210215/</id><updated>2021-10-01T20:54:44+08:00</updated><published>2021-02-14T19:28:11+00:00</published><author><name>Jiachen</name><uri>https://www.zhangjc.site/</uri><email>zhangjc1999@gmail.com</email></author><rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh)</rights><summary type="html">&lt;p>最近阿里云香港突然异常，借此机会把服务迁移重新部署，记录下容器环境的相关操作。&lt;/p>……</summary><content type="html">&lt;p>最近阿里云香港突然异常，借此机会把服务迁移重新部署，记录下容器环境的相关操作。&lt;/p>
+&lt;h2 id="1-install-docker-engine-on-ubuntu">1. Install Docker Engine on Ubuntu&lt;/h2>
+&lt;p>Refer:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://docs.docker.com/engine/install/ubuntu/">https://docs.docker.com/engine/install/ubuntu/&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://docs.docker.com/compose/install/">https://docs.docker.com/compose/install/&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;pre tabindex="0">&lt;code>sudo apt-get update
+sudo apt-get install \
+apt-transport-https \
+ca-certificates \
+curl \
+gnupg-agent \
+software-properties-common -y
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+&lt;/code>&lt;/pre>&lt;pre tabindex="0">&lt;code>sudo add-apt-repository \
+&amp;quot;deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+$(lsb_release -cs) \
+stable&amp;quot;
+&lt;/code>&lt;/pre>&lt;pre tabindex="0">&lt;code>sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io -y
+&lt;/code>&lt;/pre>&lt;p>增加权限&lt;/p>
+&lt;pre tabindex="0">&lt;code>sudo usermod -aG docker &amp;lt;your-user&amp;gt;
+&lt;/code>&lt;/pre>&lt;p>安装 docker-compose&lt;/p>
+&lt;pre tabindex="0">&lt;code>sudo curl -L &amp;quot;https://github.com/docker/compose/releases/download/1.28.2/docker-compose-$(uname -s)-$(uname -m)&amp;quot; -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+&lt;/code>&lt;/pre>&lt;h2 id="2-scp-命令">2. scp 命令&lt;/h2>
+&lt;p>scp提供了几个选项 在scp后加就行了&lt;/p>
+&lt;pre tabindex="0">&lt;code>-p 拷贝文件的时候保留源文件建立的时间。
+-q 执行文件拷贝时，不显示任何提示消息。
+-r 拷贝整个目录 www.2cto.com
+-v 拷贝文件时，显示提示信息。
+&lt;/code>&lt;/pre>&lt;h2 id="3-tar-命令">3. tar 命令&lt;/h2>
+&lt;p>tar 压缩方法：&lt;/p>
+&lt;p>tar -zcvf /home/xahot.tar.gz /xahot&lt;/p>
+&lt;p>tar 解压方法：&lt;/p>
+&lt;p>tar -xzvf /home/xahot.tar.gz&lt;/p>
+&lt;p>tar -zcvf 打包后生成的文件名全路径 要打包的目录例子：把/xahot文件夹打包后生成一个/home/xahot.tar.gz的文件。&lt;/p>
+&lt;figure>&lt;img src="https://image-hosting.zhangjc.tech/ghost/content/images/2021/02/image.png"/>
+&lt;/figure></content><category scheme="https://www.zhangjc.site/tech/" term="tech" label="tech"/></entry><entry><title type="text">Java源码 | 哈希映射</title><link rel="alternate" type="text/html" href="https://www.zhangjc.site/java-map-source-code-learning/"/><id>https://www.zhangjc.site/java-map-source-code-learning/</id><updated>2021-10-01T20:54:44+08:00</updated><published>2020-03-21T05:57:56+00:00</published><author><name>Jiachen</name><uri>https://www.zhangjc.site/</uri><email>zhangjc1999@gmail.com</email></author><rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh)</rights><summary type="html">HashMap, TreeMap, LinkedHashMap, HashTable, ConcurrentHashMap</summary><content type="html">&lt;p>基于&lt;code>jdk1.8&lt;/code>的源代码，学习&lt;code>java&lt;/code>中有关哈希map的类。&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>HashMap&lt;/code>&lt;/li>
+&lt;li>&lt;code>TreeMap&lt;/code>&lt;/li>
+&lt;li>&lt;code>LinkedHashMap&lt;/code>&lt;/li>
+&lt;li>&lt;code>Hashtable&lt;/code>&lt;/li>
+&lt;li>&lt;code>ConcurrentHashMap&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;p>首先使用&lt;code>IDEA&lt;/code>查看与这几个类有关的&lt;code>UML&lt;/code>类图。&lt;/p>
+&lt;figure>&lt;img src="https://image-hosting.zhangjc.tech/ghost/content/images/2020/03/java-map-uml.png"/>
+&lt;/figure>
+&lt;p>我关注的主要有以下几点&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>AbstractMap&lt;/code>, &lt;code>TreeMap&lt;/code>, &lt;code>HashMap&lt;/code>, &lt;code>LinkedHashMap&lt;/code> 之间的继承关系。&lt;/li>
+&lt;li>&lt;code>LinkedHashMap&lt;/code> 在 &lt;code>HashMap&lt;/code> 的基础上，对 &lt;code>Map&lt;/code> 接口的修改。&lt;/li>
+&lt;li>&lt;code>TreeMap&lt;/code> 使用的&lt;code>SortedMap&lt;/code>, &lt;code>NavigableMap&lt;/code> 提供的额外特性。&lt;/li>
+&lt;li>&lt;code>Hashtable&lt;/code> 作为 &lt;code>Dictionary&lt;/code> 的子类，有什么特点。&lt;/li>
+&lt;/ul>
+&lt;h2 id="map-interface">Map Interface&lt;/h2>
+&lt;p>源码的 &lt;code>javaDoc&lt;/code> 中对 &lt;code>Map&lt;/code> 的定义有几个关键点&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>Map&lt;/code> 提供键值映射；不存在重复的键；一个键只映射一个值；&lt;/li>
+&lt;li>提供三种集合视图 (collection views)
+&lt;ul>
+&lt;li>键的集合&lt;/li>
+&lt;li>值的集合&lt;/li>
+&lt;li>键值映射的集合&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>顺序 &lt;code>order&lt;/code> 取决于操作集合视图的迭代器。&lt;strong>&lt;code>TreeMap&lt;/code> 提供了额外的顺序保证。&lt;/strong>&lt;/li>
+&lt;li>需要特别注意 &amp;quot;mutable&amp;quot; 的键的情况。&lt;a href="https://stackoverflow.com/questions/45977296/mutation-of-the-keys-in-hashmap-causes-wrong-results">Related Issue Here&lt;/a>&lt;/li>
+&lt;li>两种标准构造器
+&lt;ul>
+&lt;li>&lt;code>(void)&lt;/code>: 构造空的 &lt;code>Map&lt;/code>。&lt;/li>
+&lt;li>&lt;code>(Map)&lt;/code>: 构造一个传入的 &lt;code>Map&lt;/code> 的副本。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>类似 &lt;code>clone()&lt;/code>, &lt;code>equals()&lt;/code>, &lt;code>hashCode()&lt;/code>, &lt;code>toString()&lt;/code> 的函数，在处理自引用(self-referential instances)的Map时，可能会触发异常。&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2 id="hashtable-class">Hashtable Class&lt;/h2>
+&lt;ul>
+&lt;li>提供键值映射；不允许 &lt;code>null&lt;/code> 作为键或值；&lt;/li>
+&lt;li>底层实现为 &lt;code>Entry[]&lt;/code>, &lt;code>Entry&lt;/code> 是单链表节点，存储 &lt;code>hash&lt;/code>, &lt;code>key&lt;/code>, &lt;code>value&lt;/code>, &lt;code>next&lt;/code>&lt;/li>
+&lt;li>&lt;strong>线程安全&lt;/strong>：引起映射改变的方法均为 &lt;code>synchronized&lt;/code> 所修饰。&lt;/li>
+&lt;li>性能由初始容量(initial capacity)（默认11）和负载系数(load factor)（默认为0.75）决定&lt;/li>
+&lt;/ul>
+&lt;p>添加操作：&lt;code>put()&lt;/code>, &lt;code>addEntry()&lt;/code>&lt;/p>
+&lt;ul>
+&lt;li>计算哈希 &lt;code>Object.hashCode()&lt;/code>&lt;/li>
+&lt;li>计算映射索引 &lt;code>(hash &amp;amp; 0x7FFFFFFF) % tab.length&lt;/code>&lt;/li>
+&lt;li>覆盖旧的值，或在链表后添加新的键值对&lt;/li>
+&lt;/ul>
+&lt;p>扩容：&lt;code>rehash()&lt;/code>&lt;/p>
+&lt;ul>
+&lt;li>扩容阈值由当前容量和负载系数决定&lt;/li>
+&lt;li>当到达阈值后仍需添加新键值对时，更新容量 &lt;code>newCapacity = (oldCapacity &amp;lt;&amp;lt; 1) + 1;&lt;/code>
+&lt;blockquote>
+&lt;p>默认初始容量为11，可以保证容量总为素数
+常用的hash函数是选一个数m取模（余数），这个数在课本中推荐m是素数，但是经常见到选择m=2^n，因为对2^n求余数更快，并认为在key分布均匀的情况下，key%m也是在[0,m-1]区间均匀分布的。但实际上，key%m的分布同m是有关的。&lt;a href="https://blog.csdn.net/majinggogogo/article/details/80260539">Reference&lt;/a>&lt;/p>
+&lt;/blockquote>
+&lt;/li>
+&lt;li>将旧的 &lt;code>Map&lt;/code> 更新到新的 &lt;code>Map&lt;/code> 中（需要重新计算索引）&lt;/li>
+&lt;/ul>
+&lt;p>&lt;em>删除和清空映射不会重新分配较小的 &lt;code>Map&lt;/code> 空间&lt;/em>&lt;/p>
+&lt;hr>
+&lt;h2 id="hashmap-class">HashMap class&lt;/h2>
+&lt;ul>
+&lt;li>提供键值映射，允许 &lt;code>null&lt;/code> 作为键或值；底层实现为数组 &lt;code>Node&amp;lt;K,V&amp;gt;[] table&lt;/code>&lt;/li>
+&lt;li>&lt;strong>非线程安全&lt;/strong>: 多线程对结构进行操作必须考虑同步问题 【添加或删除，不包含修改】并发环境可能会形成环状链表&lt;/li>
+&lt;li>不保证插入顺序且无法维护数据顺序；&lt;/li>
+&lt;li>&lt;code>get()&lt;/code> 和 &lt;code>put()&lt;/code> 保持常数时间复杂度；&lt;/li>
+&lt;li>迭代性能：&lt;code>capacity * size&lt;/code> 【考虑迭代性能时，capacity不能过大，load factor不能过小】&lt;/li>
+&lt;li>&lt;strong>扩容&lt;/strong>： 容量翻倍 （*2）默认容量：16 默认负载系数：0.75&lt;/li>
+&lt;/ul>
+&lt;p>扩容 &lt;code>resize()&lt;/code>：&lt;/p>
+&lt;ul>
+&lt;li>对原有的元素根据hash值重新计算索引并更新位置。&lt;/li>
+&lt;li>扩容后长度变为2倍（当长度大于默认最大 &lt;code>1&amp;lt;&amp;lt;30&lt;/code>，则长度固定为 &lt;code>Integer.MaxValue&lt;/code>）&lt;/li>
+&lt;li>当hash碰撞较多时，及链表长度&amp;gt;=8时，将单链表转换至红黑树&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>为什么扩容2倍&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>index = hash &amp;amp; (length-1)&lt;/code>: &lt;code>length - 1&lt;/code> 的二进制表示为 &lt;code>0*1*&lt;/code>， 可以充分利用空间&lt;/li>
+&lt;li>每次扩容后的 &lt;code>length - 1&lt;/code> 中 &lt;code>1&lt;/code> 的数量+1，相当于必定多考虑一位 &lt;code>hash&lt;/code>， 减少碰撞概率。 同时在 &lt;code>resize()&lt;/code> 函数中可以通过判断 &lt;code>(e.hash &amp;amp; oldCap) == 0&lt;/code> 来确定该项索引保持不变或 &lt;code>+oldCap&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;figure class="kg-card kg-bookmark-card">
+&lt;a href="https://blog.csdn.net/dalong3976/article/details/83934609" class="kg-bookmark-container">
+&lt;div class="kg-bookmark-content">
+&lt;div class="kg-bookmark-title">HashMap的扩容机制 为什么是2幂_Java_dalong3976的博客-CSDN博客&lt;/div>
+&lt;div class="kg-bookmark-description">HashMap的扩容机制 为什么是2幂假设length为Hash表数组的大小，方法indexFor(Java&lt;/div>
+&lt;div class="kg-bookmark-metadata">
+&lt;img src="https://blog.csdn.net/favicon.ico" class="kg-bookmark-icon">
+&lt;/div>
+&lt;/div>
+&lt;div class="kg-bookmark-thumbnail">
+&lt;img src="https://oscimg.oschina.net/oscnet/599ef1bbd35bdf0551446727e6d7ea8922f.jpg">
+&lt;/div>
+&lt;/a>
+&lt;/figure>
+&lt;hr>
+&lt;h2 id="linkedhashmap-class">LinkedHashMap Class&lt;/h2>
+&lt;p>&lt;code>LinkedHashMap&lt;/code> 是 &lt;code>HashMap&lt;/code> 的子类&lt;/p>
+&lt;ul>
+&lt;li>底层实现：同HashMap, 但节点为&lt;strong>双向链表节点&lt;/strong> 可以记录插入顺序 （重复插入key无法体现）【保持顺序复制map】&lt;/li>
+&lt;li>可以快速实现 LRU 结构
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java"> &lt;span class="kd">private&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="kd">final&lt;/span> &lt;span class="kt">int&lt;/span> &lt;span class="n">MAX_ENTRIES&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">100&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;span class="nd">@override&lt;/span>
+&lt;span class="kd">protected&lt;/span> &lt;span class="kt">boolean&lt;/span> &lt;span class="nf">removeEldestEntry&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">Map&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">Entry&lt;/span> &lt;span class="n">eldest&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;span class="k">return&lt;/span> &lt;span class="n">size&lt;/span>&lt;span class="o">()&lt;/span> &lt;span class="o">&amp;gt;&lt;/span> &lt;span class="n">MAX_ENTRIES&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;span class="o">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;/li>
+&lt;li>&lt;strong>对 collection-view 的操作不会影响映射的结构&lt;/strong> （&lt;code>HashMap&lt;/code>, &lt;code>Hashtable&lt;/code> 会影响）&lt;/li>
+&lt;li>提供键值映射，允许 &lt;code>null&lt;/code> 作为键或值；&lt;/li>
+&lt;li>&lt;code>get()&lt;/code> 和 &lt;code>put()&lt;/code> 保持常数时间复杂度；&lt;/li>
+&lt;li>&lt;strong>非线程安全&lt;/strong>: 多线程对结构进行操作必须考虑同步问题 【添加或删除，不包含修改】&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2 id="treemap-class">TreeMap Class&lt;/h2>
+&lt;ul>
+&lt;li>底层实现为红黑树&lt;/li>
+&lt;li>&lt;code>get()&lt;/code>, &lt;code>put()&lt;/code>, &lt;code>remove()&lt;/code> 和 &lt;code>containsKey()&lt;/code> 保持$O(log n)$ 时间复杂度；&lt;/li>
+&lt;li>&lt;strong>非线程安全&lt;/strong>: 多线程对结构进行操作必须考虑同步问题 【添加或删除，不包含修改】&lt;/li>
+&lt;li>树形实现，因此对 &lt;code>Comparator&lt;/code> 严格要求 （存在性，可比较性）
+&lt;ul>
+&lt;li>按照 &lt;code>key&lt;/code> 的范围快速获取子树&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>使用迭代器获取按照 &lt;code>key&lt;/code> 有序的键值对&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2 id="concurrenthashmap">ConcurrentHashMap&lt;/h2>
+&lt;ul>
+&lt;li>&lt;strong>线程安全&lt;/strong> &lt;code>get()&lt;/code> 不会被锁影响，&lt;code>put()&lt;/code>, &lt;code>remove()&lt;/code> 会分段上锁， 默认16段 (segment)&lt;/li>
+&lt;li>&lt;/li>
+&lt;/ul>
+&lt;p>Updating...&lt;/p>
+&lt;h2 id="reference">Reference&lt;/h2>
+&lt;figure class="kg-card kg-bookmark-card">
+&lt;a href="https://dzone.com/articles/hashmap-vs-treemap-vs" class="kg-bookmark-container">
+&lt;div class="kg-bookmark-content">
+&lt;div class="kg-bookmark-title">HashMap vs. TreeMap vs. HashTable vs. LinkedHashMap - DZone Java&lt;/div>
+&lt;div class="kg-bookmark-description">Check out this tutorial to learn all about important data structures like HashMap, HashTable, and TreeMap, with code examples.&lt;/div>
+&lt;div class="kg-bookmark-metadata">
+&lt;img src="https://dzone.com/themes/dz20/images/favicon.png" class="kg-bookmark-icon">
+&lt;span class="kg-bookmark-author">Ryan Wang&lt;/span>
+&lt;span class="kg-bookmark-publisher">DZone&lt;/span>
+&lt;/div>
+&lt;/div>
+&lt;div class="kg-bookmark-thumbnail">
+&lt;img src="https://dz2cdn1.dzone.com/storage/article-thumb/12809072-thumb.jpg">
+&lt;/div>
+&lt;/a>
+&lt;/figure>
+&lt;figure class="kg-card kg-bookmark-card">
+&lt;a href="https://blog.csdn.net/justloveyou_/article/details/72783008" class="kg-bookmark-container">
+&lt;div class="kg-bookmark-content">
+&lt;div class="kg-bookmark-title">Map 综述（三）：彻头彻尾理解 ConcurrentHashMap_Java_Rico’s Blogs-CSDN博客&lt;/div>
+&lt;div class="kg-bookmark-description">ConcurrentHashMap是J.U.C的重要成员，它是HashMap的一个线程安全的版本。在Java&lt;/div>
+&lt;div class="kg-bookmark-metadata">
+&lt;img src="https://blog.csdn.net/favicon.ico" class="kg-bookmark-icon">
+&lt;/div>
+&lt;/div>
+&lt;div class="kg-bookmark-thumbnail">
+&lt;img src="https://img-blog.csdn.net/20170317181610752?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvanVzdGxvdmV5b3Vf/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+&lt;/div>
+&lt;/a>
+&lt;/figure></content><category scheme="https://www.zhangjc.site/tech/" term="tech" label="tech"/><category scheme="https://www.zhangjc.site/tags/note/" term="note" label="note"/></entry><entry><title type="text">常用排序算法</title><link rel="alternate" type="text/html" href="https://www.zhangjc.site/basic-introduction-for-sorting-algorithm/"/><id>https://www.zhangjc.site/basic-introduction-for-sorting-algorithm/</id><updated>2021-10-01T20:54:44+08:00</updated><published>2020-03-15T21:56:04+00:00</published><author><name>Jiachen</name><uri>https://www.zhangjc.site/</uri><email>zhangjc1999@gmail.com</email></author><rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh)</rights><summary type="html">稳定性分析 稳定排序算法不会在排序后改变相等键值记录间的相对次序。 冒泡排序 交换逆序的相邻关键字 时间复杂度：$O(n^2)$ 改进策略1：设置标志位，若某一轮没有发生交换，则排序结束 改进策略2：第i次遍历范围为0~N-i 插入排序 讲一个记录插入到有序表中，在基本良序的表中性能更好。 时间复杂度：$O(n^2)……</summary><content type="html">&lt;h2 id="稳定性分析">稳定性分析&lt;/h2>
+&lt;blockquote>
+&lt;p>稳定排序算法不会在排序后改变相等键值记录间的相对次序。&lt;/p>
+&lt;/blockquote>
+&lt;p>&lt;img src="https://img-blog.csdn.net/20130801171021937?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvam51X3NpbWJh/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="">
+&lt;img src="https://image-hosting.zhangjc.tech/ghost/content/images/2020/03/849589-20180402133438219-1946132192.png" alt="849589-20180402133438219-1946132192">&lt;/p>
+&lt;hr>
+&lt;h2 id="冒泡排序">冒泡排序&lt;/h2>
+&lt;blockquote>
+&lt;p>交换逆序的相邻关键字&lt;/p>
+&lt;/blockquote>
+&lt;p>时间复杂度：$O(n^2)$&lt;/p>
+&lt;p>改进策略1：设置标志位，若某一轮没有发生交换，则排序结束
+改进策略2：第i次遍历范围为0~N-i&lt;/p>
+&lt;p>&lt;img src="https://image-hosting.zhangjc.tech/ghost/content/images/2020/03/849589-20171015223238449-2146169197.gif" alt="849589-20171015223238449-2146169197">&lt;/p>
+&lt;h2 id="插入排序">插入排序&lt;/h2>
+&lt;blockquote>
+&lt;p>讲一个记录插入到有序表中，在基本良序的表中性能更好。&lt;/p>
+&lt;/blockquote>
+&lt;p>时间复杂度：$O(n^2)$&lt;/p>
+&lt;p>&lt;img src="https://image-hosting.zhangjc.tech/ghost/content/images/2020/03/849589-20171015225645277-1151100000.gif" alt="849589-20171015225645277-1151100000">&lt;/p>
+&lt;h2 id="选择排序">选择排序&lt;/h2>
+&lt;blockquote>
+&lt;p>第i次在 i~n的范围内寻找最小值，并放置在第i个位置处。&lt;/p>
+&lt;/blockquote>
+&lt;p>时间复杂度：$O(n^2)$&lt;/p>
+&lt;p>&lt;img src="https://upload.wikimedia.org/wikipedia/commons/9/94/Selection-Sort-Animation.gif" alt="">
+&lt;img src="https://image-hosting.zhangjc.tech/ghost/content/images/2020/03/849589-20171015224719590-1433219824.gif" alt="849589-20171015224719590-1433219824">&lt;/p>
+&lt;h2 id="希尔排序">希尔排序&lt;/h2>
+&lt;p>&lt;img src="https://image-hosting.zhangjc.tech/ghost/content/images/2020/03/1024555-20161128110416068-1421707828.png" alt="1024555-20161128110416068-1421707828">
+&lt;img src="https://image-hosting.zhangjc.tech/ghost/content/images/2020/03/849589-20180331170017421-364506073.gif" alt="849589-20180331170017421-364506073">&lt;/p>
+&lt;h2 id="归并排序">归并排序&lt;/h2>
+&lt;blockquote>
+&lt;p>利用分治思想对两个良序数组合并。可以快速解决逆序对相关问题。&lt;/p>
+&lt;/blockquote>
+&lt;p>时间复杂度：$O(nlogn)$&lt;/p>
+&lt;p>空间复杂度：$O(n)$ 需要辅助空间帮助合并过程&lt;/p>
+&lt;p>&lt;img src="https://image-hosting.zhangjc.tech/ghost/content/images/2020/03/849589-20171015230557043-37375010.gif" alt="849589-20171015230557043-37375010">&lt;/p>
+&lt;h2 id="堆排序">堆排序&lt;/h2>
+&lt;blockquote>
+&lt;p>堆是一种特殊的完全二叉树&lt;/p>
+&lt;ul>
+&lt;li>大顶堆：父节点大于等于子节点&lt;/li>
+&lt;li>小顶堆：父节点小于等于子节点
+应用：$O(nlogk)$复杂度解决前k个最大值问题&lt;/li>
+&lt;/ul>
+&lt;/blockquote>
+&lt;h2 id="快排">快排&lt;/h2>
+&lt;blockquote>
+&lt;p>通过一趟排序将要排序的数据分割成独立的两部分，其中一部分的所有数据都比另外一部分的所有数据都要小，然后再按此方法对这两部分数据分别进行快速排序，整个排序过程可以递归进行，以此达到整个数据变成有序序列。时间复杂度为O(nlogn)
+应用：快速解决求第k大的值问题。&lt;/p>
+&lt;/blockquote>
+&lt;p>&lt;img src="https://image-hosting.zhangjc.tech/ghost/content/images/2020/03/849589-20171015230936371-1413523412.gif" alt="849589-20171015230936371-1413523412">&lt;/p>
+&lt;h2 id="reference">Reference&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="https://www.cnblogs.com/onepixel/p/7674659.html">十大经典排序算法（动图演示）&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://blog.csdn.net/jnu_simba/article/details/9705111">十种排序算法总结（冒泡、插入、选择、希尔、归并、堆、快速，计数，桶，基数）&lt;/a>&lt;/li>
+&lt;/ul></content><category scheme="https://www.zhangjc.site/tech/" term="tech" label="tech"/></entry><entry><title type="text">常用查找算法</title><link rel="alternate" type="text/html" href="https://www.zhangjc.site/basic-introduction-for-search-algorithm/"/><id>https://www.zhangjc.site/basic-introduction-for-search-algorithm/</id><updated>2021-10-01T20:54:44+08:00</updated><published>2020-03-15T17:00:00+00:00</published><author><name>Jiachen</name><uri>https://www.zhangjc.site/</uri><email>zhangjc1999@gmail.com</email></author><rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh)</rights><summary type="html">顺序查找 存储结构为顺序存储或链接存储的线性表 查找的时间复杂度为 $O(N)$ 二分查找 元素必须是有序的 每次将目标值与中间节点的值进行比较，再判断其落入中间节点的左侧或右侧。 可以使用迭代或递归实现。 插值查找 二分查找进阶 联系查字典，将二分查找中的 $mid = \frac{low + high}{2}$ 修改为自适应的 $mid = low + (key - a[low]) / a[high] - a[low]) * (high -low)$ 及将二分查找中的比例……</summary><content type="html">&lt;h2 id="顺序查找">顺序查找&lt;/h2>
+&lt;blockquote>
+&lt;p>存储结构为顺序存储或链接存储的线性表&lt;/p>
+&lt;/blockquote>
+&lt;p>查找的时间复杂度为 $O(N)$&lt;/p>
+&lt;h2 id="二分查找">二分查找&lt;/h2>
+&lt;blockquote>
+&lt;p>元素必须是有序的&lt;/p>
+&lt;/blockquote>
+&lt;p>每次将目标值与中间节点的值进行比较，再判断其落入中间节点的左侧或右侧。&lt;/p>
+&lt;p>可以使用迭代或递归实现。&lt;/p>
+&lt;h2 id="插值查找">插值查找&lt;/h2>
+&lt;blockquote>
+&lt;p>二分查找进阶&lt;/p>
+&lt;/blockquote>
+&lt;p>联系查字典，将二分查找中的 $mid = \frac{low + high}{2}$ 修改为自适应的 $mid = low + (key - a[low]) / a[high] - a[low]) * (high -low)$
+及将二分查找中的比例 0.5 改为自适应的值，根据关键字在表中的位置，让下一次查找更靠近关键字，从而减少了查找的次数。&lt;/p>
+&lt;blockquote>
+&lt;p>插值查找一般适用于表长较大，同时关键字分布较为均匀的表。&lt;/p>
+&lt;/blockquote>
+&lt;p>复杂度：$O(log_2(log_2n))$&lt;/p>
+&lt;h2 id="斐波那契查找">斐波那契查找&lt;/h2>
+&lt;blockquote>
+&lt;p>类比二分查找，当表长等于某斐波那契数时使用。&lt;/p>
+&lt;/blockquote>
+&lt;p>最坏情况时间复杂度为 $O(log_2n)$，期望复杂度 $O(log_2n)$&lt;/p>
+&lt;h2 id="二叉树查找">二叉树查找&lt;/h2>
+&lt;p>二叉搜索树的特点是左子节点小于父节点，父节点小于右子节点。&lt;/p>
+&lt;p>此方案的查找效率较高，但是需要维护二叉树，并且在查找树严重不平衡时退化为“链表”。&lt;/p>
+&lt;p>将二叉搜索树进行优化，可以参考平衡二叉树、红黑树。&lt;/p>
+&lt;h2 id="平衡查找树">平衡查找树&lt;/h2>
+&lt;h3 id="2-3-tree">2-3 Tree&lt;/h3>
+&lt;p>每个节点保存1个或2个值（对应可以拥有2个或3个子节点）&lt;/p>
+&lt;p>性质：在一个完全平衡的2-3查找树中，根节点到每一个叶节点的距离都相同。&lt;/p>
+&lt;h3 id="红黑树">红黑树&lt;/h3>
+&lt;p>红黑树的思想是对2-3查找树进行编码，特别是对其中的3-node节点添加额外的信息。&lt;/p>
+&lt;p>&lt;img src="https://image-hosting.zhangjc.tech/ghost/content/images/2020/03/270024368439888.png" alt="红黑树">&lt;/p>
+&lt;blockquote>
+&lt;p>可以想像两个红色边链接的节点对应2-3查找树中的3-node。&lt;/p>
+&lt;/blockquote>
+&lt;p>红黑树的定义：&lt;/p>
+&lt;ul>
+&lt;li>红色节点向左倾斜；&lt;/li>
+&lt;li>一个节点不可能有两个红色连接；&lt;/li>
+&lt;li>根节点到每个叶节点的黑色链接个数相同。&lt;/li>
+&lt;/ul>
+&lt;p>红黑树的应用：&lt;/p>
+&lt;ul>
+&lt;li>Java: &lt;code>Java.util.TreeMap&lt;/code>, &lt;code>Java.util.TreeSet&lt;/code>;&lt;/li>
+&lt;li>C++: &lt;code>STL::map&lt;/code>, &lt;code>STL::multimap&lt;/code>, &lt;code>STL::multiset&lt;/code>;&lt;/li>
+&lt;li>.NET: &lt;code>SortedDictionary&lt;/code>, &lt;code>SortedSet&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;h3 id="b树">B树&lt;/h3>
+&lt;p>B树可以看作是2-3查找树的拓展，其每个节点允许有M-1个子节点&lt;/p>
+&lt;p>B树的定义&lt;/p>
+&lt;ul>
+&lt;li>根节点至少有两个子节点&lt;/li>
+&lt;li>每个节点有M-1个key，并以升序排列&lt;/li>
+&lt;li>其他节点至少有 M/2 个子节点&lt;/li>
+&lt;/ul>
+&lt;p>基本操作演示动画：&lt;/p>
+&lt;p>&lt;img src="https://image-hosting.zhangjc.tech/ghost/content/images/2020/03/btreebuild.gif" alt="btreebuild">&lt;/p>
+&lt;p>B树的优点：&lt;/p>
+&lt;ul>
+&lt;li>每一个节点包含 key 和 value， 因此经常访问的元素可能距离根节点更近，可以更快访问。&lt;/li>
+&lt;/ul>
+&lt;h3 id="b树-1">B+树&lt;/h3>
+&lt;p>B+树的定义&lt;/p>
+&lt;ul>
+&lt;li>有 k 个子节点的节点必然有 k 个关键码&lt;/li>
+&lt;li>非叶节点仅具有索引作用&lt;/li>
+&lt;li>叶节点存放记录相关的信息&lt;/li>
+&lt;li>树的所有叶节点构成一个有序链表，可以按照关键码排序的次序遍历全部记录&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>试想一下，在文件系统中，若该文件在磁盘上的分区恰好不属于同一个父节点，此时B+树与B树的性能差异&lt;/p>
+&lt;/blockquote>
+&lt;p>&lt;img src="https://image-hosting.zhangjc.tech/ghost/content/images/2020/03/290050048129679.png" alt="290050048129679">&lt;/p>
+&lt;p>如下为B+树的操作动画：&lt;/p>
+&lt;p>&lt;img src="https://image-hosting.zhangjc.tech/ghost/content/images/2020/03/Bplustreebuild.gif" alt="Bplustreebuild">&lt;/p>
+&lt;p>B+树的优点：&lt;/p>
+&lt;ul>
+&lt;li>内部节点不含数据信息，内存页可以存放更多的key。&lt;/li>
+&lt;li>数据存放紧密，具有更好的空间局部性，访问叶节点关联的数据具有更高的缓存命中率。&lt;/li>
+&lt;li>叶节点构成有序链表，对整棵树的遍历更快。&lt;/li>
+&lt;li>便于区间查找与搜索。（非同父节点时优势明显）&lt;/li>
+&lt;/ul>
+&lt;p>B树/B+树的应用：&lt;/p>
+&lt;ul>
+&lt;li>Windows: HPFS&lt;/li>
+&lt;li>Mac: HFS, HFS+&lt;/li>
+&lt;li>Linux: ResiserFS, XFX, Ext3FS, JFS&lt;/li>
+&lt;li>数据库: ORACLE, MySQL, SQLServer&lt;/li>
+&lt;/ul>
+&lt;h2 id="分块查找">分块查找&lt;/h2>
+&lt;p>每一块中数据不必有序。
+但快间数据有序。 （类比快排的中间步骤）&lt;/p>
+&lt;p>算法步骤：&lt;/p>
+&lt;ul>
+&lt;li>选取各块中的最大关键字构成索引表&lt;/li>
+&lt;li>二分查找确定索引块&lt;/li>
+&lt;li>索引块内顺序查找目标值&lt;/li>
+&lt;/ul>
+&lt;h2 id="哈希查找">哈希查找&lt;/h2>
+&lt;p>哈希函数：使关键字分散到指定大小的顺序结构的转换关系。&lt;/p>
+&lt;p>算法流程：&lt;/p>
+&lt;ul>
+&lt;li>使用哈希函数构造哈希表&lt;/li>
+&lt;li>解决地址冲突
+&lt;ul>
+&lt;li>拉链法&lt;/li>
+&lt;li>线性探测法&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>执行哈希查找&lt;/li>
+&lt;/ul></content><category scheme="https://www.zhangjc.site/tech/" term="tech" label="tech"/></entry><entry><title type="text">Leetcode 第180场周赛回顾</title><link rel="alternate" type="text/html" href="https://www.zhangjc.site/leetcode-weekly-contest-180-review/"/><id>https://www.zhangjc.site/leetcode-weekly-contest-180-review/</id><updated>2021-10-01T20:54:44+08:00</updated><published>2020-03-14T21:00:00+00:00</published><author><name>Jiachen</name><uri>https://www.zhangjc.site/</uri><email>zhangjc1999@gmail.com</email></author><rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh)</rights><summary type="html">Leetcode 第 180 场周赛，又一次 AK（容易满足的我 矩阵中的幸运数 直接遍历就可以实现 使用两个数组分别记录每一行的最小值下标，和每一列的最大值下标。（只需一次遍历即可） 设计一个支持增量操作的栈 使用数组实现的栈，全部都是常规操作。唯一需要注意的或许是增长前k个时范围的特判（当心越界）。 将二叉搜索树变平衡 利用中序遍历获……</summary><content type="html">&lt;p>Leetcode 第 180 场周赛，又一次 AK（容易满足的我&lt;/p>
+&lt;figure>&lt;img src="https://image-hosting.zhangjc.tech/ghost/content/images/2020/03/.png"/>
+&lt;/figure>
+&lt;h2 id="矩阵中的幸运数">矩阵中的幸运数&lt;/h2>
+&lt;ol>
+&lt;li>直接遍历就可以实现&lt;/li>
+&lt;li>使用两个数组分别记录每一行的最小值下标，和每一列的最大值下标。（只需一次遍历即可）&lt;/li>
+&lt;/ol>
+&lt;h2 id="设计一个支持增量操作的栈">设计一个支持增量操作的栈&lt;/h2>
+&lt;p>使用数组实现的栈，全部都是常规操作。唯一需要注意的或许是增长前k个时范围的特判（当心越界）。&lt;/p>
+&lt;h2 id="将二叉搜索树变平衡">将二叉搜索树变平衡&lt;/h2>
+&lt;ol>
+&lt;li>利用中序遍历获取递增数组&lt;/li>
+&lt;li>递归调用构造平衡搜索树&lt;/li>
+&lt;/ol>
+&lt;h2 id="最大的团队表现值">最大的团队表现值&lt;/h2>
+&lt;ol>
+&lt;li>效率比速度更关键（变量少，自由度低，便于控制&lt;/li>
+&lt;li>由1，我选择将其按照效率优先方式递减排列&lt;/li>
+&lt;li>对于工程师i，假如选择其加入团队，则需要在&lt;code>[1:i-1]&lt;/code>中挑选 &lt;code>k&lt;/code> 个速度最大的。（前面的工程师效率更高，因此只需要以工程师 i 的效率为基准即可）&lt;/li>
+&lt;li>此时则将问题简化为求数组中前k个最大值的小顶堆问题。&lt;/li>
+&lt;/ol></content><category scheme="https://www.zhangjc.site/tech/" term="tech" label="tech"/><category scheme="https://www.zhangjc.site/tags/code/" term="code" label="code"/></entry><entry><title type="text">查找两棵二叉搜索树之和-Two Sum BSTs</title><link rel="alternate" type="text/html" href="https://www.zhangjc.site/5080-two-sum-bsts/"/><id>https://www.zhangjc.site/5080-two-sum-bsts/</id><updated>2021-10-01T20:54:44+08:00</updated><published>2019-10-08T17:58:43+00:00</published><author><name>Jiachen</name><uri>https://www.zhangjc.site/</uri><email>zhangjc1999@gmail.com</email></author><rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh)</rights><summary type="html">首先给定的二叉搜索树是很好的提示，即两组数据是有序的。
+其次还有一点是，所需的两个数字分别位于两个数中，即我们需要从两组数据中得到恰好和为所需值的两个数。</summary><content type="html">&lt;p>比较简单的一道题目，和之前的一道&lt;a href="https://www.zhangjc.site/archives-69/">两数和&lt;/a>非常像&lt;/p>
+&lt;blockquote>
+&lt;p>来源：力扣（LeetCode）
+链接：&lt;a href="https://leetcode-cn.com/problems/two-sum-bsts/solution/two-pointer-solving-by-jiachen_zhang/">https://leetcode-cn.com/problems/two-sum-bsts/&lt;/a>&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="分析">分析&lt;/h2>
+&lt;p>首先给定的二叉搜索树是很好的提示，即两组数据是&lt;strong>有序&lt;/strong>的。&lt;/p>
+&lt;p>其次还有一点是，所需的两个数字分别位于两个数中，即我们需要从两组数据中得到恰好和为所需值的两个数。&lt;/p>
+&lt;h3 id="思路一">思路一&lt;/h3>
+&lt;p>一个非常简单的方案是，将其中一棵树放入哈希表中，再依次遍历另一颗树，对于每个元素检测其补值（Target - curNum）是否存在哈希表中。&lt;/p>
+&lt;p>此时时间复杂度为$O(min{|M|, |N|})$。（|M|，|N|分别为两棵树的大小）。&lt;/p>
+&lt;p>但这个方案需要使用哈希表，显然复杂度的常数较大，并且对空间也有一定的要求。&lt;/p>
+&lt;h3 id="思路二">思路二&lt;/h3>
+&lt;p>使用中序遍历将两棵树的元素分别保存（升序），使用双指针分别指向两个列表的头、尾。&lt;/p>
+&lt;p>此时可以借鉴文章开头提到的题目思路，不断移动双指针即可。&lt;/p>
+&lt;p>时间复杂度与空间复杂度均为$O(|M| + |N|)$。（暂未考虑中序遍历时的递归空间需求）&lt;/p>
+&lt;h3 id="实现">实现&lt;/h3>
+&lt;p>思路一比较简单，思路二的实现如下：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python3" data-lang="python3">&lt;span class="c1"># Definition for a binary tree node.&lt;/span>
+&lt;span class="c1"># class TreeNode:&lt;/span>
+&lt;span class="c1"># def __init__(self, x):&lt;/span>
+&lt;span class="c1"># self.val = x&lt;/span>
+&lt;span class="c1"># self.left = None&lt;/span>
+&lt;span class="c1"># self.right = None&lt;/span>
+&lt;span class="k">def&lt;/span> &lt;span class="nf">inorder&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">node&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="n">TreeNode&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">li&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="nb">list&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;span class="k">if&lt;/span> &lt;span class="n">node&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="kc">None&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;span class="k">return&lt;/span>
+&lt;span class="n">inorder&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">node&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">left&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">li&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="n">li&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">append&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">node&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">val&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="n">inorder&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">node&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">right&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">li&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="k">class&lt;/span> &lt;span class="nc">Solution&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;span class="k">def&lt;/span> &lt;span class="nf">twoSumBSTs&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="bp">self&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">root1&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">TreeNode&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">root2&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">TreeNode&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">target&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nb">int&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">-&amp;gt;&lt;/span> &lt;span class="nb">bool&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;span class="n">li_1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">li_2&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">[],&lt;/span> &lt;span class="p">[]&lt;/span>
+&lt;span class="n">inorder&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">root1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">li_1&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="n">inorder&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">root2&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">li_2&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="n">p1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">p2&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">len1&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nb">len&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">li_2&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">-&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nb">len&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">li_1&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="k">while&lt;/span> &lt;span class="n">p1&lt;/span> &lt;span class="o">&amp;lt;&lt;/span> &lt;span class="n">len1&lt;/span> &lt;span class="ow">and&lt;/span> &lt;span class="n">p2&lt;/span> &lt;span class="o">&amp;gt;=&lt;/span>&lt;span class="mi">0&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;span class="n">judge&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">li_1&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">p1&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">li_2&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">p2&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="n">target&lt;/span>
+&lt;span class="k">if&lt;/span> &lt;span class="n">judge&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;span class="k">return&lt;/span> &lt;span class="kc">True&lt;/span>
+&lt;span class="k">elif&lt;/span> &lt;span class="n">judge&lt;/span> &lt;span class="o">&amp;gt;&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;span class="n">p2&lt;/span> &lt;span class="o">-=&lt;/span> &lt;span class="mi">1&lt;/span>
+&lt;span class="k">else&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;span class="n">p1&lt;/span> &lt;span class="o">+=&lt;/span> &lt;span class="mi">1&lt;/span>
+&lt;span class="k">return&lt;/span> &lt;span class="kc">False&lt;/span>
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;figure>&lt;img src="https://image-hosting.zhangjc.tech/ghost/content/images/2019/10/image.png"/>
+&lt;/figure></content><category scheme="https://www.zhangjc.site/tech/" term="tech" label="tech"/><category scheme="https://www.zhangjc.site/tags/code/" term="code" label="code"/></entry><entry><title type="text">拼车 - Car Pooling</title><link rel="alternate" type="text/html" href="https://www.zhangjc.site/leetcode-1094-car-pooling/"/><id>https://www.zhangjc.site/leetcode-1094-car-pooling/</id><updated>2021-10-01T20:54:44+08:00</updated><published>2019-10-05T05:18:56+00:00</published><author><name>Jiachen</name><uri>https://www.zhangjc.site/</uri><email>zhangjc1999@gmail.com</email></author><rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh)</rights><summary type="html">&lt;p>假设你是一位顺风车司机，车上最初有 capacity 个空座位可以用来载客。由于道路的限制，车 只能 向一个方向行驶（也就是说，不允许掉头或改变方向，你可以将其想象为一个向量）。&lt;/p>
+&lt;p>这道题目的模型其实很简单，可以理解为动态维护一个有限的容器（例如堆栈等计算资源）。&lt;/p></summary><content type="html">&lt;p>这道题目的模型其实很简单，可以理解为动态维护一个有限的容器（例如堆栈等计算资源）。&lt;/p>
+&lt;p>而按照题意直接进行解答的思路当然就如下：&lt;/p>
+&lt;blockquote>
+&lt;p>对每一个计划，需要执行一次遍历，更新当前所有位置上的状态并判断。&lt;/p>
+&lt;/blockquote>
+&lt;p>此时解决问题的复杂度与计划数量及计划区间成正比，显然 weak scalable。&lt;/p>
+&lt;p>一个比较高效的思路是：将行程信息预处理，这样可以得知在每一站的使用量净值变化（充分利用该问题的离散特点）。这样在预处理后的复杂度将只和站数有关。（对应于资源使用量可以进行动态监测而不会产生较大的性能波动）&lt;/p>
+&lt;p>下面是一份简单的python3实现代码。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python3" data-lang="python3">&lt;span class="k">class&lt;/span> &lt;span class="nc">Solution&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;span class="k">def&lt;/span> &lt;span class="nf">carPooling&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="bp">self&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">trips&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">List&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">List&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="nb">int&lt;/span>&lt;span class="p">]],&lt;/span> &lt;span class="n">capacity&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nb">int&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">-&amp;gt;&lt;/span> &lt;span class="nb">bool&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;span class="n">records&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="mi">0&lt;/span>&lt;span class="p">]&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="mi">1001&lt;/span>
+&lt;span class="k">for&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="n">num&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">start&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">dest&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">trips&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;span class="n">records&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">start&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">+=&lt;/span> &lt;span class="n">num&lt;/span>
+&lt;span class="n">records&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">dest&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">-=&lt;/span> &lt;span class="n">num&lt;/span>
+&lt;span class="n">curNum&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">0&lt;/span>
+&lt;span class="k">for&lt;/span> &lt;span class="n">record&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">records&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;span class="n">curNum&lt;/span> &lt;span class="o">+=&lt;/span> &lt;span class="n">record&lt;/span>
+&lt;span class="k">if&lt;/span> &lt;span class="n">curNum&lt;/span> &lt;span class="o">&amp;gt;&lt;/span> &lt;span class="n">capacity&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;span class="k">return&lt;/span> &lt;span class="kc">False&lt;/span>
+&lt;span class="k">return&lt;/span> &lt;span class="kc">True&lt;/span>
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>假设起点与终点距离为$L$且该问题离散处理，显然复杂度为：$O(len(trips)) + O(L)$。&lt;/p>
+&lt;blockquote>
+&lt;p>题目来源：力扣（LeetCode）相关链接：&lt;a href="https://leetcode-cn.com/problems/car-pooling/solution/han-fen-xi-si-lu-de-shi-xing-dai-ma-by-jiachen_zha/">https://leetcode-cn.com/problems/car-pooling/solution/han-fen-xi-si-lu-de-shi-xing-dai-ma-by-jiachen_zha/&lt;/a>&lt;/p>
+&lt;/blockquote></content><category scheme="https://www.zhangjc.site/tech/" term="tech" label="tech"/><category scheme="https://www.zhangjc.site/tags/code/" term="code" label="code"/></entry><entry><title type="text">深入理解 Linux 链接</title><link rel="alternate" type="text/html" href="https://www.zhangjc.site/learn-linux-link/"/><id>https://www.zhangjc.site/learn-linux-link/</id><updated>2021-10-01T20:54:44+08:00</updated><published>2019-10-03T23:21:52+00:00</published><author><name>Jiachen</name><uri>https://www.zhangjc.site/</uri><email>zhangjc1999@gmail.com</email></author><rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh)</rights><summary type="html">Windows文件管理中有一个非常实用的功能——快捷方式，它为一份文件提供了多个不同的入口，并以此进行同步。而快捷方式在我看来是对Linux中符号链接功能的一种泛化。（与之类似的，还有MacOS中的别名Alias功能）</summary><content type="html">&lt;p>Windows文件管理中有一个非常实用的功能——快捷方式，它为一份文件提供了多个不同的入口，并以此进行同步。而快捷方式在我看来是对Linux中符号链接功能的一种泛化。（与之类似的，还有MacOS中的别名Alias功能）&lt;/p>
+&lt;p>在Unix操作系统中，文件的引入使独立于进程之外信息得以长期存储，文件作为进程创建信息的逻辑单元可被多个进程并发使用，简单来说，UNIX 系统中除进程之外的一切皆是文件，Linux 也保持了这一特性， 并引入了目录（文件夹）这一概念便于文件管理。&lt;/p>
+&lt;blockquote>
+&lt;p>注：包括键盘鼠标在内的所有设备，依然被操作系统视为文件，并可以被打开进而通讯&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="linux的文件数据">Linux的文件数据&lt;/h2>
+&lt;p>Linux将文件数据分为用户数据(user data)与元数据(metadata)两部分，如下图，&lt;/p>
+&lt;figure>&lt;img src="https://image-hosting.zhangjc.tech/ghost/content/images/2019/10/image001.jpg"
+alt="Linux将文件数据分为用户数据与文件数据"/>&lt;figcaption>
+&lt;p>Linux将文件数据分为用户数据与文件数据&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>其中文件名(filename)很好理解，而数据块(data blocks)中存储的为文件的具体内容，于此同时，索引节点(inode)则存储了除文件名外的附加属性（文件大小，创建时间，修改时间，所有者，权限等等等等）。同时也很容易理解，&lt;strong>对于Linux而言，inode才是文件的唯一标识&lt;/strong>（我们可以很容易地在不同目录创建同名文件）。&lt;/p>
+&lt;blockquote>
+&lt;p>在Linux中可以使用&lt;code>stat &amp;lt;filename&amp;gt;&lt;/code>查看Inode编号及属性；或使用 &lt;code>ls -i&lt;/code> 列出当前目录下所有文件的 Inode 编号&lt;/p>
+&lt;/blockquote>
+&lt;p>下面是一个简单的例子，可以看到即使重命名文件并不会改变文件的Inode（Change部分当然除外）&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash"> jiachen@DELL$ stat prime.py
+File: prime.py
+Size: &lt;span class="m">606&lt;/span> Blocks: &lt;span class="m">8&lt;/span> IO Block: &lt;span class="m">512&lt;/span> regular file
+Device: 2h/2d Inode: &lt;span class="m">25614222880720159&lt;/span> Links: &lt;span class="m">1&lt;/span>
+Access: &lt;span class="o">(&lt;/span>0666/-rw-rw-rw-&lt;span class="o">)&lt;/span> Uid: &lt;span class="o">(&lt;/span> 1000/ jiachen&lt;span class="o">)&lt;/span> Gid: &lt;span class="o">(&lt;/span> 1000/ jiachen&lt;span class="o">)&lt;/span>
+Access: 2019-10-04 14:48:59.779690000 +0800
+Modify: 2019-10-04 14:48:59.781083800 +0800
+Change: 2019-10-04 14:48:59.781083800 +0800
+Birth: -
+jiachen@DELL$ ls -i
+&lt;span class="m">25614222880720159&lt;/span> prime.py
+jiachen@DELL$ mv prime.py prime.py.test
+jiachen@DELL$ stat prime.py
+stat: cannot stat &lt;span class="s1">&amp;#39;prime.py&amp;#39;&lt;/span>: No such file or directory
+jiachen@DELL$ stat prime.py.test
+File: prime.py.test
+Size: &lt;span class="m">606&lt;/span> Blocks: &lt;span class="m">8&lt;/span> IO Block: &lt;span class="m">512&lt;/span> regular file
+Device: 2h/2d Inode: &lt;span class="m">25614222880720159&lt;/span> Links: &lt;span class="m">1&lt;/span>
+Access: &lt;span class="o">(&lt;/span>0666/-rw-rw-rw-&lt;span class="o">)&lt;/span> Uid: &lt;span class="o">(&lt;/span> 1000/ jiachen&lt;span class="o">)&lt;/span> Gid: &lt;span class="o">(&lt;/span> 1000/ jiachen&lt;span class="o">)&lt;/span>
+Access: 2019-10-04 14:48:59.779690000 +0800
+Modify: 2019-10-04 14:48:59.781083800 +0800
+Change: 2019-10-04 14:49:58.919329800 +0800
+Birth: -
+jiachen@DELL$ ls -i
+&lt;span class="m">25614222880720159&lt;/span> prime.py.test
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>前面已经提到了，既然Linux使用Inode作为文件标识符，那么我们显然可以为其指定不同的入口来进入同一个数据区块。Linux的解决方案是链接，即赋予一个Inode多个文件名。&lt;/p>
+&lt;h2 id="硬链接与软链接">硬链接与软链接&lt;/h2>
+&lt;p>链接的使用有非常多的优点，例如服务器证书安装中&lt;strong>隐藏文件目录，增加安全权限，统一管理&lt;/strong>等，在目录管理中&lt;strong>便于访问&lt;/strong>，在文件管理中&lt;strong>节约存储，保证一致性&lt;/strong>等。&lt;/p>
+&lt;p>基于Inode的链接显然只能针对文件使用，为了将其拓展到对于目录的使用，Linux引入了硬链接和软链接两种概念。&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>软连接&lt;/th>
+&lt;th>硬链接&lt;/th>
+&lt;th>是否支持该特质&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>N&lt;/td>
+&lt;td>Y&lt;/td>
+&lt;td>文件属性必须相同(Inode, datablock)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>N&lt;/td>
+&lt;td>Y&lt;/td>
+&lt;td>文件必须存在&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>Y&lt;/td>
+&lt;td>N&lt;/td>
+&lt;td>跨文件系统链接&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>Y&lt;/td>
+&lt;td>N&lt;/td>
+&lt;td>链接目录&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>N&lt;/td>
+&lt;td>N&lt;/td>
+&lt;td>删除链接影响原始文件&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>以上是软连接与硬链接在表现上的不同，接下来让我们对其实现有一个大概的了解，增强对其表现的认识。&lt;/p>
+&lt;p>从前面的内容可以得知，硬链接指向了文件的Inode，而软链接显然不能（目录没有）。实际上，软链接严格来说也是文件，只不过它的数据区块存储的是其指向的文件路径，如下所示，&lt;/p>
+&lt;figure>&lt;img src="https://www.ibm.com/developerworks/cn/linux/l-cn-hardandsymb-links/image002.jpg"
+alt="软链接与硬链接对文件的访问"/>&lt;figcaption>
+&lt;p>软链接与硬链接对文件的访问&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash"> jiachen@DELL  ~/tmp  &lt;span class="nb">echo&lt;/span> &lt;span class="s2">&amp;#34;Hello world&amp;#34;&lt;/span> &amp;gt;&amp;gt; &lt;span class="nb">test&lt;/span>
+jiachen@DELL  ~/tmp  ll
+total &lt;span class="m">0&lt;/span>
+-rw-rw-rw- &lt;span class="m">1&lt;/span> jiachen jiachen &lt;span class="m">12&lt;/span> Oct &lt;span class="m">4&lt;/span> 15:16 &lt;span class="nb">test&lt;/span>
+jiachen@DELL  ~/tmp  cat &lt;span class="nb">test&lt;/span>
+Hello world
+jiachen@DELL  ~/tmp  ln -s ~/tmp/test ~/tmp/sln_test
+jiachen@DELL  ~/tmp  cat sln_test
+Hello world
+jiachen@DELL  ~/tmp  mv &lt;span class="nb">test&lt;/span> test_mv
+jiachen@DELL  ~/tmp  cat sln_test
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>很显然，当原始文件的路径改变后，则软连接失效，从前面的例子可以知道硬链接显然不会。&lt;/p>
+&lt;p>在实际使用中，软连接当然可以链接已有的软链接，但个人不建议这样做，否则容易增加文件系统维护的复杂度。&lt;/p>
+&lt;p>并且强烈建议&lt;strong>使用绝对路径进行链接&lt;/strong>，以免因为用户切换而造成不可预知的问题。&lt;/p>
+&lt;h2 id="常用命令">常用命令&lt;/h2>
+&lt;p>...&lt;/p>
+&lt;p>Reference:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://www.ibm.com/developerworks/cn/linux/l-cn-hardandsymb-links/index.html">理解 Linux 的硬链接与软链接&lt;/a>&lt;/li>
+&lt;li>&lt;a href="http://www.runoob.com/linux/linux-comm-ln.html">Linux ln命令&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://zh.wikipedia.org/wiki/%E7%AC%A6%E5%8F%B7%E9%93%BE%E6%8E%A5#%E5%BF%AB%E6%8D%B7%E6%96%B9%E5%BC%8F">符号链接&lt;/a>&lt;/li>
+&lt;/ul></content><category scheme="https://www.zhangjc.site/tech/" term="tech" label="tech"/><category scheme="https://www.zhangjc.site/tags/note/" term="note" label="note"/></entry><entry><title type="text">脚本 | 利用python自动整理桌面文件</title><link rel="alternate" type="text/html" href="https://www.zhangjc.site/archives-610/"/><id>https://www.zhangjc.site/archives-610/</id><updated>2021-10-01T20:54:44+08:00</updated><published>2019-07-09T05:54:00+00:00</published><author><name>Jiachen</name><uri>https://www.zhangjc.site/</uri><email>zhangjc1999@gmail.com</email></author><rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh)</rights><summary type="html">鉴于自己的桌面实在太乱了，所以写了个python脚本自动整理无用文件。</summary><content type="html">&lt;p>鉴于自己的桌面实在太乱了，所以写了个python脚本自动整理无用文件。&lt;/p>
+&lt;p>我将脚本统一放在了桌面内的 &lt;code>script&lt;/code> 文件夹内，同时在桌面建立了批处理文件&lt;code>archive_files.bat&lt;/code>方便操作：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="nb">cd&lt;/span> ./script
+python archive_files.py &lt;span class="s2">&amp;#34;C:\\Users\\acezj\\Desktop&amp;#34;&lt;/span>
+pause
+&lt;span class="nb">exit&lt;/span>
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>脚本运行需要&lt;code>python&lt;/code>环境&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;span class="lnt">31
+&lt;/span>&lt;span class="lnt">32
+&lt;/span>&lt;span class="lnt">33
+&lt;/span>&lt;span class="lnt">34
+&lt;/span>&lt;span class="lnt">35
+&lt;/span>&lt;span class="lnt">36
+&lt;/span>&lt;span class="lnt">37
+&lt;/span>&lt;span class="lnt">38
+&lt;/span>&lt;span class="lnt">39
+&lt;/span>&lt;span class="lnt">40
+&lt;/span>&lt;span class="lnt">41
+&lt;/span>&lt;span class="lnt">42
+&lt;/span>&lt;span class="lnt">43
+&lt;/span>&lt;span class="lnt">44
+&lt;/span>&lt;span class="lnt">45
+&lt;/span>&lt;span class="lnt">46
+&lt;/span>&lt;span class="lnt">47
+&lt;/span>&lt;span class="lnt">48
+&lt;/span>&lt;span class="lnt">49
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="c1"># python&lt;/span>
+&lt;span class="c1"># archive_files.py&lt;/span>
+&lt;span class="n">file_doc&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s2">&amp;#34;.doc&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;.pptx&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;.pdf&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;.md&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;.html&amp;#34;&lt;/span>&lt;span class="p">]&lt;/span>
+&lt;span class="c1"># 文档 =&amp;gt; Doc&lt;/span>
+&lt;span class="n">file_pic&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s2">&amp;#34;.jpg&amp;#34;&lt;/span>&lt;span class="p">]&lt;/span>
+&lt;span class="c1"># 图片 =&amp;gt; Pic&lt;/span>
+&lt;span class="n">file_tmp&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s2">&amp;#34;.torrent&amp;#34;&lt;/span>&lt;span class="p">]&lt;/span>
+&lt;span class="c1"># 其他 =&amp;gt; Tmp&lt;/span>
+&lt;span class="n">file_no_move&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s2">&amp;#34;.py&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;.exe&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;.bat&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="c1"># 可执行文件（不移动）&lt;/span>
+&lt;span class="s2">&amp;#34;.lnk&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="c1"># 图标（不移动）&lt;/span>
+&lt;span class="s2">&amp;#34;.ini&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;.drivedownload&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;&amp;#34;&lt;/span>
+&lt;span class="c1"># 不移动&lt;/span>
+&lt;span class="p">]&lt;/span>
+&lt;span class="n">file_type_recognized&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">file_doc&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">file_pic&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">file_tmp&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">file_no_move&lt;/span>
+&lt;span class="n">extension_not_exist&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">[]&lt;/span>
+&lt;span class="n">old_path&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">new_path&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s2">&amp;#34;&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;&amp;#34;&lt;/span>
+&lt;span class="k">def&lt;/span> &lt;span class="nf">archive_files&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">file_dir&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;span class="kn">import&lt;/span> &lt;span class="nn">os&lt;/span>
+&lt;span class="kn">import&lt;/span> &lt;span class="nn">shutil&lt;/span>
+&lt;span class="k">def&lt;/span> &lt;span class="nf">getPath&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">file_dir&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">file&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">folder&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;span class="n">old_path&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">path&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">join&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">file_dir&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">file&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="n">new_path&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">path&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">join&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">path&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">join&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">file_dir&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">folder&lt;/span>&lt;span class="p">),&lt;/span> &lt;span class="n">file&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="k">return&lt;/span> &lt;span class="n">old_path&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">new_path&lt;/span>
+&lt;span class="k">for&lt;/span> &lt;span class="n">file&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">listdir&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">file_dir&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;span class="n">path&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">path&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">join&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">file_dir&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">file&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="n">extension&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">path&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">splitext&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">file&lt;/span>&lt;span class="p">)[&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">]&lt;/span>
+&lt;span class="c1"># 其中os.path.splitext()函数将路径拆分为文件名+扩展名&lt;/span>
+&lt;span class="k">if&lt;/span> &lt;span class="n">extension&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">file_doc&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;span class="n">old_path&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">new_path&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">getPath&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">file_dir&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">file&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;doc&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="k">elif&lt;/span> &lt;span class="n">extension&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">file_pic&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;span class="n">old_path&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">new_path&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">getPath&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">file_dir&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">file&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;pic&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="k">elif&lt;/span> &lt;span class="n">extension&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">file_tmp&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;span class="n">old_path&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">new_path&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">getPath&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">file_dir&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">file&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;tmp&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="k">elif&lt;/span> &lt;span class="n">extension&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">file_no_move&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;span class="k">continue&lt;/span>
+&lt;span class="k">elif&lt;/span> &lt;span class="n">extension&lt;/span> &lt;span class="ow">not&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">extension_not_exist&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;span class="n">extension_not_exist&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">append&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">extension&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="k">continue&lt;/span>
+&lt;span class="n">shutil&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">move&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">old_path&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">new_path&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;unrecognized:&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">extension_not_exist&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="c1"># file_dir = &amp;#34;C:\\Users\\acezj\\Desktop&amp;#34;&lt;/span>
+&lt;span class="kn">import&lt;/span> &lt;span class="nn">sys&lt;/span>
+&lt;span class="n">file_dir&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">sys&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">argv&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">]&lt;/span>
+&lt;span class="n">archive_files&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">file_dir&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>和&lt;code>.bat&lt;/code>批处理文件同级的 &lt;code>doc&lt;/code>, &lt;code>pic&lt;/code>, &lt;code>tmp&lt;/code> 三个目录需要手动创建&lt;/p>
+&lt;p>会自动将设置好的后缀名文件移动至对应目录，同时没有处理过的文件后缀会列出&lt;/p></content><category scheme="https://www.zhangjc.site/tech/" term="tech" label="tech"/></entry><entry><title type="text">MIT6.828 | Lec6: Virtual Memory - 1</title><link rel="alternate" type="text/html" href="https://www.zhangjc.site/archives-604/"/><id>https://www.zhangjc.site/archives-604/</id><updated>2021-10-01T20:54:44+08:00</updated><published>2019-07-02T06:57:00+00:00</published><author><name>Jiachen</name><uri>https://www.zhangjc.site/</uri><email>zhangjc1999@gmail.com</email></author><rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh)</rights><summary type="html">Notes MIT6.828 Lec6 Virtual Memory</summary><content type="html">&lt;p>&lt;a href="https://pdos.csail.mit.edu/6.828/2018/lec/l-vm.md">LINK&lt;/a>&lt;/p>
+&lt;p>计划：&lt;/p>
+&lt;ul>
+&lt;li>地址空间&lt;/li>
+&lt;li>页面硬件&lt;/li>
+&lt;li>&lt;code>xv6&lt;/code> VM 代码&lt;/li>
+&lt;/ul>
+&lt;h2 id="虚拟内存概述">虚拟内存概述&lt;/h2>
+&lt;p>&lt;strong>当今的问题：&lt;/strong>&lt;/p>
+&lt;p>[用户/内核图]&lt;/p>
+&lt;figure>&lt;img src="https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1745336595.png"
+alt="内存视图：内存中包含用户进程和内核的图表"/>&lt;figcaption>
+&lt;p>内存视图：内存中包含用户进程和内核的图表&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>假设shell有一个bug：有时它会写入随机存储器地址&lt;/p>
+&lt;p>我们如何防止它破坏内核或其他过程？&lt;/p>
+&lt;p>&lt;strong>我们想要隔离的地址空间&lt;/strong>：&lt;/p>
+&lt;ul>
+&lt;li>每个进程都有自己的内存&lt;/li>
+&lt;li>它可以读写自己的内存&lt;/li>
+&lt;li>它无法读取或写入任何其他内容&lt;/li>
+&lt;li>挑战：如何在一个物理内存中复用多个内存？同时保持内存之间的隔离&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>&lt;code>xv6&lt;/code> 和 &lt;code>JOS&lt;/code> 使用 &lt;code>x86&lt;/code> 的分页硬件实现 AS&lt;/strong>&lt;/p>
+&lt;p>&lt;strong>分页为寻址提供了间接层&lt;/strong>：&lt;/p>
+&lt;figure>&lt;img src="https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1798872467.png"/>
+&lt;/figure>
+&lt;p>&lt;code>s/w&lt;/code> 只能 &lt;code>ld&lt;/code>/&lt;code>st&lt;/code>到虚拟地址，而非物理地址，内核告诉MMU如何将每个虚拟地址映射到物理地址。&lt;/p>
+&lt;p>&lt;code>MMU&lt;/code> 本质上是一个由 &lt;code>va&lt;/code> 索引至 &lt;code>pa&lt;/code> 的表，&lt;code>MMU&lt;/code> 能够限制用户代码允许使用的虚拟地址。&lt;/p>
+&lt;p>&lt;strong>&lt;code>x86&lt;/code> 映射 &lt;code>4KB&lt;/code> “页面”并从 &lt;code>4KB&lt;/code> 边界开始对齐——因此页表索引是 &lt;code>VA&lt;/code> 的前20位。&lt;/strong>&lt;/p>
+&lt;p>&lt;strong>页表条目（PTE）中的内容是什么？&lt;/strong>&lt;/p>
+&lt;p>前20位是物理地址的前20位&lt;/p>
+&lt;ul>
+&lt;li>“物理页码”&lt;/li>
+&lt;li>MMU用PPN取代VA的高20位&lt;/li>
+&lt;/ul>
+&lt;p>低12位是标志位&lt;/p>
+&lt;p>Present， Writeable，&amp;amp;c&lt;/p>
+&lt;figure>&lt;img src="https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/462757007.jpg"/>
+&lt;/figure>
+&lt;p>&lt;strong>页表存储在哪里：&lt;/strong>&lt;/p>
+&lt;p>在 &lt;code>RAM&lt;/code> 中——&lt;code>MMU&lt;/code> 加载（和存储）&lt;code>PTE&lt;/code> ；操作系统可以读写 &lt;code>PTE&lt;/code>&lt;/p>
+&lt;p>&lt;strong>是否可以认为页表是一个&lt;code>PTE&lt;/code>数组？它有多大？&lt;/strong>&lt;/p>
+&lt;p>$2^{20}$是一百万 -&amp;gt; 每个条目32位 -&amp;gt; 整页表格为&lt;code>4MB&lt;/code>&lt;/p>
+&lt;p>在早期机器上相当大，但会为小程序浪费大量内存！—— 你只需要几百页的映射，所以其余的百万条目将在那里但不需要。&lt;/p>
+&lt;p>&lt;strong>x86使用“两级页表”来节省空间：&lt;/strong>&lt;/p>
+&lt;p>RAM中的PTE页面&lt;/p>
+&lt;p>RAM中的页面目录（PD）&lt;/p>
+&lt;p>PDE还包含20位PPN —— 1024个PTE组成的页面，1024个PDE指向PTE页面&lt;/p>
+&lt;p>每个PTE页面有1024个PTE——总共1024*1024个PTE&lt;/p>
+&lt;p>PD条目可能无效&lt;/p>
+&lt;p>那些PTE页面不需要存在，因此，小地址空间的页表可以很小&lt;/p>
+&lt;p>&lt;strong>mmu如何知道页表在RAM中的位置？&lt;/strong>&lt;/p>
+&lt;p>&lt;code>％cr3&lt;/code>保存&lt;code>PD&lt;/code>的物理地址&lt;/p>
+&lt;p>&lt;code>PD&lt;/code>保存&lt;code>PTE&lt;/code>页面的物理地址&lt;/p>
+&lt;p>(它们可以在RAM中的任何位置 - 不需要连续)&lt;/p>
+&lt;p>&lt;strong>x86寻页硬件如何翻译虚拟地址(va)？&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>定位正确的 &lt;code>PTE&lt;/code>&lt;/li>
+&lt;li>&lt;code>%cr3&lt;/code> 指向 &lt;code>PD&lt;/code> 的 &lt;code>PA&lt;/code>&lt;/li>
+&lt;li>高 &lt;code>10bit&lt;/code> 作为 &lt;code>PD&lt;/code> 的索引来得到 &lt;code>PT&lt;/code> 的 &lt;code>PA&lt;/code>&lt;/li>
+&lt;li>之后的 &lt;code>10bit&lt;/code> 作为 &lt;code>PT&lt;/code> 的索引得到 &lt;code>PTE&lt;/code>&lt;/li>
+&lt;li>最终得到 【来自 &lt;code>PTE&lt;/code> 的 &lt;code>PPN&lt;/code> + &lt;code>VA&lt;/code> 的低12bit】&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>PTE 中的标志位：&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>P&lt;/code>, &lt;code>W&lt;/code>, &lt;code>U&lt;/code>&lt;/li>
+&lt;li>xv6 使用 &lt;code>U&lt;/code> 来防止用户使用内核内存&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>如果没有设置P位怎么办？ 或存储和W位未设置？&lt;/strong>&lt;/p>
+&lt;p>“页面错误”&lt;/p>
+&lt;p>CPU保存寄存器，强制转移到内核&lt;/p>
+&lt;p>trap.c在xv6源码中&lt;/p>
+&lt;p>内核能够产生错误，结束进程；或安装PTE，恢复进程&lt;/p>
+&lt;p>例如 从磁盘加载内存页面后&lt;/p>
+&lt;p>&lt;strong>问：为什么映射而不是基址/约束？&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>间接允许分页 &lt;code>h/w&lt;/code> 解决许多问题，例如&lt;/li>
+&lt;li>避免碎片化&lt;/li>
+&lt;li>&lt;code>copy-on-write fork&lt;/code>&lt;/li>
+&lt;li>懒惰分配（下一课的家庭作业）&lt;/li>
+&lt;li>更多技术，下一讲的主题&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>问：为什么在内核中使用虚拟内存？为用户进程提供页表显然很好****但为什么需要内核的页表？&lt;/strong>&lt;/p>
+&lt;p>内核可以只使用物理地址运行吗？是的&lt;code>Singularity&lt;/code> 是使用物理地址的示例内核但是，大多数标准内核都使用虚拟地址？为什么标准内核会这样做？&lt;/p>
+&lt;p>硬件使其难以关闭&lt;/p>
+&lt;p>例如在进入系统调用时，必须禁用VM&lt;/p>
+&lt;p>内核可以方便地使用用户地址，例如传递给系统调用的用户地址但是，可能是一个坏主意：内核/应用程序之间的隔离比较差&lt;/p>
+&lt;p>如果地址是连续的则很方便。例如内核有4Kbyte对象和64Kbyte对象，如果没有页表，我们很容易就会出现&lt;strong>内存碎片&lt;/strong>&lt;/p>
+&lt;p>例如，分配64K，分配4Kbyte，释放64K，从64Kbyte分配4Kbyte现在一个新的64Kbyte对象不能使用空闲的60Kbyte。&lt;/p>
+&lt;p>内核必须运行各种硬件，而它们可能具有不同的物理内存布局&lt;/p>
+&lt;h2 id="案例研究xv6使用x86分页硬件">案例研究：xv6使用x86分页硬件&lt;/h2>
+&lt;p>&lt;strong>xv6中每个进程的地址空间&lt;/strong>&lt;/p>
+&lt;pre tabindex="0">&lt;code> 0x00000000:0x80000000 -- user addresses below KERNBASE
+0x80000000:0x80100000 -- map low 1MB devices (for kernel)
+0x80100000:? -- kernel instructions/data
+? :0x8E000000 -- 224 MB of DRAM mapped here
+0xFE000000:0x00000000 -- more memory-mapped devices
+&lt;/code>&lt;/pre>&lt;p>&lt;strong>xv6内存映射的对饮关系&lt;/strong>——课本，或者代码注释 （mem_layout.h）&lt;/p>
+&lt;p>&lt;strong>每个进程都有独立的地址空间和页表，但所有的进程有相同的内核映射（高内存地址片段）&lt;/strong>&lt;/p>
+&lt;p>内核通过切换页表，（例如设置 &lt;code>%cr3&lt;/code>）来切换进程&lt;/p>
+&lt;p>&lt;strong>问：为什么这样安排地址空间？&lt;/strong>&lt;/p>
+&lt;p>用户虚拟地址从零开始，那么用户的虚拟地址 &lt;code>va: 0&lt;/code> 对于每个进程映射不同的 &lt;code>PA&lt;/code>&lt;/p>
+&lt;p>虚拟内存中2GB大小的用户堆连续增长，但不需要连续的物理内存 —— 内核和用户映射都不会产生碎片问题—— 易于系统调用的切换，中断在所有进程的相同位置映射内核&lt;/p>
+&lt;p>简化进程切换&lt;/p>
+&lt;p>内核能方便地读写用户内存&lt;/p>
+&lt;p>&lt;code>pa x&lt;/code> 映射到 &lt;code>va x + 0x80000000&lt;/code> ，我们很快就会在操作页面表时看到这一点&lt;/p>
+&lt;p>&lt;strong>这样的视图下能承载的最大进程？&lt;/strong>&lt;/p>
+&lt;p>&lt;strong>是否能增加这样的最大进程，通过增加或减少 &lt;code>0x80000000&lt;/code>？&lt;/strong>&lt;/p>
+&lt;p>&lt;strong>内核是否必须将所有的物理内存映射到其虚拟地址空间？&lt;/strong>&lt;/p>
+&lt;p>let's look at some xv6 virtual memory codeterminology: virtual memory == address space / translationwill help you w. next homework and labs&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>where did this pgdir get setup?look at vm.c: setupkvm and inituvm&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>mappages() in vm.carguments are PD, va, size, pa, permadds mappings from a range of va's to corresponding pa'srounds b/c some uses pass in non-page-aligned addressesfor each page-aligned address in the rangecall walkpgdir to find address of PTEneed the PTE's address (not just content) b/c we want to modifyput the desired pa into the PTEmark PTE as valid w/ PTE_P&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>diagram of PD &amp;amp;c, as following steps build it&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>walkpgdir() in vm.cmimics how the paging h/w finds the PTE for an addressrefer to the handoutPDX extracts top ten bits&amp;amp;pgdir[PDX(va)] is the address of the relevant PDEnow *pde is the PDEif PTE_Pthe relevant page-table page already existsPTE_ADDR extracts the PPN from the PDEp2v() adds 0x80000000, since PTE holds physical addressif not PTE_Palloc a page-table pagefill in PDE with PPN -- thus v2pnow the PTE we want is in the page-table pageat offset PTX(va)which is 2nd 10 bits of va&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>tracing and date system call&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>a process calls sbrk(n) to ask for n more bytes of heap memorymalloc() uses sbrk()each process has a sizekernel adds new memory at process's end, increases sizesbrk() allocates physical memory (RAM)maps it into the process's page tablereturns the starting address of the new memory&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>sys_sbrk() in sysproc.c&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>growproc() in proc.cproc-&amp;gt;sz is the process's current sizeallocuvm() does most of the workswitchuvm sets %cr3 with new page tablealso flushes some MMU caches so it will see new PTEs&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>allocuvm() in vm.cwhy if(newsz &amp;gt;= KERNBASE) ?why PGROUNDUP?arguments to mappages()...&lt;/p>
+&lt;/li>
+&lt;/ul></content><category scheme="https://www.zhangjc.site/tech/" term="tech" label="tech"/><category scheme="https://www.zhangjc.site/tags/note/" term="note" label="note"/><category scheme="https://www.zhangjc.site/tags/mit6.828/" term="MIT6.828" label="MIT6.828"/></entry><entry><title type="text">MIT6.828 | hw5: xv6 system calls 【待填坑 dup2】</title><link rel="alternate" type="text/html" href="https://www.zhangjc.site/archives-602/"/><id>https://www.zhangjc.site/archives-602/</id><updated>2021-10-01T20:54:44+08:00</updated><published>2019-06-28T06:40:00+00:00</published><author><name>Jiachen</name><uri>https://www.zhangjc.site/</uri><email>zhangjc1999@gmail.com</email></author><rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh)</rights><summary type="html">Part1: System call tracing
+Part 2: Date system call
+实现 dup2</summary><content type="html">&lt;h2 id="part1-system-call-tracing">Part1: System call tracing&lt;/h2>
+&lt;p>第一个任务是修改xv6内核，为每个系统调用调用打印输出。（ 输出系统调用的名称和返回值就足够了; 不需要打印系统调用参数）&lt;/p>
+&lt;p>样例：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">...
+fork -&amp;gt; &lt;span class="m">2&lt;/span>
+&lt;span class="nb">exec&lt;/span> -&amp;gt; &lt;span class="m">0&lt;/span>
+open -&amp;gt; &lt;span class="m">3&lt;/span>
+close -&amp;gt; &lt;span class="m">0&lt;/span>
+&lt;span class="nv">$write&lt;/span> -&amp;gt; &lt;span class="m">1&lt;/span>
+write -&amp;gt; &lt;span class="m">1&lt;/span>
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>这是初始化和执行&lt;code>sh&lt;/code>，确保只打开两个文件描述符，并写入&lt;code>$prompt&lt;/code>。 （注意：&lt;code>shell&lt;/code>的输出和系统调用跟踪是混合的，因为&lt;code>shell&lt;/code>使用&lt;code>write syscall&lt;/code>来打印它的输出。）&lt;/p>
+&lt;p>提示：修改&lt;code>syscall.c&lt;/code> 中的 &lt;code>syscall()&lt;/code>&lt;/p>
+&lt;p>可选挑战：打印系统调用参数&lt;/p>
+&lt;hr>
+&lt;p>通过观察 &lt;code>xv6-public/syscall.c&lt;/code> 可知，系统调用使用了方法指针来实现不同的系统调用入口，因此添加了一个数组保存方法名：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-c" data-lang="c">&lt;span class="k">static&lt;/span> &lt;span class="kt">char&lt;/span> &lt;span class="n">syscalls_name&lt;/span>&lt;span class="p">[][&lt;/span>&lt;span class="mi">7&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;span class="p">[&lt;/span>&lt;span class="n">SYS_fork&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="s">&amp;#34;fork&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="p">[&lt;/span>&lt;span class="n">SYS_exit&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="s">&amp;#34;exit&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="p">[&lt;/span>&lt;span class="n">SYS_wait&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="s">&amp;#34;wait&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="p">[&lt;/span>&lt;span class="n">SYS_pipe&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="s">&amp;#34;pipe&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="p">[&lt;/span>&lt;span class="n">SYS_read&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="s">&amp;#34;read&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="p">[&lt;/span>&lt;span class="n">SYS_kill&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="s">&amp;#34;kill&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="p">[&lt;/span>&lt;span class="n">SYS_exec&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="s">&amp;#34;exec&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="p">[&lt;/span>&lt;span class="n">SYS_fstat&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="s">&amp;#34;fstat&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="p">[&lt;/span>&lt;span class="n">SYS_chdir&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="s">&amp;#34;chdir&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="p">[&lt;/span>&lt;span class="n">SYS_dup&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="s">&amp;#34;dup&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="p">[&lt;/span>&lt;span class="n">SYS_getpid&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="s">&amp;#34;getpid&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="p">[&lt;/span>&lt;span class="n">SYS_sbrk&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="s">&amp;#34;sbrk&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="p">[&lt;/span>&lt;span class="n">SYS_sleep&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="s">&amp;#34;sleep&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="p">[&lt;/span>&lt;span class="n">SYS_uptime&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="s">&amp;#34;uptime&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="p">[&lt;/span>&lt;span class="n">SYS_open&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="s">&amp;#34;open&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="p">[&lt;/span>&lt;span class="n">SYS_write&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="s">&amp;#34;write&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="p">[&lt;/span>&lt;span class="n">SYS_mknod&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="s">&amp;#34;mknod&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="p">[&lt;/span>&lt;span class="n">SYS_unlink&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="s">&amp;#34;unlink&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="p">[&lt;/span>&lt;span class="n">SYS_link&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="s">&amp;#34;link&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="p">[&lt;/span>&lt;span class="n">SYS_mkdir&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="s">&amp;#34;mkdir&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="p">[&lt;/span>&lt;span class="n">SYS_close&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="s">&amp;#34;close&amp;#34;&lt;/span>
+&lt;span class="p">};&lt;/span>
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>观察 &lt;code>syscall()&lt;/code> 函数，在保存返回值后进行打印系统调用名称及返回值：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-c" data-lang="c">&lt;span class="kt">void&lt;/span>
+&lt;span class="nf">syscall&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kt">void&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="p">{&lt;/span>
+&lt;span class="kt">int&lt;/span> &lt;span class="n">num&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;span class="k">struct&lt;/span> &lt;span class="n">proc&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="n">curproc&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">myproc&lt;/span>&lt;span class="p">();&lt;/span>
+&lt;span class="n">num&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">curproc&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="n">tf&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="n">eax&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;span class="k">if&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">num&lt;/span> &lt;span class="o">&amp;gt;&lt;/span> &lt;span class="mi">0&lt;/span> &lt;span class="o">&amp;amp;&amp;amp;&lt;/span> &lt;span class="n">num&lt;/span> &lt;span class="o">&amp;lt;&lt;/span> &lt;span class="n">NELEM&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">syscalls&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">&amp;amp;&amp;amp;&lt;/span> &lt;span class="n">syscalls&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">num&lt;/span>&lt;span class="p">])&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;span class="n">curproc&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="n">tf&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="n">eax&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">syscalls&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">num&lt;/span>&lt;span class="p">]();&lt;/span> &lt;span class="c1">// save the return value
+&lt;/span>&lt;span class="c1">&lt;/span> &lt;span class="c1">// My code Here
+&lt;/span>&lt;span class="c1">&lt;/span> &lt;span class="n">cprintf&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;%s -&amp;gt; %d&lt;/span>&lt;span class="se">\n&lt;/span>&lt;span class="s">&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">syscalls_name&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">num&lt;/span>&lt;span class="p">],&lt;/span> &lt;span class="n">curproc&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="n">tf&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="n">eax&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;span class="p">}&lt;/span> &lt;span class="k">else&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;span class="n">cprintf&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;%d %s: unknown sys call %d&lt;/span>&lt;span class="se">\n&lt;/span>&lt;span class="s">&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="n">curproc&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="n">pid&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">curproc&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="n">name&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">num&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;span class="n">curproc&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="n">tf&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="n">eax&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="o">-&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;span class="p">}&lt;/span>
+&lt;span class="p">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>其中 &lt;code>fetchint&lt;/code> 和 &lt;code>fetchstr&lt;/code> 函数为根据 &lt;code>arg*&lt;/code> 函数计算的地址，打印对应堆栈数据的函数，在其中添加输出即可：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;span class="lnt">31
+&lt;/span>&lt;span class="lnt">32
+&lt;/span>&lt;span class="lnt">33
+&lt;/span>&lt;span class="lnt">34
+&lt;/span>&lt;span class="lnt">35
+&lt;/span>&lt;span class="lnt">36
+&lt;/span>&lt;span class="lnt">37
+&lt;/span>&lt;span class="lnt">38
+&lt;/span>&lt;span class="lnt">39
+&lt;/span>&lt;span class="lnt">40
+&lt;/span>&lt;span class="lnt">41
+&lt;/span>&lt;span class="lnt">42
+&lt;/span>&lt;span class="lnt">43
+&lt;/span>&lt;span class="lnt">44
+&lt;/span>&lt;span class="lnt">45
+&lt;/span>&lt;span class="lnt">46
+&lt;/span>&lt;span class="lnt">47
+&lt;/span>&lt;span class="lnt">48
+&lt;/span>&lt;span class="lnt">49
+&lt;/span>&lt;span class="lnt">50
+&lt;/span>&lt;span class="lnt">51
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-c" data-lang="c">&lt;span class="c1">// Fetch the int at addr from the current process.
+&lt;/span>&lt;span class="c1">&lt;/span>&lt;span class="kt">int&lt;/span>
+&lt;span class="nf">fetchint&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">uint&lt;/span> &lt;span class="n">addr&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">int&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="n">ip&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="p">{&lt;/span>
+&lt;span class="k">struct&lt;/span> &lt;span class="n">proc&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="n">curproc&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">myproc&lt;/span>&lt;span class="p">();&lt;/span>
+&lt;span class="k">if&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">addr&lt;/span> &lt;span class="o">&amp;gt;=&lt;/span> &lt;span class="n">curproc&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="n">sz&lt;/span> &lt;span class="o">||&lt;/span> &lt;span class="n">addr&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="mi">4&lt;/span> &lt;span class="o">&amp;gt;&lt;/span> &lt;span class="n">curproc&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="n">sz&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="k">return&lt;/span> &lt;span class="o">-&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;span class="o">*&lt;/span>&lt;span class="n">ip&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kt">int&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="p">)(&lt;/span>&lt;span class="n">addr&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;span class="n">cprintf&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;&amp;lt;int&amp;gt;: %d&lt;/span>&lt;span class="se">\n&lt;/span>&lt;span class="s">&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="n">ip&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;span class="k">return&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;span class="p">}&lt;/span>
+&lt;span class="c1">// Fetch the nul-terminated string at addr from the current process.
+&lt;/span>&lt;span class="c1">// Doesn&amp;#39;t actually copy the string - just sets *pp to point at it.
+&lt;/span>&lt;span class="c1">// Returns length of string, not including nul.
+&lt;/span>&lt;span class="c1">&lt;/span>&lt;span class="kt">int&lt;/span>
+&lt;span class="nf">fetchstr&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">uint&lt;/span> &lt;span class="n">addr&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">char&lt;/span> &lt;span class="o">**&lt;/span>&lt;span class="n">pp&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="p">{&lt;/span>
+&lt;span class="kt">char&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="n">s&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="n">ep&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;span class="k">struct&lt;/span> &lt;span class="n">proc&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="n">curproc&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">myproc&lt;/span>&lt;span class="p">();&lt;/span>
+&lt;span class="k">if&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">addr&lt;/span> &lt;span class="o">&amp;gt;=&lt;/span> &lt;span class="n">curproc&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="n">sz&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="k">return&lt;/span> &lt;span class="o">-&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;span class="n">cprintf&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;&amp;lt;str&amp;gt;: %s&lt;/span>&lt;span class="se">\n&lt;/span>&lt;span class="s">&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">**&lt;/span>&lt;span class="n">pp&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;span class="o">*&lt;/span>&lt;span class="n">pp&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kt">char&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="n">addr&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;span class="n">ep&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kt">char&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="n">curproc&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="n">sz&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;span class="k">for&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">s&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="n">pp&lt;/span>&lt;span class="p">;&lt;/span> &lt;span class="n">s&lt;/span> &lt;span class="o">&amp;lt;&lt;/span> &lt;span class="n">ep&lt;/span>&lt;span class="p">;&lt;/span> &lt;span class="n">s&lt;/span>&lt;span class="o">++&lt;/span>&lt;span class="p">){&lt;/span>
+&lt;span class="k">if&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="n">s&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="k">return&lt;/span> &lt;span class="n">s&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="n">pp&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;span class="p">}&lt;/span>
+&lt;span class="k">return&lt;/span> &lt;span class="o">-&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;span class="p">}&lt;/span>
+&lt;span class="c1">// Fetch the nth 32-bit system call argument.
+&lt;/span>&lt;span class="c1">&lt;/span>&lt;span class="kt">int&lt;/span>
+&lt;span class="nf">argint&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kt">int&lt;/span> &lt;span class="n">n&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">int&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="n">ip&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="p">{&lt;/span>
+&lt;span class="n">cprintf&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;&amp;gt; args%d &amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="n">n&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;span class="k">return&lt;/span> &lt;span class="n">fetchint&lt;/span>&lt;span class="p">((&lt;/span>&lt;span class="n">myproc&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="n">tf&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="n">esp&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="mi">4&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="mi">4&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="n">n&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">ip&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;span class="p">}&lt;/span>
+&lt;span class="kt">int&lt;/span>
+&lt;span class="nf">argstr&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kt">int&lt;/span> &lt;span class="n">n&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">char&lt;/span> &lt;span class="o">**&lt;/span>&lt;span class="n">pp&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="p">{&lt;/span>
+&lt;span class="kt">int&lt;/span> &lt;span class="n">addr&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;span class="k">if&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">argint&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">n&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">&amp;amp;&lt;/span>&lt;span class="n">addr&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">&amp;lt;&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="k">return&lt;/span> &lt;span class="o">-&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;span class="n">cprintf&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;&amp;gt; args%d &amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="n">n&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;span class="k">return&lt;/span> &lt;span class="n">fetchstr&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">addr&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">pp&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;span class="p">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>运行 &lt;code>make qemu-nox&lt;/code> 重新编译运行：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">...
+fork -&amp;gt; &lt;span class="m">2&lt;/span>
+&amp;gt; args0 &amp;lt;int&amp;gt;: &lt;span class="m">2070&lt;/span>
+&amp;gt; args0 &amp;lt;str&amp;gt;: uZgf
+.gf
+&amp;gt; args1 &amp;lt;int&amp;gt;: &lt;span class="m">2792&lt;/span>
+&amp;lt;int&amp;gt;: &lt;span class="m">2070&lt;/span>
+&amp;lt;str&amp;gt;: fC
+.gf
+&amp;lt;int&amp;gt;: &lt;span class="m">0&lt;/span>
+&lt;span class="nb">exec&lt;/span> -&amp;gt; &lt;span class="m">0&lt;/span>
+&amp;gt; args0 &amp;lt;int&amp;gt;: &lt;span class="m">4697&lt;/span>
+&amp;gt; args0 &amp;lt;str&amp;gt;: x7
+&amp;gt; args1 &amp;lt;int&amp;gt;: &lt;span class="m">2&lt;/span>
+open -&amp;gt; &lt;span class="m">3&lt;/span>
+&amp;gt; args0 &amp;lt;int&amp;gt;: &lt;span class="m">3&lt;/span>
+close -&amp;gt; &lt;span class="m">0&lt;/span>
+&amp;gt; args0 &amp;lt;int&amp;gt;: &lt;span class="m">2&lt;/span>
+&amp;gt; args2 &amp;lt;int&amp;gt;: &lt;span class="m">1&lt;/span>
+&amp;gt; args1 &amp;lt;int&amp;gt;: &lt;span class="m">16250&lt;/span>
+&lt;span class="nv">$write&lt;/span> -&amp;gt; &lt;span class="m">1&lt;/span>
+&amp;gt; args0 &amp;lt;int&amp;gt;: &lt;span class="m">2&lt;/span>
+&amp;gt; args2 &amp;lt;int&amp;gt;: &lt;span class="m">1&lt;/span>
+&amp;gt; args1 &amp;lt;int&amp;gt;: &lt;span class="m">16250&lt;/span>
+write -&amp;gt; &lt;span class="m">1&lt;/span>
+&amp;gt; args0 &amp;lt;int&amp;gt;: &lt;span class="m">0&lt;/span>
+&amp;gt; args2 &amp;lt;int&amp;gt;: &lt;span class="m">1&lt;/span>
+&amp;gt; args1 &amp;lt;int&amp;gt;: &lt;span class="m">16255&lt;/span>
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="part-2-date-system-call">Part 2: Date system call&lt;/h2>
+&lt;p>第二个任务是向xv6添加新的系统调用。主要是了解系统调用装置的不同部分。 新的系统调用将获得当前的UTC时间并将其返回给用户程序。 您可能希望使用辅助函数&lt;code>cmostime()&lt;/code>（在&lt;code>lapic.c&lt;/code>中定义）来读取实时时钟。 &lt;code>date.h&lt;/code>包含&lt;code>struct rtcdate&lt;/code>结构的定义，您将作为指针提供&lt;code>cmostime()&lt;/code>的参数。&lt;/p>
+&lt;p>您应该创建一个用户级程序来调用您的新日期系统调用; 这里有一些你应该放在&lt;code>date.c&lt;/code>中的代码：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-c" data-lang="c">&lt;span class="cp">#include&lt;/span> &lt;span class="cpf">&amp;#34;types.h&amp;#34;&lt;/span>&lt;span class="cp">
+&lt;/span>&lt;span class="cp">#include&lt;/span> &lt;span class="cpf">&amp;#34;user.h&amp;#34;&lt;/span>&lt;span class="cp">
+&lt;/span>&lt;span class="cp">#include&lt;/span> &lt;span class="cpf">&amp;#34;date.h&amp;#34;&lt;/span>&lt;span class="cp">
+&lt;/span>&lt;span class="cp">&lt;/span>
+&lt;span class="kt">int&lt;/span>
+&lt;span class="nf">main&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kt">int&lt;/span> &lt;span class="n">argc&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">char&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="n">argv&lt;/span>&lt;span class="p">[])&lt;/span>
+&lt;span class="p">{&lt;/span>
+&lt;span class="k">struct&lt;/span> &lt;span class="n">rtcdate&lt;/span> &lt;span class="n">r&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;span class="k">if&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="n">date&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;amp;&lt;/span>&lt;span class="n">r&lt;/span>&lt;span class="p">))&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;span class="n">printf&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">2&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;date failed&lt;/span>&lt;span class="se">\n&lt;/span>&lt;span class="s">&amp;#34;&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;span class="n">exit&lt;/span>&lt;span class="p">();&lt;/span>
+&lt;span class="p">}&lt;/span>
+&lt;span class="c1">// your code to print the time in any format you like...
+&lt;/span>&lt;span class="c1">&lt;/span>
+&lt;span class="n">exit&lt;/span>&lt;span class="p">();&lt;/span>
+&lt;span class="p">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>为了使您的新日期程序可以从&lt;code>xv6&lt;/code> &lt;code>shell&lt;/code>运行，请将&lt;code>_date&lt;/code>添加到&lt;code>Makefile&lt;/code>中的&lt;code>UPROGS&lt;/code>定义中。&lt;/p>
+&lt;p>您进行日期系统调用的策略应该是克隆特定于某些现有系统调用的所有代码段，例如“uptime”系统调用。 您应该使用&lt;code>grep -n uptime *.[chS]&lt;/code>来查看所有源文件的正常运行时间。&lt;/p>
+&lt;p>When you're done, typing &lt;code>date&lt;/code> to an xv6 shell prompt should print the current UTC time.&lt;/p>
+&lt;p>Write down a few words of explanation for each of the files you had to modify in the process of creating your date system call.&lt;/p>
+&lt;p>Optional challenge: add a dup2() system call and modify the shell to use it.&lt;/p>
+&lt;hr>
+&lt;p>根据提示可得：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">$ grep -n uptime *.&lt;span class="o">[&lt;/span>c,h&lt;span class="o">]&lt;/span>
+syscall.c:110:extern int sys_uptime&lt;span class="o">(&lt;/span>void&lt;span class="o">)&lt;/span>&lt;span class="p">;&lt;/span>
+syscall.c:126:&lt;span class="o">[&lt;/span>SYS_uptime&lt;span class="o">]&lt;/span> sys_uptime,
+syscall.c:151:// &lt;span class="o">[&lt;/span>SYS_uptime&lt;span class="o">]&lt;/span> &lt;span class="s2">&amp;#34;uptime&amp;#34;&lt;/span>,
+syscall.h:15:#define SYS_uptime &lt;span class="m">14&lt;/span>
+sysproc.c:83:sys_uptime&lt;span class="o">(&lt;/span>void&lt;span class="o">)&lt;/span>
+user.h:25:int uptime&lt;span class="o">(&lt;/span>void&lt;span class="o">)&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>模仿 &lt;code>uptime&lt;/code> 添加对 &lt;code>date&lt;/code> 系统调用的支持&lt;/p>
+&lt;p>在 &lt;code>syscall.h&lt;/code> 中添加 &lt;code>syscall.h:15:#define SYS_date 22&lt;/code>&lt;/p>
+&lt;p>在 &lt;code>syscall.c&lt;/code> 中添加 &lt;code>extern int sys_date(void);&lt;/code>&lt;/p>
+&lt;p>在 &lt;code>syscall.c&lt;/code> 中添加 &lt;code>[SYS_uptime] sys_date,&lt;/code> 【和上边的编号22对应】&lt;/p>
+&lt;p>在 &lt;code>sysproc.c&lt;/code> 中添加函数 &lt;code>int sys_date(struct )&lt;/code>&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-c" data-lang="c">&lt;span class="kt">int&lt;/span> &lt;span class="nf">sys_date&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="k">struct&lt;/span> &lt;span class="n">rtcdate&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="n">r&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;span class="k">if&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="n">argptr&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">0&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kt">void&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">&amp;amp;&lt;/span>&lt;span class="n">r&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="k">sizeof&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="n">r&lt;/span>&lt;span class="p">))&lt;/span> &lt;span class="o">&amp;lt;&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="k">return&lt;/span> &lt;span class="o">-&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;span class="n">cmostime&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">r&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;span class="k">return&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;span class="p">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>新建文件 &lt;code>date.c&lt;/code>&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-c" data-lang="c">&lt;span class="cp">#include&lt;/span> &lt;span class="cpf">&amp;#34;types.h&amp;#34;&lt;/span>&lt;span class="cp">
+&lt;/span>&lt;span class="cp">#include&lt;/span> &lt;span class="cpf">&amp;#34;user.h&amp;#34;&lt;/span>&lt;span class="cp">
+&lt;/span>&lt;span class="cp">#include&lt;/span> &lt;span class="cpf">&amp;#34;date.h&amp;#34;&lt;/span>&lt;span class="cp">
+&lt;/span>&lt;span class="cp">&lt;/span>
+&lt;span class="k">static&lt;/span> &lt;span class="kt">char&lt;/span> &lt;span class="n">month_name&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="mi">12&lt;/span>&lt;span class="p">][&lt;/span>&lt;span class="mi">7&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;span class="s">&amp;#34;Jan&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="s">&amp;#34;Feb&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="s">&amp;#34;Mar&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="s">&amp;#34;Apr&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="s">&amp;#34;May&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="s">&amp;#34;June&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="s">&amp;#34;July&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="s">&amp;#34;Aug&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="s">&amp;#34;Sept&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="s">&amp;#34;Oct&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="s">&amp;#34;Nov&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="s">&amp;#34;Dec&amp;#34;&lt;/span>
+&lt;span class="p">};&lt;/span>
+&lt;span class="kt">int&lt;/span>
+&lt;span class="nf">main&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kt">int&lt;/span> &lt;span class="n">argc&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">char&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="n">argv&lt;/span>&lt;span class="p">[])&lt;/span>
+&lt;span class="p">{&lt;/span>
+&lt;span class="k">struct&lt;/span> &lt;span class="n">rtcdate&lt;/span> &lt;span class="n">r&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;span class="k">if&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="n">date&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;amp;&lt;/span>&lt;span class="n">r&lt;/span>&lt;span class="p">))&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;span class="n">printf&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">2&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;date failed&lt;/span>&lt;span class="se">\n&lt;/span>&lt;span class="s">&amp;#34;&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;span class="p">}&lt;/span>
+&lt;span class="n">printf&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;%s %d %d:%d:%d UTC %d&lt;/span>&lt;span class="se">\n&lt;/span>&lt;span class="s">&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">&amp;amp;&lt;/span>&lt;span class="n">month_name&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">r&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">month&lt;/span>&lt;span class="p">],&lt;/span> &lt;span class="n">r&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">day&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">r&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">hour&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">r&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">minute&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">r&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">second&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">r&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">year&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;span class="n">exit&lt;/span>&lt;span class="p">();&lt;/span>
+&lt;span class="p">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>将&lt;code>_date&lt;/code>添加到&lt;code>Makefile&lt;/code>中的&lt;code>UPROGS&lt;/code>定义:&lt;code>vim Makefile&lt;/code>&lt;/p>
+&lt;pre tabindex="0">&lt;code>UPROGS=\
+_cat\
+_echo\
+_forktest\
+_grep\
+_init\
+_kill\
+_ln\
+_ls\
+_mkdir\
+_rm\
+_sh\
+_stressfs\
+_usertests\
+_wc\
+_zombie\
+_date\
+&lt;/code>&lt;/pre>&lt;p>编译运行 &lt;code>make qemu-nox&lt;/code>&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">$ date
+July &lt;span class="m">28&lt;/span> 14:35:8 UTC &lt;span class="m">2019&lt;/span>
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="实现-dup2">实现 &lt;code>dup2&lt;/code>&lt;/h3>
+&lt;p>在之前的文章中，提到了 &lt;code>dup&lt;/code> 和 &lt;code>dup2&lt;/code> 的使用，可以理解 &lt;code>dup2&lt;/code> 借助 &lt;code>dup&lt;/code> 自动实现了IO重定向中文件描述符的重定向与释放。&lt;/p>
+&lt;figure class="kg-card kg-bookmark-card">
+&lt;a href="https://www.zhangjc.site/archives-548/" class="kg-bookmark-container">
+&lt;div class="kg-bookmark-content">
+&lt;div class="kg-bookmark-title">译 | pipe, fork &amp;amp; dup: 理解命令执行和输入输出流&lt;/div>
+&lt;div class="kg-bookmark-description">使用图表清晰的展示了管道的工作方式 原文链接 [http://www.rozmichelle.com/pipes-forks-dups/] i&amp;amp;gt; 注意：理解这篇文章需要基本熟悉Unix命令和C / C &amp;#43;&amp;#43;。 我的目标是在运行命令时解释进程之间的数据流。 如果您想直接跳转到管道内容，请单击此处\n[https://www.zhangjc.site/archives/548.html#%E7%AE%A1%E9%81%93-Pipe]。 在这篇文章中，我们将讨论Unix命令如何通过管道和输入/输出重定向将数据相互传递，并且我将说明执行命令时数据流实际发生的情况。 文件描述符 - File D…&lt;/div>
+&lt;div class="kg-bookmark-metadata">
+&lt;img src="https://www.zhangjc.site/favicon.ico" class="kg-bookmark-icon">
+&lt;span class="kg-bookmark-author">Jiachen Zhang&lt;/span>
+&lt;span class="kg-bookmark-publisher">The Daily Awesome&lt;/span>
+&lt;/div>
+&lt;/div>
+&lt;div class="kg-bookmark-thumbnail">
+&lt;img src="https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/934882281.png">
+&lt;/div>
+&lt;/a>
+&lt;/figure></content><category scheme="https://www.zhangjc.site/tech/" term="tech" label="tech"/><category scheme="https://www.zhangjc.site/tags/note/" term="note" label="note"/><category scheme="https://www.zhangjc.site/tags/mit6.828/" term="MIT6.828" label="MIT6.828"/></entry></feed>

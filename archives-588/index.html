@@ -1,0 +1,592 @@
+<!doctype html><html lang=zh-cn>
+<head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+<meta charset=utf-8>
+<meta name=generator content="Hugo 0.88.1"><meta name=theme-color content="#16171d">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=format-detection content="telephone=no, date=no, address=no, email=no">
+<meta http-equiv=cache-control content="no-transform">
+<meta http-equiv=cache-control content="no-siteapp">
+<title>MIT6.828 | Lab 2: Memory Management - Part 3: Kernel Address Space | The Daily Awesome</title>
+<link rel=stylesheet href=/css/meme.min.c7b66d8ab937ea5489e87c6d96c470e3f5e7b5a21a385e18c358b7b3be61b6de.css>
+<script src=/js/meme.min.8cbe976441b5181abfd3093c9beee209b19cdbb1fa77c48d225a83ba81fa3fb1.js></script>
+<link rel=preconnect href=https://fonts.gstatic.com crossorigin>
+<link rel=stylesheet href="https://fonts.loli.net/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400;1,700&family=Noto+Serif+SC:wght@400;500;700&family=Source+Code+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap" media=print onload="this.media='all'">
+<noscript><link rel=stylesheet href="https://fonts.loli.net/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400;1,700&family=Noto+Serif+SC:wght@400;500;700&family=Source+Code+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap"></noscript>
+<meta name=author content="Jiachen Zhang"><meta name=description content="JOS将处理器的32位线性地址空间分为两部分。 我们将在实验3中开始加载和运行的用户环境（进程）将控制下部的布局和内容，而内核始终保持对上部的完全控制。 划分线某种程度上由inc/memlayout.h中的符号ULIM定义，为内核保留大约256MB的虚拟地址空间。">
+<link rel="shortcut icon" href=/favicon.ico type=image/x-icon>
+<link rel=mask-icon href=/icons/safari-pinned-tab.svg color=#2a6df4>
+<link rel=apple-touch-icon sizes=180x180 href=/icons/apple-touch-icon.png>
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-title content="The Daily Awesome">
+<meta name=apple-mobile-web-app-status-bar-style content="black">
+<meta name=mobile-web-app-capable content="yes">
+<meta name=application-name content="The Daily Awesome">
+<meta name=msapplication-starturl content="../">
+<meta name=msapplication-TileColor content="#fff">
+<meta name=msapplication-TileImage content="../icons/mstile-150x150.png">
+<link rel=manifest href=/manifest.json>
+<link rel=canonical href=https://www.zhangjc.site/archives-588/>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","datePublished":"2019-06-20T06:17:00+00:00","dateModified":"2021-10-01T20:54:44+08:00","url":"https://www.zhangjc.site/archives-588/","headline":"MIT6.828 | Lab 2: Memory Management - Part 3: Kernel Address Space","description":"JOS将处理器的32位线性地址空间分为两部分。 我们将在实验3中开始加载和运行的用户环境（进程）将控制下部的布局和内容，而内核始终保持对上部的完全控制。 划分线某种程度上由inc/memlayout.h中的符号ULIM定义，为内核保留大约256MB的虚拟地址空间。","inLanguage":"zh-CN","articleSection":"tech","wordCount":2969,"image":"https://www.zhangjc.site/icons/apple-touch-icon.png","author":{"@type":"Person","description":"The Daily Awesome","email":"zhangjc1999@gmail.com","image":"https://www.zhangjc.site/icons/apple-touch-icon.png","url":"https://www.zhangjc.site/","name":"Jiachen"},"license":"[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh)","publisher":{"@type":"Organization","name":"The Daily Awesome","logo":{"@type":"ImageObject","url":"https://www.zhangjc.site/icons/apple-touch-icon.png"},"url":"https://www.zhangjc.site/"},"mainEntityOfPage":{"@type":"WebSite","@id":"https://www.zhangjc.site/"}}</script>
+<meta name=twitter:card content="summary">
+<meta name=twitter:site content="@JiachenZhang5">
+<meta name=twitter:creator content="@JiachenZhang5">
+<meta property="og:title" content="MIT6.828 | Lab 2: Memory Management - Part 3: Kernel Address Space">
+<meta property="og:description" content="JOS将处理器的32位线性地址空间分为两部分。 我们将在实验3中开始加载和运行的用户环境（进程）将控制下部的布局和内容，而内核始终保持对上部的完全控制。 划分线某种程度上由inc/memlayout.h中的符号ULIM定义，为内核保留大约256MB的虚拟地址空间。">
+<meta property="og:url" content="https://www.zhangjc.site/archives-588/">
+<meta property="og:site_name" content="The Daily Awesome">
+<meta property="og:locale" content="zh"><meta property="og:image" content="https://www.zhangjc.site/icons/apple-touch-icon.png">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2019-06-20T06:17:00+00:00">
+<meta property="article:modified_time" content="2021-10-01T20:54:44+08:00">
+<meta property="article:section" content="tech">
+<script type=text/javascript src="https://s4.cnzz.com/z_stat.php?id=1279769355&web_id=1279769355"></script>
+</head>
+<body>
+<div class=container>
+<header class=header>
+<div class=header-wrapper>
+<div class="header-inner single">
+<div class=site-brand>
+<a href=/ class=brand>The Daily Awesome</a>
+</div>
+<nav class=nav>
+<ul class=menu id=menu>
+<li class=menu-item><a href=/life/><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon archive"><path d="M32 448c0 17.7 14.3 32 32 32h384c17.7.0 32-14.3 32-32V160H32v288zm160-212c0-6.6 5.4-12 12-12h104c6.6.0 12 5.4 12 12v8c0 6.6-5.4 12-12 12H204c-6.6.0-12-5.4-12-12v-8zM480 32H32C14.3 32 0 46.3.0 64v48c0 8.8 7.2 16 16 16h480c8.8.0 16-7.2 16-16V64c0-17.7-14.3-32-32-32z"/></svg><span class=menu-item-name>生活</span></a>
+</li>
+<li class=menu-item><a href=/tech/><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon th"><path d="M149.333 56v80c0 13.255-10.745 24-24 24H24c-13.255.0-24-10.745-24-24V56c0-13.255 10.745-24 24-24h101.333c13.255.0 24 10.745 24 24zm181.334 240v-80c0-13.255-10.745-24-24-24H205.333c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256.0 24.001-10.745 24.001-24zm32-240v80c0 13.255 10.745 24 24 24H488c13.255.0 24-10.745 24-24V56c0-13.255-10.745-24-24-24H386.667c-13.255.0-24 10.745-24 24zm-32 80V56c0-13.255-10.745-24-24-24H205.333c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256.0 24.001-10.745 24.001-24zm-205.334 56H24c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24zM0 376v80c0 13.255 10.745 24 24 24h101.333c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H24c-13.255.0-24 10.745-24 24zm386.667-56H488c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zm0 160H488c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zM181.333 376v80c0 13.255 10.745 24 24 24h101.333c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H205.333c-13.255.0-24 10.745-24 24z"/></svg><span class=menu-item-name>技术</span></a>
+</li>
+<li class=menu-item><a href=/about/><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" class="icon user-circle"><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 96c48.6.0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 344c-58.7.0-111.3-26.6-146.5-68.2 18.8-35.4 55.6-59.8 98.5-59.8 2.4.0 4.8.4 7.1 1.1 13 4.2 26.6 6.9 40.9 6.9s28-2.7 40.9-6.9c2.3-.7 4.7-1.1 7.1-1.1 42.9.0 79.7 24.4 98.5 59.8C359.3 421.4 306.7 448 248 448z"/></svg><span class=menu-item-name>关于</span></a>
+</li>
+<li class=menu-item>
+<a id=theme-switcher href=#><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon theme-icon-light"><path d="M193.2 104.5 242 7a18 18 0 0128 0l48.8 97.5L422.2 70A18 18 0 01442 89.8l-34.5 103.4L505 242a18 18 0 010 28l-97.5 48.8L442 422.2A18 18 0 01422.2 442l-103.4-34.5L270 505a18 18 0 01-28 0l-48.8-97.5L89.8 442A18 18 0 0170 422.2l34.5-103.4-97.5-48.8a18 18 0 010-28l97.5-48.8L70 89.8A18 18 0 0189.8 70zM256 128a128 128 0 10.01.0M256 160a96 96 0 10.01.0"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon theme-icon-dark"><path d="M27 412A256 256 0 10181 5a11.5 11.5.0 00-5 20A201.5 201.5.0 0142 399a11.5 11.5.0 00-15 13"/></svg></a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+<input type=checkbox id=nav-toggle aria-hidden=true>
+<label for=nav-toggle class=nav-toggle></label>
+<label for=nav-toggle class=nav-curtain></label>
+</header>
+<main class="main single" id=main>
+<div class=main-inner>
+<article class="content post h-entry" data-align=justify data-type=tech data-toc-num=true>
+<h1 class="post-title p-name">MIT6.828 | Lab 2: Memory Management - Part 3: Kernel Address Space</h1>
+<div class=post-meta>
+<time datetime=2019-06-20T06:17:00+00:00 class="post-meta-item published dt-published"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon post-meta-icon"><path d="M148 288h-40c-6.6.0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6.0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5.0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6.0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6.0 12 5.4 12 12v52h48c26.5.0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3.0 6-2.7 6-6z"/></svg>&nbsp;2019.6.20</time>
+<span class="post-meta-item category"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49.0 112v288c0 26.51 21.49 48 48 48h416c26.51.0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>&nbsp;<a href=/tech/ class="category-link p-category">Tech</a></span>
+</div>
+<nav class=contents>
+<ol class=toc>
+<li><a id=contents:权限和故障隔离 href=#权限和故障隔离>权限和故障隔离</a></li>
+<li><a id=contents:初始化内核地址空间 href=#初始化内核地址空间>初始化内核地址空间</a></li>
+<li><a id=contents:挑战 href=#挑战>挑战</a>
+<ol>
+<li><a id=contents:挑战1 href=#挑战1>挑战1</a></li>
+<li><a id=contents:挑战二 href=#挑战二>挑战二</a></li>
+</ol>
+</li>
+</ol>
+</nav><div class="post-body e-content">
+<p>JOS将处理器的32位线性地址空间分为两部分。 我们将在实验3中开始加载和运行的用户环境（进程）将控制下部的布局和内容，而内核始终保持对上部的完全控制。 划分线某种程度上由<code>inc/memlayout.h</code>中的符号<code>ULIM</code>定义，为内核保留大约256MB的虚拟地址空间。 这就解释了为什么我们需要在lab1中为内核提供如此高的链接地址：否则内核的虚拟地址空间中没有足够的空间来同时映射到它下面的用户环境中。</p>
+<p>参考<code>inc/memlayout.h</code>中的JOS存储器布局图对本次和接下来的lab会很有帮助。</p>
+<h2 id=权限和故障隔离><a href=#权限和故障隔离 class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:权限和故障隔离 class=headings>权限和故障隔离</a></h2>
+<p>Permissions and Fault Isolation</p>
+<p>由于内核和用户内存都存在于每个环境的地址空间中，因此我们必须在x86页表中使用权限位，以允许用户仅访问地址空间的用户部分。 否则用户代码中的bug可能会覆盖内核数据，从而导致崩溃或更微妙的故障; 或者也可能窃取其他环境的私有数据。 请注意，可写权限位<code>PTE_W</code>会对用户和内核代码均有效！</p>
+<p><code>ULIM</code>以上内存用户没有任何权限，而内核能够拥有读写权限。 对于地址范围<code>[UTOP，ULIM)</code>，内核和用户环境都具有相同的权限：它们可以读取但不能写入此地址范围。 此范围的地址用于将某些内核数据结构以只读方式暴露给用户环境。 最后，<code>UTOP</code>下面的地址空间供用户环境使用; 用户环境将设置访问此内存的权限。</p>
+<h2 id=初始化内核地址空间><a href=#初始化内核地址空间 class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:初始化内核地址空间 class=headings>初始化内核地址空间</a></h2>
+<p>Initializing the Kernel Address Space</p>
+<p>现在你将设置<code>UTOP</code>上方的地址空间——地址空间的内核部分。 <code>inc/memlayout.h</code>显示了你应该使用的布局。 您将使用刚刚编写的函数来设置适当的线性到物理的映射。</p>
+<p><strong>Exercise 5.</strong> Fill in the missing code in <code>mem_init()</code> after the call to <code>check_page()</code>.</p>
+<p>Your code should now pass the <code>check_kern_pgdir()</code> and <code>check_page_installed_pgdir()</code> checks.</p>
+<p>In <code>inc/memlayout.h</code>:</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span><span class=lnt>61
+</span><span class=lnt>62
+</span><span class=lnt>63
+</span><span class=lnt>64
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cm>/*
+</span><span class=cm> * Virtual memory map:                                Permissions
+</span><span class=cm> *                                                    kernel/user
+</span><span class=cm> *
+</span><span class=cm> *    4 Gig --------&gt;  +------------------------------+
+</span><span class=cm> *                     |                              | RW/--
+</span><span class=cm> *                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+</span><span class=cm> *                     :              .               :
+</span><span class=cm> *                     :              .               :
+</span><span class=cm> *                     :              .               :
+</span><span class=cm> *                     |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~| RW/--
+</span><span class=cm> *                     |                              | RW/--
+</span><span class=cm> *                     |   Remapped Physical Memory   | RW/--
+</span><span class=cm> *                     |                              | RW/--
+</span><span class=cm> *    KERNBASE, ----&gt;  +------------------------------+ 0xf0000000      --+
+</span><span class=cm> *    KSTACKTOP        |     CPU0&#39;s Kernel Stack      | RW/--  KSTKSIZE   |
+</span><span class=cm> *                     | - - - - - - - - - - - - - - -|                   |
+</span><span class=cm> *                     |      Invalid Memory (*)      | --/--  KSTKGAP    |
+</span><span class=cm> *                     +------------------------------+                   |
+</span><span class=cm> *                     |     CPU1&#39;s Kernel Stack      | RW/--  KSTKSIZE   |
+</span><span class=cm> *                     | - - - - - - - - - - - - - - -|                 PTSIZE
+</span><span class=cm> *                     |      Invalid Memory (*)      | --/--  KSTKGAP    |
+</span><span class=cm> *                     +------------------------------+                   |
+</span><span class=cm> *                     :              .               :                   |
+</span><span class=cm> *                     :              .               :                   |
+</span><span class=cm> *    MMIOLIM ------&gt;  +------------------------------+ 0xefc00000      --+
+</span><span class=cm> *                     |       Memory-mapped I/O      | RW/--  PTSIZE
+</span><span class=cm> * ULIM, MMIOBASE --&gt;  +------------------------------+ 0xef800000
+</span><span class=cm> *                     |  Cur. Page Table (User R-)   | R-/R-  PTSIZE
+</span><span class=cm> *    UVPT      ----&gt;  +------------------------------+ 0xef400000
+</span><span class=cm> *                     |          RO PAGES            | R-/R-  PTSIZE
+</span><span class=cm> *    UPAGES    ----&gt;  +------------------------------+ 0xef000000
+</span><span class=cm> *                     |           RO ENVS            | R-/R-  PTSIZE
+</span><span class=cm> * UTOP,UENVS ------&gt;  +------------------------------+ 0xeec00000
+</span><span class=cm> * UXSTACKTOP -/       |     User Exception Stack     | RW/RW  PGSIZE
+</span><span class=cm> *                     +------------------------------+ 0xeebff000
+</span><span class=cm> *                     |       Empty Memory (*)       | --/--  PGSIZE
+</span><span class=cm> *    USTACKTOP  ---&gt;  +------------------------------+ 0xeebfe000
+</span><span class=cm> *                     |      Normal User Stack       | RW/RW  PGSIZE
+</span><span class=cm> *                     +------------------------------+ 0xeebfd000
+</span><span class=cm> *                     |                              |
+</span><span class=cm> *                     |                              |
+</span><span class=cm> *                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+</span><span class=cm> *                     .                              .
+</span><span class=cm> *                     .                              .
+</span><span class=cm> *                     .                              .
+</span><span class=cm> *                     |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
+</span><span class=cm> *                     |     Program Data &amp; Heap      |
+</span><span class=cm> *    UTEXT --------&gt;  +------------------------------+ 0x00800000
+</span><span class=cm> *    PFTEMP -------&gt;  |       Empty Memory (*)       |        PTSIZE
+</span><span class=cm> *                     |                              |
+</span><span class=cm> *    UTEMP --------&gt;  +------------------------------+ 0x00400000      --+
+</span><span class=cm> *                     |       Empty Memory (*)       |                   |
+</span><span class=cm> *                     | - - - - - - - - - - - - - - -|                   |
+</span><span class=cm> *                     |  User STAB Data (optional)   |                 PTSIZE
+</span><span class=cm> *    USTABDATA ----&gt;  +------------------------------+ 0x00200000        |
+</span><span class=cm> *                     |       Empty Memory (*)       |                   |
+</span><span class=cm> *    0 ------------&gt;  +------------------------------+                 --+
+</span><span class=cm> *
+</span><span class=cm> * (*) Note: The kernel ensures that &#34;Invalid Memory&#34; is *never* mapped.
+</span><span class=cm> *     &#34;Empty Memory&#34; is normally unmapped, but user programs may map pages
+</span><span class=cm> *     there if desired.  JOS user programs map pages temporarily at UTEMP.
+</span><span class=cm> */</span>
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p>根据这里的布局图，可以完成 <code>pmap.c::mem_init()</code> 中的内容：</p>
+<ol>
+<li>从 <code>UPAGES</code> 开始，往上 <code>PTSIZE</code> 范围的地址空间，可以看到其对用户和内核均为只读</li>
+</ol>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c>	<span class=c1>//////////////////////////////////////////////////////////////////////
+</span><span class=c1></span>	<span class=c1>// Map &#39;pages&#39; read-only by the user at linear address UPAGES
+</span><span class=c1></span>	<span class=c1>// Permissions:
+</span><span class=c1></span>	<span class=c1>//    - the new image at UPAGES -- kernel R, user R
+</span><span class=c1></span>	<span class=c1>//      (ie. perm = PTE_U | PTE_P)
+</span><span class=c1></span>	<span class=c1>//    - pages itself -- kernel RW, user NONE
+</span><span class=c1></span>	<span class=c1>// Your code goes here:
+</span><span class=c1></span>	<span class=n>boot_map_region</span><span class=p>(</span><span class=n>kern_pgdir</span><span class=p>,</span> <span class=n>UPAGES</span><span class=p>,</span> <span class=n>PTSIZE</span><span class=p>,</span> <span class=n>PADDR</span><span class=p>(</span><span class=n>pages</span><span class=p>),</span> <span class=n>PTE_U</span><span class=p>);</span>
+
+</code></pre></td></tr></table></div>
+</div>
+</div><ol>
+<li><code>bootstack</code>: 由注释可知，该部分的空间范围为<code>[KSTACKTOP-KSTKSIZE, KSTACKTOP)</code>，即从 <code>KSTACKTOP-KSTKSIZE</code> 开始往上的 <code>KSTKSIZE</code> 大小的空间，可以看到内核具有读写权限，用户没有访问权限</li>
+</ol>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c>	<span class=c1>//////////////////////////////////////////////////////////////////////
+</span><span class=c1></span>	<span class=c1>// Use the physical memory that &#39;bootstack&#39; refers to as the kernel
+</span><span class=c1></span>	<span class=c1>// stack.  The kernel stack grows down from virtual address KSTACKTOP.
+</span><span class=c1></span>	<span class=c1>// We consider the entire range from [KSTACKTOP-PTSIZE, KSTACKTOP)
+</span><span class=c1></span>	<span class=c1>// to be the kernel stack, but break this into two pieces:
+</span><span class=c1></span>	<span class=c1>//     * [KSTACKTOP-KSTKSIZE, KSTACKTOP) -- backed by physical memory
+</span><span class=c1></span>	<span class=c1>//     * [KSTACKTOP-PTSIZE, KSTACKTOP-KSTKSIZE) -- not backed; so if
+</span><span class=c1></span>	<span class=c1>//       the kernel overflows its stack, it will fault rather than
+</span><span class=c1></span>	<span class=c1>//       overwrite memory.  Known as a &#34;guard page&#34;.
+</span><span class=c1></span>	<span class=c1>//     Permissions: kernel RW, user NONE
+</span><span class=c1></span>	<span class=c1>// Your code goes here:
+</span><span class=c1></span>	<span class=n>boot_map_region</span><span class=p>(</span><span class=n>kern_pgdir</span><span class=p>,</span> <span class=n>KSTACKTOP</span><span class=o>-</span><span class=n>KSTKSIZE</span><span class=p>,</span> <span class=n>KSTKSIZE</span><span class=p>,</span> <span class=n>PADDR</span><span class=p>(</span><span class=n>bootstack</span><span class=p>),</span> <span class=n>PTE_W</span><span class=p>);</span>
+
+</code></pre></td></tr></table></div>
+</div>
+</div><ol>
+<li>所有的物理内存，即从 <code>KERNBASE</code> 开始的 <code>32bit</code> 能表示的最大地址 $2^{32} - 1$, 因此其尺寸恰好为 负数以2的补码表示下的 <code>-KERNBASE</code> ； 可以看到对于这部分空间，内核具有读写权限，用户没有权限。</li>
+</ol>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c>	<span class=c1>//////////////////////////////////////////////////////////////////////
+</span><span class=c1></span>	<span class=c1>// Map all of physical memory at KERNBASE.
+</span><span class=c1></span>	<span class=c1>// Ie.  the VA range [KERNBASE, 2^32) should map to
+</span><span class=c1></span>	<span class=c1>//      the PA range [0, 2^32 - KERNBASE)
+</span><span class=c1></span>	<span class=c1>// We might not have 2^32 - KERNBASE bytes of physical memory, but
+</span><span class=c1></span>	<span class=c1>// we just set up the mapping anyway.
+</span><span class=c1></span>	<span class=c1>// Permissions: kernel RW, user NONE
+</span><span class=c1></span>	<span class=c1>// Your code goes here:
+</span><span class=c1></span>	<span class=n>boot_map_region</span><span class=p>(</span><span class=n>kern_pgdir</span><span class=p>,</span> <span class=n>KERNBASE</span><span class=p>,</span> <span class=o>-</span><span class=n>KERNBASE</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=n>PTE_W</span><span class=p>);</span>
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p><strong>Question</strong></p>
+<p>What entries (rows) in the page directory have been filled in at this point? What addresses do they map and where do they point? In other words, fill out this table as much as possible：</p>
+<blockquote>
+<p>EntryBase Virtual AddressPoints to (logically):10230xffc00000Page table for top 4MB of phys memory10220xff800000?.??.??.??20x00800000?10x00400000?00x00000000[see next question]</p>
+</blockquote>
+<p>和最上面给出的<code>inc/memlayout.h</code>中的内存布局一致，简单的线性映射即可。即 $$\text{Virtual address} = Entry \times {0X0040000}$$</p>
+<p>We have placed the kernel and user environment in the same address space. Why will user programs not be able to read or write the kernel's memory? What specific mechanisms protect the kernel memory?</p>
+<p>内核内存部分，PTE_U 无效，因此用户没有读写权限。</p>
+<p>使用寻址区域限制，和权限类型检查来保护内核内存。</p>
+<p>What is the maximum amount of physical memory that this operating system can support? Why?</p>
+<p>UPAGES 大小最大为4MB，而每个PageInfo大小为8B，所以可以最多可以存储512K个PageInfo结构体，而每个PageInfo对应4KB内存，所以最多 512K*4K = 2G内存。</p>
+<p>但这里使用两级表寻址内存页面。 一级页表是页面目录，最多可以处理第二级的1K页表；二级页表可以处理最多1K页面。 页面目录所寻址1M（$2^{20}$）页面，而每个页面包含4K字节（$2 ^{12}$）个字节，所以一个页面目录的表可以跨越<code>80386</code>的整个物理地址空间（$2 ^{20}\times 2 ^{12} = 2 ^{32} Byte = 4 GB)$</p>
+<p>How much space overhead is there for managing memory, if we actually had the maximum amount of physical memory? How is this overhead broken down?</p>
+<p><code>2GB</code>内存对应 <code>512</code> 个物理页，每个 <code>PageInfo</code> 结构占用 <code>8 Byte</code> ，共 <code>4MB</code>。页目录需要 <code>512*8=4KB</code>，而页表包括 <code>512K</code> 个页表项，共<code>512K*4=2MB</code>存储，所以额外消耗的内存为 <code>6MB + 4KB</code>。</p>
+<p>Revisit the page table setup in <code>kern/entry.S</code> and <code>kern/entrypgdir.c</code>. Immediately after we turn on paging, EIP is still a low number (a little over 1MB). At what point do we transition to running at an EIP above KERNBASE? What makes it possible for us to continue executing at a low EIP between when we enable paging and when we begin running at an EIP above KERNBASE? Why is this transition necessary?</p>
+<p>从 <code>kern/entry.S</code> 中的 <code>jmp *%eax</code> 语句开始，系统便跳转到高地址运行。因为在 <code>entry.S</code> 中我们的<code>CR3</code> 加载的是 <code>entry_pgdir</code>，它将物理地址 <code>[0, 4M)</code>同时映射到了虚拟地址的 <code>[0, 4M)</code> 和<code>[KERNBASE, KERNBASE+4M)</code>，所以能保证正常运行。</p>
+<p>而新的<code>kern_pgdir</code>加载后，并没有映射低位的虚拟地址 <code>[0, 4M)</code>，所以这一步跳转是必要的。</p>
+<h2 id=挑战><a href=#挑战 class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:挑战 class=headings>挑战</a></h2>
+<h3 id=挑战1><a href=#挑战1 class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:挑战1 class=headings>挑战1</a></h3>
+<p><em>Challenge!</em> We consumed many physical pages to hold the page tables for the KERNBASE mapping. Do a more space-efficient job using the PTE_PS ("Page Size") bit in the page directory entries. This bit was <em>not</em> supported in the original 80386, but is supported on more recent x86 processors. You will therefore have to refer to <a href=https://pdos.csail.mit.edu/6.828/2018/readings/ia32/IA32-3A.pdf target=_blank rel=noopener>Volume 3 of the current Intel manuals</a>. Make sure you design the kernel to use this optimization only on processors that support it!</p>
+<h3 id=挑战二><a href=#挑战二 class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:挑战二 class=headings>挑战二</a></h3>
+<p>参考链接：<a href=https://github.com/Clann24/jos/tree/master/lab2 target=_blank rel=noopener>https://github.com/Clann24/jos/tree/master/lab2</a></p>
+<p><em>Challenge!</em> Extend the JOS kernel monitor with commands to:</p>
+<ul>
+<li>Display in a useful and easy-to-read format all of the physical page mappings (or lack thereof) that apply to a particular range of virtual/linear addresses in the currently active address space. For example, you might enter <code>showmappings 0x3000 0x5000</code> to display the physical page mappings and corresponding permission bits that apply to the pages at virtual addresses 0x3000, 0x4000, and 0x5000.</li>
+<li>Explicitly set, clear, or change the permissions of any mapping in the current address space.</li>
+<li>Dump the contents of a range of memory given either a virtual or physical address range. Be sure the dump code behaves correctly when the range extends across page boundaries!</li>
+<li>Do anything else that you think might be useful later for debugging the kernel. (There's a good chance it will be!)</li>
+</ul>
+<p>1.1 读取字符串转化为地址</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=kt>uint32_t</span> <span class=nf>xtoi</span><span class=p>(</span><span class=kt>char</span><span class=o>*</span> <span class=n>buf</span><span class=p>)</span> <span class=p>{</span>
+	<span class=kt>uint32_t</span> <span class=n>res</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+	<span class=n>buf</span> <span class=o>+=</span> <span class=mi>2</span><span class=p>;</span> <span class=c1>//0x...
+</span><span class=c1></span>	<span class=k>while</span> <span class=p>(</span><span class=o>*</span><span class=n>buf</span><span class=p>)</span> <span class=p>{</span> 
+		<span class=k>if</span> <span class=p>(</span><span class=o>*</span><span class=n>buf</span> <span class=o>&gt;=</span> <span class=sc>&#39;a&#39;</span><span class=p>)</span> <span class=o>*</span><span class=n>buf</span> <span class=o>=</span> <span class=o>*</span><span class=n>buf</span><span class=o>-</span><span class=sc>&#39;a&#39;</span><span class=o>+</span><span class=sc>&#39;0&#39;</span><span class=o>+</span><span class=mi>10</span><span class=p>;</span><span class=c1>//aha
+</span><span class=c1></span>		<span class=n>res</span> <span class=o>=</span> <span class=n>res</span><span class=o>*</span><span class=mi>16</span> <span class=o>+</span> <span class=o>*</span><span class=n>buf</span> <span class=o>-</span> <span class=sc>&#39;0&#39;</span><span class=p>;</span>
+		<span class=o>++</span><span class=n>buf</span><span class=p>;</span>
+	<span class=p>}</span>
+	<span class=k>return</span> <span class=n>res</span><span class=p>;</span>
+<span class=p>}</span>
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p>1.2 格式化打印 <code>pte_t</code>:</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=kt>void</span> <span class=nf>pprint</span><span class=p>(</span><span class=n>pte_t</span> <span class=o>*</span><span class=n>pte</span><span class=p>)</span> <span class=p>{</span>
+	<span class=n>cprintf</span><span class=p>(</span><span class=s>&#34;PTE_P: %x, PTE_W: %x, PTE_U: %x</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> 
+		<span class=o>*</span><span class=n>pte</span><span class=o>&amp;</span><span class=n>PTE_P</span><span class=p>,</span> <span class=o>*</span><span class=n>pte</span><span class=o>&amp;</span><span class=n>PTE_W</span><span class=p>,</span> <span class=o>*</span><span class=n>pte</span><span class=o>&amp;</span><span class=n>PTE_U</span><span class=p>);</span>
+<span class=p>}</span>
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p>1.3 <code>showmapping</code></p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=kt>int</span>
+<span class=nf>showmappings</span><span class=p>(</span><span class=kt>int</span> <span class=n>argc</span><span class=p>,</span> <span class=kt>char</span> <span class=o>**</span><span class=n>argv</span><span class=p>,</span> <span class=k>struct</span> <span class=n>Trapframe</span> <span class=o>*</span><span class=n>tf</span><span class=p>)</span>
+<span class=p>{</span>
+	<span class=k>if</span> <span class=p>(</span><span class=n>argc</span> <span class=o>==</span> <span class=mi>1</span><span class=p>)</span> <span class=p>{</span>
+		<span class=n>cprintf</span><span class=p>(</span><span class=s>&#34;Usage: showmappings 0xbegin_addr 0xend_addr</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>);</span>
+		<span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+	<span class=p>}</span>
+	<span class=kt>uint32_t</span> <span class=n>begin</span> <span class=o>=</span> <span class=n>xtoi</span><span class=p>(</span><span class=n>argv</span><span class=p>[</span><span class=mi>1</span><span class=p>]),</span> <span class=n>end</span> <span class=o>=</span> <span class=n>xtoi</span><span class=p>(</span><span class=n>argv</span><span class=p>[</span><span class=mi>2</span><span class=p>]);</span>
+	<span class=n>cprintf</span><span class=p>(</span><span class=s>&#34;begin: %x, end: %x</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>begin</span><span class=p>,</span> <span class=n>end</span><span class=p>);</span>
+	<span class=k>for</span> <span class=p>(;</span> <span class=n>begin</span> <span class=o>&lt;=</span> <span class=n>end</span><span class=p>;</span> <span class=n>begin</span> <span class=o>+=</span> <span class=n>PGSIZE</span><span class=p>)</span> <span class=p>{</span>
+		<span class=n>pte_t</span> <span class=o>*</span><span class=n>pte</span> <span class=o>=</span> <span class=n>pgdir_walk</span><span class=p>(</span><span class=n>kern_pgdir</span><span class=p>,</span> <span class=p>(</span><span class=kt>void</span> <span class=o>*</span><span class=p>)</span> <span class=n>begin</span><span class=p>,</span> <span class=mi>1</span><span class=p>);</span>	<span class=c1>//create
+</span><span class=c1></span>		<span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=n>pte</span><span class=p>)</span> <span class=n>panic</span><span class=p>(</span><span class=s>&#34;boot_map_region panic, out of memory&#34;</span><span class=p>);</span>
+		<span class=k>if</span> <span class=p>(</span><span class=o>*</span><span class=n>pte</span> <span class=o>&amp;</span> <span class=n>PTE_P</span><span class=p>)</span> <span class=p>{</span>
+			<span class=n>cprintf</span><span class=p>(</span><span class=s>&#34;page %x with &#34;</span><span class=p>,</span> <span class=n>begin</span><span class=p>);</span>
+			<span class=n>pprint</span><span class=p>(</span><span class=n>pte</span><span class=p>);</span>
+		<span class=p>}</span> <span class=k>else</span> <span class=n>cprintf</span><span class=p>(</span><span class=s>&#34;page not exist: %x</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>begin</span><span class=p>);</span>
+	<span class=p>}</span>
+	<span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+<span class=p>}</span>
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p>2.1 <code>setm</code></p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=kt>int</span> <span class=nf>setm</span><span class=p>(</span><span class=kt>int</span> <span class=n>argc</span><span class=p>,</span> <span class=kt>char</span> <span class=o>**</span><span class=n>argv</span><span class=p>,</span> <span class=k>struct</span> <span class=n>Trapframe</span> <span class=o>*</span><span class=n>tf</span><span class=p>)</span> <span class=p>{</span>
+	<span class=k>if</span> <span class=p>(</span><span class=n>argc</span> <span class=o>==</span> <span class=mi>1</span><span class=p>)</span> <span class=p>{</span>
+		<span class=n>cprintf</span><span class=p>(</span><span class=s>&#34;Usage: setm 0xaddr [0|1 :clear or set] [P|W|U]</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>);</span>
+		<span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+	<span class=p>}</span>
+	<span class=kt>uint32_t</span> <span class=n>addr</span> <span class=o>=</span> <span class=n>xtoi</span><span class=p>(</span><span class=n>argv</span><span class=p>[</span><span class=mi>1</span><span class=p>]);</span>
+	<span class=n>pte_t</span> <span class=o>*</span><span class=n>pte</span> <span class=o>=</span> <span class=n>pgdir_walk</span><span class=p>(</span><span class=n>kern_pgdir</span><span class=p>,</span> <span class=p>(</span><span class=kt>void</span> <span class=o>*</span><span class=p>)</span><span class=n>addr</span><span class=p>,</span> <span class=mi>1</span><span class=p>);</span>
+	<span class=n>cprintf</span><span class=p>(</span><span class=s>&#34;%x before setm: &#34;</span><span class=p>,</span> <span class=n>addr</span><span class=p>);</span>
+	<span class=n>pprint</span><span class=p>(</span><span class=n>pte</span><span class=p>);</span>
+	<span class=kt>uint32_t</span> <span class=n>perm</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+	<span class=k>if</span> <span class=p>(</span><span class=n>argv</span><span class=p>[</span><span class=mi>3</span><span class=p>][</span><span class=mi>0</span><span class=p>]</span> <span class=o>==</span> <span class=sc>&#39;P&#39;</span><span class=p>)</span> <span class=n>perm</span> <span class=o>=</span> <span class=n>PTE_P</span><span class=p>;</span>
+	<span class=k>if</span> <span class=p>(</span><span class=n>argv</span><span class=p>[</span><span class=mi>3</span><span class=p>][</span><span class=mi>0</span><span class=p>]</span> <span class=o>==</span> <span class=sc>&#39;W&#39;</span><span class=p>)</span> <span class=n>perm</span> <span class=o>=</span> <span class=n>PTE_W</span><span class=p>;</span>
+	<span class=k>if</span> <span class=p>(</span><span class=n>argv</span><span class=p>[</span><span class=mi>3</span><span class=p>][</span><span class=mi>0</span><span class=p>]</span> <span class=o>==</span> <span class=sc>&#39;U&#39;</span><span class=p>)</span> <span class=n>perm</span> <span class=o>=</span> <span class=n>PTE_U</span><span class=p>;</span>
+	<span class=k>if</span> <span class=p>(</span><span class=n>argv</span><span class=p>[</span><span class=mi>2</span><span class=p>][</span><span class=mi>0</span><span class=p>]</span> <span class=o>==</span> <span class=sc>&#39;0&#39;</span><span class=p>)</span> 	<span class=c1>//clear
+</span><span class=c1></span>		<span class=o>*</span><span class=n>pte</span> <span class=o>=</span> <span class=o>*</span><span class=n>pte</span> <span class=o>&amp;</span> <span class=o>~</span><span class=n>perm</span><span class=p>;</span>
+	<span class=k>else</span> 	<span class=c1>//set
+</span><span class=c1></span>		<span class=o>*</span><span class=n>pte</span> <span class=o>=</span> <span class=o>*</span><span class=n>pte</span> <span class=o>|</span> <span class=n>perm</span><span class=p>;</span>
+	<span class=n>cprintf</span><span class=p>(</span><span class=s>&#34;%x after  setm: &#34;</span><span class=p>,</span> <span class=n>addr</span><span class=p>);</span>
+	<span class=n>pprint</span><span class=p>(</span><span class=n>pte</span><span class=p>);</span>
+	<span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+<span class=p>}</span>
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p>4.1 <code>showvm</code>: 查看内存</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=kt>int</span> <span class=nf>showvm</span><span class=p>(</span><span class=kt>int</span> <span class=n>argc</span><span class=p>,</span> <span class=kt>char</span> <span class=o>**</span><span class=n>argv</span><span class=p>,</span> <span class=k>struct</span> <span class=n>Trapframe</span> <span class=o>*</span><span class=n>tf</span><span class=p>)</span> <span class=p>{</span>
+	<span class=k>if</span> <span class=p>(</span><span class=n>argc</span> <span class=o>==</span> <span class=mi>1</span><span class=p>)</span> <span class=p>{</span>
+		<span class=n>cprintf</span><span class=p>(</span><span class=s>&#34;Usage: showvm 0xaddr 0xn</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>);</span>
+		<span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+	<span class=p>}</span>
+	<span class=kt>void</span><span class=o>**</span> <span class=n>addr</span> <span class=o>=</span> <span class=p>(</span><span class=kt>void</span><span class=o>**</span><span class=p>)</span> <span class=n>xtoi</span><span class=p>(</span><span class=n>argv</span><span class=p>[</span><span class=mi>1</span><span class=p>]);</span>
+	<span class=kt>uint32_t</span> <span class=n>n</span> <span class=o>=</span> <span class=n>xtoi</span><span class=p>(</span><span class=n>argv</span><span class=p>[</span><span class=mi>2</span><span class=p>]);</span>
+	<span class=kt>int</span> <span class=n>i</span><span class=p>;</span>
+	<span class=k>for</span> <span class=p>(</span><span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>n</span><span class=p>;</span> <span class=o>++</span><span class=n>i</span><span class=p>)</span>
+		<span class=n>cprintf</span><span class=p>(</span><span class=s>&#34;VM at %x is %x</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>addr</span><span class=o>+</span><span class=n>i</span><span class=p>,</span> <span class=n>addr</span><span class=p>[</span><span class=n>i</span><span class=p>]);</span>
+	<span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+<span class=p>}</span>
+
+</code></pre></td></tr></table></div>
+</div>
+</div>
+</div>
+</article>
+<div class=related-posts>
+<h2 class=related-title>相关文章：<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon related-icon"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm144 276c0 6.6-5.4 12-12 12h-92v92c0 6.6-5.4 12-12 12h-56c-6.6.0-12-5.4-12-12v-92h-92c-6.6.0-12-5.4-12-12v-56c0-6.6 5.4-12 12-12h92v-92c0-6.6 5.4-12 12-12h56c6.6.0 12 5.4 12 12v92h92c6.6.0 12 5.4 12 12v56z"/></svg></h2>
+<ul class=related-list>
+<li class=related-item>
+<a href=/archives-604/ class=related-link>MIT6.828 | Lec6: Virtual Memory - 1</a>
+</li>
+<li class=related-item>
+<a href=/archives-602/ class=related-link>MIT6.828 | hw5: xv6 system calls 【待填坑 dup2】</a>
+</li>
+<li class=related-item>
+<a href=/archives-601/ class=related-link>MIT6.828 | Lec 5: Isolation mechanisms</a>
+</li>
+<li class=related-item>
+<a href=/archives-592/ class=related-link>MIT6.828 | Lec4: Shell & OS organization</a>
+</li>
+<li class=related-item>
+<a href=/archives-579/ class=related-link>MIT6.828 | Lab 2: Memory Management</a>
+</li>
+</ul>
+</div>
+<div class=post-tags>
+<a href=/tags/note/ rel=tag class=post-tags-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon tag-icon"><path d="M0 252.118V48C0 21.49 21.49.0 48 0h204.118a48 48 0 0133.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137.0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882.0L14.059 286.059A48 48 0 010 252.118zM112 64c-26.51.0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"/></svg>note</a>
+<a href=/tags/mit6.828/ rel=tag class=post-tags-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon tag-icon"><path d="M0 252.118V48C0 21.49 21.49.0 48 0h204.118a48 48 0 0133.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137.0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882.0L14.059 286.059A48 48 0 010 252.118zM112 64c-26.51.0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"/></svg>MIT6.828</a>
+</div>
+<footer class=minimal-footer>
+<div class=post-tag><a href=/tags/note/ rel=tag class=post-tag-link>#note</a> <a href=/tags/mit6.828/ rel=tag class=post-tag-link>#mit6828</a></div>
+<div class=post-category>
+<a href=/tech/ class="post-category-link active">tech</a>
+</div>
+</footer>
+<ul class=post-nav>
+<li class=post-nav-prev>
+<a href=/archives-579/ rel=prev>&lt; MIT6.828 | Lab 2: Memory Management</a>
+</li>
+<li class=post-nav-next>
+<a href=/archives-583/ rel=next>MIT6.828 | Lab 2: Memory Management - Part 2: Virtual Memory ></a>
+</li>
+</ul>
+</div>
+</main>
+<div id=back-to-top class=back-to-top>
+<a href=#><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon arrow-up"><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6.0-33.9L207 39c9.4-9.4 24.6-9.4 33.9.0l194.3 194.3c9.4 9.4 9.4 24.6.0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3.0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"/></svg></a>
+</div>
+<footer id=footer class=footer>
+<div class=footer-inner>
+<div class=site-info>©&nbsp;2019–2021&nbsp;&nbsp;Jiachen</div><div class=site-copyright><a href=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh target=_blank rel=noopener>CC BY-NC-SA 4.0</a></div>
+</div>
+</footer>
+</div>
+<script>'serviceWorker'in navigator&&window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js')})</script>
+<script src=https://cdn.jsdelivr.net/npm/medium-zoom@latest/dist/medium-zoom.min.js></script>
+<script>mediumZoom(document.querySelectorAll('div.post-body img'),{background:'hsla(var(--color-bg-h), var(--color-bg-s), var(--color-bg-l), 0.95)'})</script>
+<script src=https://cdn.jsdelivr.net/npm/instant.page@5.1.0/instantpage.min.js type=module defer></script>
+</body>
+</html>

@@ -1,0 +1,618 @@
+<!doctype html><html lang=zh-cn>
+<head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+<meta charset=utf-8>
+<meta name=generator content="Hugo 0.88.1"><meta name=theme-color content="#16171d">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=format-detection content="telephone=no, date=no, address=no, email=no">
+<meta http-equiv=cache-control content="no-transform">
+<meta http-equiv=cache-control content="no-siteapp">
+<title>MIT6.828 | Lec2: x86 and PC architecture | The Daily Awesome</title>
+<link rel=stylesheet href=/css/meme.min.c7b66d8ab937ea5489e87c6d96c470e3f5e7b5a21a385e18c358b7b3be61b6de.css>
+<script src=/js/meme.min.8cbe976441b5181abfd3093c9beee209b19cdbb1fa77c48d225a83ba81fa3fb1.js></script>
+<link rel=preconnect href=https://fonts.gstatic.com crossorigin>
+<link rel=stylesheet href="https://fonts.loli.net/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400;1,700&family=Noto+Serif+SC:wght@400;500;700&family=Source+Code+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap" media=print onload="this.media='all'">
+<noscript><link rel=stylesheet href="https://fonts.loli.net/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400;1,700&family=Noto+Serif+SC:wght@400;500;700&family=Source+Code+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap"></noscript>
+<meta name=author content="Jiachen Zhang"><meta name=description content="From: LINK Outline PC architecture x86 instruction set gcc calling conventions 【调用约定】 PC emulation PC architecture 数据寄存器：AX, BX, CX, DX 地址寄存器：SP, DP, SI, BI 指令寄存器：IP 16位和32位的切换 A full PC has: an x86 CPU with registers, execution unit, and memory management CPU chip pins include address and data signals memory disk keyboard (Input) display (Output) other resources: BIOS ROM, clock, ... We will start with the original 16-bit 8086 CPU (1978) CPU runs instructions: for(;;){ run next instruction } Needs work space: registers four 16-bit data registers: AX, BX, CX, DX each in two 8-bit halves, e.g. AH and AL very fast, very few More work space: memory CPU sends out address on address……">
+<link rel="shortcut icon" href=/favicon.ico type=image/x-icon>
+<link rel=mask-icon href=/icons/safari-pinned-tab.svg color=#2a6df4>
+<link rel=apple-touch-icon sizes=180x180 href=/icons/apple-touch-icon.png>
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-title content="The Daily Awesome">
+<meta name=apple-mobile-web-app-status-bar-style content="black">
+<meta name=mobile-web-app-capable content="yes">
+<meta name=application-name content="The Daily Awesome">
+<meta name=msapplication-starturl content="../">
+<meta name=msapplication-TileColor content="#fff">
+<meta name=msapplication-TileImage content="../icons/mstile-150x150.png">
+<link rel=manifest href=/manifest.json>
+<link rel=canonical href=https://www.zhangjc.site/archives-540/>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","datePublished":"2019-06-16T00:40:00+00:00","dateModified":"2021-10-01T20:54:44+08:00","url":"https://www.zhangjc.site/archives-540/","headline":"MIT6.828 | Lec2: x86 and PC architecture","description":"From: LINK Outline PC architecture x86 instruction set gcc calling conventions 【调用约定】 PC emulation PC architecture 数据寄存器：AX, BX, CX, DX 地址寄存器：SP, DP, SI, BI 指令寄存器：IP 16位和32位的切换 A full PC has: an x86 CPU with registers, execution unit, and memory management CPU chip pins include address and data signals memory disk keyboard (Input) display (Output) other resources: BIOS ROM, clock, ... We will start with the original 16-bit 8086 CPU (1978) CPU runs instructions: for(;;){ run next instruction } Needs work space: registers four 16-bit data registers: AX, BX, CX, DX each in two 8-bit halves, e.g. AH and AL very fast, very few More work space: memory CPU sends out address on address……","inLanguage":"zh-CN","articleSection":"tech","wordCount":2204,"image":"https://www.zhangjc.site/icons/apple-touch-icon.png","author":{"@type":"Person","description":"The Daily Awesome","email":"zhangjc1999@gmail.com","image":"https://www.zhangjc.site/icons/apple-touch-icon.png","url":"https://www.zhangjc.site/","name":"Jiachen"},"license":"[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh)","publisher":{"@type":"Organization","name":"The Daily Awesome","logo":{"@type":"ImageObject","url":"https://www.zhangjc.site/icons/apple-touch-icon.png"},"url":"https://www.zhangjc.site/"},"mainEntityOfPage":{"@type":"WebSite","@id":"https://www.zhangjc.site/"}}</script>
+<meta name=twitter:card content="summary">
+<meta name=twitter:site content="@JiachenZhang5">
+<meta name=twitter:creator content="@JiachenZhang5">
+<meta property="og:title" content="MIT6.828 | Lec2: x86 and PC architecture">
+<meta property="og:description" content="From: LINK Outline PC architecture x86 instruction set gcc calling conventions 【调用约定】 PC emulation PC architecture 数据寄存器：AX, BX, CX, DX 地址寄存器：SP, DP, SI, BI 指令寄存器：IP 16位和32位的切换 A full PC has: an x86 CPU with registers, execution unit, and memory management CPU chip pins include address and data signals memory disk keyboard (Input) display (Output) other resources: BIOS ROM, clock, ... We will start with the original 16-bit 8086 CPU (1978) CPU runs instructions: for(;;){ run next instruction } Needs work space: registers four 16-bit data registers: AX, BX, CX, DX each in two 8-bit halves, e.g. AH and AL very fast, very few More work space: memory CPU sends out address on address……">
+<meta property="og:url" content="https://www.zhangjc.site/archives-540/">
+<meta property="og:site_name" content="The Daily Awesome">
+<meta property="og:locale" content="zh"><meta property="og:image" content="https://www.zhangjc.site/icons/apple-touch-icon.png">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2019-06-16T00:40:00+00:00">
+<meta property="article:modified_time" content="2021-10-01T20:54:44+08:00">
+<meta property="article:section" content="tech">
+<script type=text/javascript src="https://s4.cnzz.com/z_stat.php?id=1279769355&web_id=1279769355"></script>
+</head>
+<body>
+<div class=container>
+<header class=header>
+<div class=header-wrapper>
+<div class="header-inner single">
+<div class=site-brand>
+<a href=/ class=brand>The Daily Awesome</a>
+</div>
+<nav class=nav>
+<ul class=menu id=menu>
+<li class=menu-item><a href=/life/><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon archive"><path d="M32 448c0 17.7 14.3 32 32 32h384c17.7.0 32-14.3 32-32V160H32v288zm160-212c0-6.6 5.4-12 12-12h104c6.6.0 12 5.4 12 12v8c0 6.6-5.4 12-12 12H204c-6.6.0-12-5.4-12-12v-8zM480 32H32C14.3 32 0 46.3.0 64v48c0 8.8 7.2 16 16 16h480c8.8.0 16-7.2 16-16V64c0-17.7-14.3-32-32-32z"/></svg><span class=menu-item-name>生活</span></a>
+</li>
+<li class=menu-item><a href=/tech/><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon th"><path d="M149.333 56v80c0 13.255-10.745 24-24 24H24c-13.255.0-24-10.745-24-24V56c0-13.255 10.745-24 24-24h101.333c13.255.0 24 10.745 24 24zm181.334 240v-80c0-13.255-10.745-24-24-24H205.333c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256.0 24.001-10.745 24.001-24zm32-240v80c0 13.255 10.745 24 24 24H488c13.255.0 24-10.745 24-24V56c0-13.255-10.745-24-24-24H386.667c-13.255.0-24 10.745-24 24zm-32 80V56c0-13.255-10.745-24-24-24H205.333c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256.0 24.001-10.745 24.001-24zm-205.334 56H24c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24zM0 376v80c0 13.255 10.745 24 24 24h101.333c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H24c-13.255.0-24 10.745-24 24zm386.667-56H488c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zm0 160H488c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zM181.333 376v80c0 13.255 10.745 24 24 24h101.333c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H205.333c-13.255.0-24 10.745-24 24z"/></svg><span class=menu-item-name>技术</span></a>
+</li>
+<li class=menu-item><a href=/about/><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" class="icon user-circle"><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 96c48.6.0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 344c-58.7.0-111.3-26.6-146.5-68.2 18.8-35.4 55.6-59.8 98.5-59.8 2.4.0 4.8.4 7.1 1.1 13 4.2 26.6 6.9 40.9 6.9s28-2.7 40.9-6.9c2.3-.7 4.7-1.1 7.1-1.1 42.9.0 79.7 24.4 98.5 59.8C359.3 421.4 306.7 448 248 448z"/></svg><span class=menu-item-name>关于</span></a>
+</li>
+<li class=menu-item>
+<a id=theme-switcher href=#><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon theme-icon-light"><path d="M193.2 104.5 242 7a18 18 0 0128 0l48.8 97.5L422.2 70A18 18 0 01442 89.8l-34.5 103.4L505 242a18 18 0 010 28l-97.5 48.8L442 422.2A18 18 0 01422.2 442l-103.4-34.5L270 505a18 18 0 01-28 0l-48.8-97.5L89.8 442A18 18 0 0170 422.2l34.5-103.4-97.5-48.8a18 18 0 010-28l97.5-48.8L70 89.8A18 18 0 0189.8 70zM256 128a128 128 0 10.01.0M256 160a96 96 0 10.01.0"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon theme-icon-dark"><path d="M27 412A256 256 0 10181 5a11.5 11.5.0 00-5 20A201.5 201.5.0 0142 399a11.5 11.5.0 00-15 13"/></svg></a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+<input type=checkbox id=nav-toggle aria-hidden=true>
+<label for=nav-toggle class=nav-toggle></label>
+<label for=nav-toggle class=nav-curtain></label>
+</header>
+<main class="main single" id=main>
+<div class=main-inner>
+<article class="content post h-entry" data-align=justify data-type=tech data-toc-num=true>
+<h1 class="post-title p-name">MIT6.828 | Lec2: x86 and PC architecture</h1>
+<div class=post-meta>
+<time datetime=2019-06-16T00:40:00+00:00 class="post-meta-item published dt-published"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon post-meta-icon"><path d="M148 288h-40c-6.6.0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6.0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5.0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6.0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6.0 12 5.4 12 12v52h48c26.5.0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3.0 6-2.7 6-6z"/></svg>&nbsp;2019.6.16</time>
+<span class="post-meta-item category"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49.0 112v288c0 26.51 21.49 48 48 48h416c26.51.0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>&nbsp;<a href=/tech/ class="category-link p-category">Tech</a></span>
+</div>
+<nav class=contents>
+<ol class=toc>
+<li><a id=contents:outline href=#outline>Outline</a></li>
+<li><a id=contents:pc-architecture href=#pc-architecture>PC architecture</a></li>
+<li><a id=contents:x86-physical-memory-map-物理内存映射 href=#x86-physical-memory-map-物理内存映射>x86 Physical Memory Map 物理内存映射</a></li>
+<li><a id=contents:x86-instruction-set href=#x86-instruction-set>x86 Instruction Set</a></li>
+<li><a id=contents:gcc-x86-calling-conventions href=#gcc-x86-calling-conventions>gcc x86 calling conventions</a></li>
+<li><a id=contents:pc-emulation-模拟器如何工作 href=#pc-emulation-模拟器如何工作>PC emulation 【模拟器（如何工作）】</a></li>
+</ol>
+</nav><div class="post-body e-content">
+<p>From: <a href=https://pdos.csail.mit.edu/6.828/2018/lec/l-x86.html target=_blank rel=noopener>LINK</a></p>
+<h2 id=outline><a href=#outline class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:outline class=headings>Outline</a></h2>
+<ul>
+<li>PC architecture</li>
+<li>x86 instruction set</li>
+<li>gcc calling conventions 【调用约定】</li>
+<li>PC emulation</li>
+</ul>
+<h2 id=pc-architecture><a href=#pc-architecture class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:pc-architecture class=headings>PC architecture</a></h2>
+<p>数据寄存器：AX, BX, CX, DX</p>
+<p>地址寄存器：SP, DP, SI, BI</p>
+<p>指令寄存器：IP</p>
+<p>16位和32位的切换</p>
+<p><strong>A full PC has:</strong></p>
+<ul>
+<li>an x86 CPU with registers, execution unit, and memory management</li>
+<li>CPU chip pins include address and data signals</li>
+<li>memory</li>
+<li>disk</li>
+<li>keyboard (Input)</li>
+<li>display (Output)</li>
+<li>other resources: BIOS ROM, clock, ...</li>
+</ul>
+<p><strong>We will start with the original 16-bit 8086 CPU (1978)</strong></p>
+<p><strong>CPU runs instructions:</strong></p>
+<pre tabindex=0><code>for(;;){
+	run next instruction
+}
+
+</code></pre><p><strong>Needs work space: registers</strong></p>
+<ul>
+<li>four 16-bit data registers: AX, BX, CX, DX</li>
+<li>each in two 8-bit halves, e.g. AH and AL</li>
+<li>very fast, very few</li>
+</ul>
+<p><strong>More work space: memory</strong></p>
+<ul>
+<li>CPU sends out address on address lines (wires, one bit per wire)</li>
+<li>Data <strong>comes back</strong> on data lines</li>
+<li><em>or</em> data is <strong>written</strong> to data lines</li>
+</ul>
+<p><strong>Add address registers: pointers into memory</strong></p>
+<ul>
+<li>SP - <strong>stack pointer</strong></li>
+<li>BP - <strong>frame base pointer</strong> 【结合 From Nand to Tetris 课程理解】</li>
+<li>SI - source index</li>
+<li>DI - destination index</li>
+</ul>
+<p><strong>Instructions are in memory too!</strong></p>
+<ul>
+<li>IP - <strong>instruction pointer</strong> (PC on PDP-11, everything else)</li>
+<li>increment after running each instruction</li>
+<li>can be modified by CALL, RET, JMP, conditional jumps</li>
+<li>Want conditional jumps 【跳转语句】</li>
+<li>FLAGS - various condition codes</li>
+<li>whether last arithmetic operation overflowed</li>
+<li>... was positive/negative</li>
+<li>... was [not] zero</li>
+<li>... carry/borrow on add/subtract</li>
+<li>... etc.</li>
+<li>whether interrupts are enabled</li>
+<li>direction of data copy instructions</li>
+<li>JP, JN, J[N]Z, J[N]C, J[N]O ...</li>
+</ul>
+<p><strong>Still not interesting - need I/O to interact with outside world</strong></p>
+<p>Original PC architecture: use dedicated <em>I/O space</em></p>
+<p>Works same as memory accesses but set I/O signal</p>
+<p>Only 1024 I/O addresses</p>
+<p><strong>Accessed with special instructions (IN, OUT)</strong></p>
+<p>Example: write a byte to line printer:</p>
+<pre tabindex=0><code>#define DATA_PORT   	0x378
+#define STATUS_PORT 	0x379
+#define BUSY 			0x80
+#define CONTROL_PORT 	0x37A
+#define   STROBE 0x01
+void lpt_putc(int c) {
+  /* wait for printer to consume previous byte */
+  while((inb(STATUS_PORT) &amp; BUSY) == 0)
+    ;
+
+  /* put the byte on the parallel lines */
+  outb(DATA_PORT, c);
+
+  /* tell the printer to look at the data */
+  outb(CONTROL_PORT, STROBE);
+  outb(CONTROL_PORT, 0);
+}
+
+</code></pre><p>Memory-Mapped I/O</p>
+<ul>
+<li>Use normal physical memory addresses</li>
+<li>Gets around limited size of I/O address space</li>
+<li>No need for special instructions</li>
+<li>System controller routes to appropriate device</li>
+<li>Works like ``magic'' memory:</li>
+<li><em>Addressed</em> and <em>accessed</em> like memory, but ...</li>
+<li>... does not <em>behave</em> like memory!</li>
+<li>Reads and writes can have ``side effects''</li>
+<li>Read results can change due to external events</li>
+</ul>
+<p>将输入输出设备映射到指定的内存区域，再经由特定指令进行访问。</p>
+<p><strong>What if we want to use more than 2^16 bytes of memory?</strong></p>
+<p>16 是因为该系统为 16bit</p>
+<p>8086 has 20-bit physical addresses, can have 1 Meg RAM</p>
+<p>the extra four bits usually come from a 16-bit "segment register":</p>
+<ul>
+<li>CS: code segment, for fetches via IP</li>
+<li>SS: stack segment, for load/store via SP and BP</li>
+<li>DS: data segment, for load/store via other registers</li>
+<li>ES: another data segment, destination for string operations</li>
+</ul>
+<p>virtual to physical translation: <code>pa = va + seg*16</code></p>
+<ul>
+<li>e.g. set CS = 4096 to execute starting at 65536</li>
+</ul>
+<p>Lab1 中便采用了这个方法，其中 <code>*16</code>恰好是16进制下的左移一位</p>
+<p><strong>tricky</strong>: can't use the 16-bit address of a stack variable as a pointer</p>
+<p>!> 堆栈变量的16位地址不能作为指针</p>
+<p>a <em>far pointer</em> includes full segment: offset (16 + 16 bits)</p>
+<p>远指针？偏移量？</p>
+<p><strong>tricky</strong>: pointer arithmetic and array indexing across segment boundaries</p>
+<p>跨段边界的指针算术和数组索引</p>
+<p><strong>But 8086's 16-bit addresses and data were still painfully small</strong></p>
+<p>80386 added support for 32-bit data and addresses (1985)</p>
+<p>boots in 16-bit mode, boot.S switches to 32-bit mode !></p>
+<p>registers are 32 bits wide, called EAX rather than AX</p>
+<p>operands and addresses that were 16-bit became 32-bit in 32-bit mode, e.g. ADD does 32-bit arithmetic</p>
+<p>prefixes 0x66/0x67 toggle between 16-bit and 32-bit operands and addresses: in 32-bit mode, MOVW is expressed as 0x66 MOVW</p>
+<p>前缀0x66 / 0x67在16位和32位操作数和地址之间切换：在32位模式下，MOVW表示为0x66 MOVW</p>
+<p>the .code32 in boot.S tells assembler to generate 0x66 for e.g. MOVW</p>
+<p>80386 also <strong>changed segments</strong> and <strong>added paged memory</strong>...</p>
+<p><strong>Example instruction encoding</strong></p>
+<pre tabindex=0><code>	b8 cd ab		16-bit CPU,  AX &lt;- 0xabcd
+	b8 34 12 cd ab		32-bit CPU, EAX &lt;- 0xabcd1234
+	66 b8 cd ab		32-bit CPU,  AX &lt;- 0xabcd
+
+</code></pre><h2 id=x86-physical-memory-map-物理内存映射><a href=#x86-physical-memory-map-物理内存映射 class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:x86-physical-memory-map-物理内存映射 class=headings>x86 Physical Memory Map 物理内存映射</a></h2>
+<ul>
+<li>The physical address space mostly looks like ordinary RAM</li>
+<li>Except some low-memory addresses actually refer to other things</li>
+<li>Writes to VGA memory appear on the screen</li>
+<li>Reset or power-on jumps to ROM at 0xfffffff0 (so must be ROM at top...)</li>
+</ul>
+<pre tabindex=0><code>+------------------+  &lt;- 0xFFFFFFFF (4GB)
+|      32-bit      |
+|  memory mapped   |
+|     devices      |
+|                  |
+/\/\/\/\/\/\/\/\/\/\
+
+/\/\/\/\/\/\/\/\/\/\
+|                  |
+|      Unused      |
+|                  |
++------------------+  &lt;- depends on amount of RAM
+|                  |
+|                  |
+| Extended Memory  |
+|                  |
+|                  |
++------------------+  &lt;- 0x00100000 (1MB)
+|     BIOS ROM     |
++------------------+  &lt;- 0x000F0000 (960KB)
+|  16-bit devices, |
+|  expansion ROMs  |
++------------------+  &lt;- 0x000C0000 (768KB)
+|   VGA Display    |  &lt;- Writes to VGA memory appear on the screen
++------------------+  &lt;- 0x000A0000 (640KB)
+|                  |  
+|    Low Memory    |  &lt;- Refer to other things
+|                  |
++------------------+  &lt;- 0x00000000
+
+</code></pre><h2 id=x86-instruction-set><a href=#x86-instruction-set class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:x86-instruction-set class=headings>x86 Instruction Set</a></h2>
+<p>Intel syntax: <code>op dst, src</code> (Intel manuals!)</p>
+<p>AT&T (gcc/gas) syntax: <code>op src, dst</code> (labs, xv6)</p>
+<ul>
+<li>uses <code>b</code>, <code>w</code>, <code>l</code> suffix on instructions to <strong>specify size of operands</strong></li>
+</ul>
+<p>Operands are <strong>registers</strong>, <strong>constant</strong>, <strong>memory via register</strong>, <strong>memory via constant</strong></p>
+<p>Examples:AT&T syntax"C"-ish equivalentmovl %eax, %edxedx = eax;_register mode_movl $0x123, %edxedx = 0x123;_immediate_movl 0x123, %edxedx = <em>(int32_t</em>)0x123;_direct_movl (%ebx), %edxedx = <em>(int32_t</em>)ebx;_indirect_movl 4(%ebx), %edxedx = <em>(int32_t</em>)(ebx+4);<em>displaced</em></p>
+<p>Instruction classes</p>
+<ul>
+<li>data movement: MOV, PUSH, POP, ...</li>
+<li>arithmetic: TEST, SHL, ADD, AND, ...</li>
+<li>i/o: IN, OUT, ...</li>
+<li>control: JMP, JZ, JNZ, CALL, RET</li>
+<li>string: REP MOVSB, ...</li>
+<li>system: IRET, INT</li>
+</ul>
+<p>Intel architecture manual Volume 2 is <em>the</em> reference</p>
+<h2 id=gcc-x86-calling-conventions><a href=#gcc-x86-calling-conventions class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:gcc-x86-calling-conventions class=headings>gcc x86 calling conventions</a></h2>
+<p><strong>x86 dictates that stack grows down</strong>:Example instructionWhat it does<code>pushl</code> <code>%eaxsubl $4, %esp</code> <code>movl %eax, (%esp)popl</code> <code>%eaxmovl (%esp), %eax</code> <code>addl $4, %espcall</code> <code>0x12345pushl %eip (*)</code> <code>movl $0x12345, %eip (*) retpopl %eip (*)</code></p>
+<p>(*) Not real instructions</p>
+<p><strong>GCC dictates how the stack is used. Contract between caller and callee on x86:</strong></p>
+<ul>
+<li>at entry to a function (i.e. just after call):</li>
+<li><code>%eip</code> points at first instruction of function</li>
+<li><code>%esp+4</code> points at first argument</li>
+<li><code>%esp</code> points at return address</li>
+<li>after ret instruction:</li>
+<li><code>%eip</code> contains return address</li>
+<li><code>%esp</code> points at arguments pushed by caller</li>
+<li>called function may have trashed arguments</li>
+<li><code>%eax</code> (and <code>%edx</code>, if return type is 64-bit) contains return value (or trash if function is <code>void</code>)</li>
+<li><code>%eax</code>, <code>%edx</code> (above), and <code>%ecx</code> may be trashed</li>
+<li><code>%ebp</code>, <code>%ebx</code>, <code>%esi</code>, <code>%edi</code> must contain contents from time of <code>call</code></li>
+<li>Terminology: 【术语】</li>
+<li><code>%eax</code>, <code>%ecx</code>, <code>%edx</code> are "<strong>caller save</strong>" registers</li>
+<li><code>%ebp</code>, <code>%ebx</code>, <code>%esi</code>, <code>%edi</code> are "<strong>callee save</strong>" registers</li>
+</ul>
+<p><strong>Functions can do anything that doesn't violate contract. By convention, GCC does more:</strong></p>
+<p>each function has a stack frame marked by <code>%ebp</code>, <code>%esp</code></p>
+<pre tabindex=0><code>		       +------------+   |
+		       | arg 2      |   \
+		       +------------+    &gt;- previous function's stack frame
+		       | arg 1      |   /
+		       +------------+   |
+		       | ret %eip   |   /
+		       +============+   
+		       | saved %ebp |   \
+		%ebp-&gt; +------------+   |
+		       |            |   |
+		       |   local    |   \
+		       | variables, |    &gt;- current function's stack frame
+		       |    etc.    |   /
+		       |            |   |
+		       |            |   |
+		%esp-&gt; +------------+   /
+
+</code></pre><p>结合 <code>From Nand to Tetris</code> 笔记理解，这里 <code>%ebp</code> 和 <code>%esp</code>制定了方法栈的大小，记录该部分的栈顶和栈底，其大小由参数个数决定。</p>
+<p><code>%esp</code> can move to make stack frame bigger, smaller</p>
+<p><code>%ebp</code> points at saved <code>%ebp</code> from previous function, chain to walk stack</p>
+<p>新方法入栈时，将入栈前的栈顶记录为<code>%ebp</code>, 在参数入栈和出栈时修改 <code>%esp</code></p>
+<p>function prologue: 【方法入栈】</p>
+<pre tabindex=0><code class=language-assembly data-lang=assembly>			pushl %ebp
+			movl %esp, %ebp
+
+</code></pre><p>or</p>
+<pre tabindex=0><code class=language-assembly data-lang=assembly>			enter $0, $0
+
+</code></pre><p>enter usually not used: 4 bytes vs 3 for <code>pushl+movl</code>, not on hardware fast-path anymore</p>
+<p>function epilogue can easily find return EIP on stack: 【方法出栈】</p>
+<pre tabindex=0><code class=language-assembly data-lang=assembly>			movl %ebp, %esp
+			popl %ebp
+
+</code></pre><p>or</p>
+<pre tabindex=0><code class=language-assembly data-lang=assembly>			leave
+
+</code></pre><p>leave used often because it's 1 byte, vs 3 for <code>movl+popl</code></p>
+<p>Big example:</p>
+<p>C code</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c>		<span class=kt>int</span> <span class=nf>main</span><span class=p>(</span><span class=kt>void</span><span class=p>)</span> <span class=p>{</span> <span class=k>return</span> <span class=n>f</span><span class=p>(</span><span class=mi>8</span><span class=p>)</span><span class=o>+</span><span class=mi>1</span><span class=p>;</span> <span class=p>}</span>
+		<span class=kt>int</span> <span class=nf>f</span><span class=p>(</span><span class=kt>int</span> <span class=n>x</span><span class=p>)</span> <span class=p>{</span> <span class=k>return</span> <span class=n>g</span><span class=p>(</span><span class=n>x</span><span class=p>);</span> <span class=p>}</span>
+		<span class=kt>int</span> <span class=nf>g</span><span class=p>(</span><span class=kt>int</span> <span class=n>x</span><span class=p>)</span> <span class=p>{</span> <span class=k>return</span> <span class=n>x</span><span class=o>+</span><span class=mi>3</span><span class=p>;</span> <span class=p>}</span>
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p>assembler</p>
+<pre tabindex=0><code class=language-assembly data-lang=assembly>		_main:
+					prologue
+			pushl %ebp
+			movl %esp, %ebp
+					body
+			pushl $8
+			call _f
+			addl $1, %eax
+					epilogue
+			movl %ebp, %esp
+			popl %ebp
+			ret
+		_f:
+					prologue
+			pushl %ebp
+			movl %esp, %ebp
+					body
+			pushl 8(%esp)
+			call _g
+					epilogue
+			movl %ebp, %esp
+			popl %ebp
+			ret
+
+		_g:
+					prologue
+			pushl %ebp
+			movl %esp, %ebp
+					save %ebx
+			pushl %ebx
+					body
+			movl 8(%ebp), %ebx
+			addl $3, %ebx
+			movl %ebx, %eax
+					restore %ebx
+			popl %ebx
+					epilogue
+			movl %ebp, %esp
+			popl %ebp
+			ret
+
+</code></pre><p>可以看到对于每个函数都有，记录初始栈顶 <code>movl %esp, %ebp</code>, 加载参数，（调用函数）出栈，返回</p>
+<p>Super-small</p>
+<p>_g:</p>
+<pre tabindex=0><code>		_g:
+			movl 4(%esp), %eax
+			addl $3, %eax
+			ret
+	
+
+</code></pre><p>Compiling, linking, loading:</p>
+<p><em>Preprocessor</em> takes C source code (ASCII text), expands #include etc, produces C source code</p>
+<p>预处理：载入头文件</p>
+<p><em>Compiler</em> takes C source code (ASCII text), produces assembly language (also ASCII text)</p>
+<p>编译：源代码 => 汇编</p>
+<p><em>Assembler</em> takes assembly language (ASCII text), produces <code>.o</code> file (binary, machine-readable!)</p>
+<p>汇编：汇编 => 机器码</p>
+<p><em>Linker</em> takes multiple '<code>.o</code>'s, produces a single <em>program image</em> (binary)</p>
+<p>链接：多个机器码文件 => 单个二进制程序镜像</p>
+<p><em>Loader</em> loads the program image into memory at run-time and starts it executing</p>
+<p>装载：程序镜像放入内存开始执行</p>
+<h2 id=pc-emulation-模拟器如何工作><a href=#pc-emulation-模拟器如何工作 class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:pc-emulation-模拟器如何工作 class=headings>PC emulation 【模拟器（如何工作）】</a></h2>
+<p>The Bochs emulator works by</p>
+<ul>
+<li>doing exactly what a real PC would do,</li>
+<li>only implemented in software rather than hardware!</li>
+</ul>
+<p>Runs as a normal process in a "host" operating system (e.g., Linux)</p>
+<p>Uses normal process storage to hold emulated hardware state: e.g.,</p>
+<p>Stores emulated CPU registers in global variables 【模拟寄存器】</p>
+<pre tabindex=0><code>		int32_t regs[8];
+		#define REG_EAX 1;
+		#define REG_EBX 2;
+		#define REG_ECX 3;
+		...
+		int32_t eip;
+		int16_t segregs[4];
+		...
+		
+
+</code></pre><p>Stores emulated physical memory in Boch's memory 【模拟内存】</p>
+<pre tabindex=0><code>                char mem[256*1024*1024];
+
+</code></pre><p>256 bytes * 1024 * 1024 = 256 MB</p>
+<p>Execute instructions by simulating them in a loop: 【模拟指令执行】</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c>	<span class=k>for</span> <span class=p>(;;)</span> <span class=p>{</span>
+		<span class=n>read_instruction</span><span class=p>();</span>
+		<span class=k>switch</span> <span class=p>(</span><span class=n>decode_instruction_opcode</span><span class=p>())</span> <span class=p>{</span>
+		<span class=k>case</span> <span class=nl>OPCODE_ADD</span><span class=p>:</span>
+			<span class=kt>int</span> <span class=n>src</span> <span class=o>=</span> <span class=n>decode_src_reg</span><span class=p>();</span>
+			<span class=kt>int</span> <span class=n>dst</span> <span class=o>=</span> <span class=n>decode_dst_reg</span><span class=p>();</span>
+			<span class=n>regs</span><span class=p>[</span><span class=n>dst</span><span class=p>]</span> <span class=o>=</span> <span class=n>regs</span><span class=p>[</span><span class=n>dst</span><span class=p>]</span> <span class=o>+</span> <span class=n>regs</span><span class=p>[</span><span class=n>src</span><span class=p>];</span>
+			<span class=k>break</span><span class=p>;</span>
+		<span class=k>case</span> <span class=nl>OPCODE_SUB</span><span class=p>:</span>
+			<span class=kt>int</span> <span class=n>src</span> <span class=o>=</span> <span class=n>decode_src_reg</span><span class=p>();</span>
+			<span class=kt>int</span> <span class=n>dst</span> <span class=o>=</span> <span class=n>decode_dst_reg</span><span class=p>();</span>
+			<span class=n>regs</span><span class=p>[</span><span class=n>dst</span><span class=p>]</span> <span class=o>=</span> <span class=n>regs</span><span class=p>[</span><span class=n>dst</span><span class=p>]</span> <span class=o>-</span> <span class=n>regs</span><span class=p>[</span><span class=n>src</span><span class=p>];</span>
+			<span class=k>break</span><span class=p>;</span>
+		<span class=p>...</span>
+		<span class=p>}</span>
+		<span class=n>eip</span> <span class=o>+=</span> <span class=n>instruction_length</span><span class=p>;</span>
+	<span class=p>}</span>
+	
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p>Simulate PC's physical memory map by decoding emulated "physical" addresses just like a PC would:</p>
+<p>【模拟物理内存映射】【内存读写】</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c>	<span class=cp>#define KB		1024
+</span><span class=cp></span>	<span class=cp>#define MB		1024*1024
+</span><span class=cp></span>
+	<span class=cp>#define LOW_MEMORY	640*KB
+</span><span class=cp></span>	<span class=cp>#define EXT_MEMORY	10*MB
+</span><span class=cp></span>
+	<span class=kt>uint8_t</span> <span class=n>low_mem</span><span class=p>[</span><span class=n>LOW_MEMORY</span><span class=p>];</span>
+	<span class=kt>uint8_t</span> <span class=n>ext_mem</span><span class=p>[</span><span class=n>EXT_MEMORY</span><span class=p>];</span>
+	<span class=kt>uint8_t</span> <span class=n>bios_rom</span><span class=p>[</span><span class=mi>64</span><span class=o>*</span><span class=n>KB</span><span class=p>];</span>
+
+	<span class=kt>uint8_t</span> <span class=nf>read_byte</span><span class=p>(</span><span class=kt>uint32_t</span> <span class=n>phys_addr</span><span class=p>)</span> <span class=p>{</span>
+		<span class=k>if</span> <span class=p>(</span><span class=n>phys_addr</span> <span class=o>&lt;</span> <span class=n>LOW_MEMORY</span><span class=p>)</span>
+			<span class=k>return</span> <span class=n>low_mem</span><span class=p>[</span><span class=n>phys_addr</span><span class=p>];</span>
+		<span class=k>else</span> <span class=k>if</span> <span class=p>(</span><span class=n>phys_addr</span> <span class=o>&gt;=</span> <span class=mi>960</span><span class=o>*</span><span class=n>KB</span> <span class=o>&amp;&amp;</span> <span class=n>phys_addr</span> <span class=o>&lt;</span> <span class=mi>1</span><span class=o>*</span><span class=n>MB</span><span class=p>)</span>
+			<span class=k>return</span> <span class=n>rom_bios</span><span class=p>[</span><span class=n>phys_addr</span> <span class=o>-</span> <span class=mi>960</span><span class=o>*</span><span class=n>KB</span><span class=p>];</span>
+		<span class=k>else</span> <span class=k>if</span> <span class=p>(</span><span class=n>phys_addr</span> <span class=o>&gt;=</span> <span class=mi>1</span><span class=o>*</span><span class=n>MB</span> <span class=o>&amp;&amp;</span> <span class=n>phys_addr</span> <span class=o>&lt;</span> <span class=mi>1</span><span class=o>*</span><span class=n>MB</span><span class=o>+</span><span class=n>EXT_MEMORY</span><span class=p>)</span> <span class=p>{</span>
+			<span class=k>return</span> <span class=n>ext_mem</span><span class=p>[</span><span class=n>phys_addr</span><span class=o>-</span><span class=mi>1</span><span class=o>*</span><span class=n>MB</span><span class=p>];</span>
+		<span class=k>else</span> <span class=p>...</span>
+	<span class=p>}</span>
+
+	<span class=kt>void</span> <span class=n>write_byte</span><span class=p>(</span><span class=kt>uint32_t</span> <span class=n>phys_addr</span><span class=p>,</span> <span class=kt>uint8_t</span> <span class=n>val</span><span class=p>)</span> <span class=p>{</span>
+		<span class=k>if</span> <span class=p>(</span><span class=n>phys_addr</span> <span class=o>&lt;</span> <span class=n>LOW_MEMORY</span><span class=p>)</span>
+			<span class=n>low_mem</span><span class=p>[</span><span class=n>phys_addr</span><span class=p>]</span> <span class=o>=</span> <span class=n>val</span><span class=p>;</span>
+		<span class=k>else</span> <span class=k>if</span> <span class=p>(</span><span class=n>phys_addr</span> <span class=o>&gt;=</span> <span class=mi>960</span><span class=o>*</span><span class=n>KB</span> <span class=o>&amp;&amp;</span> <span class=n>phys_addr</span> <span class=o>&lt;</span> <span class=mi>1</span><span class=o>*</span><span class=n>MB</span><span class=p>)</span>
+			<span class=p>;</span> <span class=cm>/* ignore attempted write to ROM! */</span>
+		<span class=k>else</span> <span class=k>if</span> <span class=p>(</span><span class=n>phys_addr</span> <span class=o>&gt;=</span> <span class=mi>1</span><span class=o>*</span><span class=n>MB</span> <span class=o>&amp;&amp;</span> <span class=n>phys_addr</span> <span class=o>&lt;</span> <span class=mi>1</span><span class=o>*</span><span class=n>MB</span><span class=o>+</span><span class=n>EXT_MEMORY</span><span class=p>)</span> <span class=p>{</span>
+			<span class=n>ext_mem</span><span class=p>[</span><span class=n>phys_addr</span><span class=o>-</span><span class=mi>1</span><span class=o>*</span><span class=n>MB</span><span class=p>]</span> <span class=o>=</span> <span class=n>val</span><span class=p>;</span>
+		<span class=k>else</span> <span class=p>...</span>
+	<span class=p>}</span>
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p>Simulate I/O devices, etc., by detecting accesses to "special" memory and I/O space and emulating the correct behavior: e.g., 【仿真输入输出设备】</p>
+<ul>
+<li>Reads/writes to emulated hard disk transformed into reads/writes of a file on the host system</li>
+<li>Writes to emulated VGA display hardware transformed into drawing into an X window</li>
+<li>Reads from emulated PC keyboard transformed into reads from X input event queue</li>
+</ul>
+</div>
+</article>
+<div class=related-posts>
+<h2 class=related-title>相关文章：<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon related-icon"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm144 276c0 6.6-5.4 12-12 12h-92v92c0 6.6-5.4 12-12 12h-56c-6.6.0-12-5.4-12-12v-92h-92c-6.6.0-12-5.4-12-12v-56c0-6.6 5.4-12 12-12h92v-92c0-6.6 5.4-12 12-12h56c6.6.0 12 5.4 12 12v92h92c6.6.0 12 5.4 12 12v56z"/></svg></h2>
+<ul class=related-list>
+<li class=related-item>
+<a href=/archives-604/ class=related-link>MIT6.828 | Lec6: Virtual Memory - 1</a>
+</li>
+<li class=related-item>
+<a href=/archives-602/ class=related-link>MIT6.828 | hw5: xv6 system calls 【待填坑 dup2】</a>
+</li>
+<li class=related-item>
+<a href=/archives-601/ class=related-link>MIT6.828 | Lec 5: Isolation mechanisms</a>
+</li>
+<li class=related-item>
+<a href=/archives-592/ class=related-link>MIT6.828 | Lec4: Shell & OS organization</a>
+</li>
+<li class=related-item>
+<a href=/archives-579/ class=related-link>MIT6.828 | Lab 2: Memory Management</a>
+</li>
+</ul>
+</div>
+<div class=post-tags>
+<a href=/tags/note/ rel=tag class=post-tags-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon tag-icon"><path d="M0 252.118V48C0 21.49 21.49.0 48 0h204.118a48 48 0 0133.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137.0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882.0L14.059 286.059A48 48 0 010 252.118zM112 64c-26.51.0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"/></svg>note</a>
+<a href=/tags/mit6.828/ rel=tag class=post-tags-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon tag-icon"><path d="M0 252.118V48C0 21.49 21.49.0 48 0h204.118a48 48 0 0133.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137.0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882.0L14.059 286.059A48 48 0 010 252.118zM112 64c-26.51.0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"/></svg>MIT6.828</a>
+</div>
+<footer class=minimal-footer>
+<div class=post-tag><a href=/tags/note/ rel=tag class=post-tag-link>#note</a> <a href=/tags/mit6.828/ rel=tag class=post-tag-link>#mit6828</a></div>
+<div class=post-category>
+<a href=/tech/ class="post-category-link active">tech</a>
+</div>
+</footer>
+<ul class=post-nav>
+<li class=post-nav-prev>
+<a href=/archives-541/ rel=prev>&lt; <ol start=1089>
+<li>重复0 - Duplicate Zeros</li>
+</ol>
+</a>
+</li>
+<li class=post-nav-next>
+<a href=/archives-539/ rel=next>MIT6.828 | Lab 1: Booting a PC - Part 3: The Kernel ></a>
+</li>
+</ul>
+</div>
+</main>
+<div id=back-to-top class=back-to-top>
+<a href=#><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon arrow-up"><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6.0-33.9L207 39c9.4-9.4 24.6-9.4 33.9.0l194.3 194.3c9.4 9.4 9.4 24.6.0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3.0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"/></svg></a>
+</div>
+<footer id=footer class=footer>
+<div class=footer-inner>
+<div class=site-info>©&nbsp;2019–2021&nbsp;&nbsp;Jiachen</div><div class=site-copyright><a href=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh target=_blank rel=noopener>CC BY-NC-SA 4.0</a></div>
+</div>
+</footer>
+</div>
+<script>'serviceWorker'in navigator&&window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js')})</script>
+<script src=https://cdn.jsdelivr.net/npm/medium-zoom@latest/dist/medium-zoom.min.js></script>
+<script>mediumZoom(document.querySelectorAll('div.post-body img'),{background:'hsla(var(--color-bg-h), var(--color-bg-s), var(--color-bg-l), 0.95)'})</script>
+<script src=https://cdn.jsdelivr.net/npm/instant.page@5.1.0/instantpage.min.js type=module defer></script>
+</body>
+</html>

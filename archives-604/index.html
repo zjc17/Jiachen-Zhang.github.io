@@ -1,0 +1,282 @@
+<!doctype html><html lang=zh-cn>
+<head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+<meta charset=utf-8>
+<meta name=generator content="Hugo 0.88.1"><meta name=theme-color content="#16171d">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=format-detection content="telephone=no, date=no, address=no, email=no">
+<meta http-equiv=cache-control content="no-transform">
+<meta http-equiv=cache-control content="no-siteapp">
+<title>MIT6.828 | Lec6: Virtual Memory - 1 | The Daily Awesome</title>
+<link rel=stylesheet href=/css/meme.min.c7b66d8ab937ea5489e87c6d96c470e3f5e7b5a21a385e18c358b7b3be61b6de.css>
+<script src=/js/meme.min.8cbe976441b5181abfd3093c9beee209b19cdbb1fa77c48d225a83ba81fa3fb1.js></script>
+<link rel=preconnect href=https://fonts.gstatic.com crossorigin>
+<link rel=stylesheet href="https://fonts.loli.net/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400;1,700&family=Noto+Serif+SC:wght@400;500;700&family=Source+Code+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap" media=print onload="this.media='all'">
+<noscript><link rel=stylesheet href="https://fonts.loli.net/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400;1,700&family=Noto+Serif+SC:wght@400;500;700&family=Source+Code+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap"></noscript>
+<meta name=author content="Jiachen Zhang"><meta name=description content="Notes MIT6.828 Lec6 Virtual Memory">
+<link rel="shortcut icon" href=/favicon.ico type=image/x-icon>
+<link rel=mask-icon href=/icons/safari-pinned-tab.svg color=#2a6df4>
+<link rel=apple-touch-icon sizes=180x180 href=/icons/apple-touch-icon.png>
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-title content="The Daily Awesome">
+<meta name=apple-mobile-web-app-status-bar-style content="black">
+<meta name=mobile-web-app-capable content="yes">
+<meta name=application-name content="The Daily Awesome">
+<meta name=msapplication-starturl content="../">
+<meta name=msapplication-TileColor content="#fff">
+<meta name=msapplication-TileImage content="../icons/mstile-150x150.png">
+<link rel=manifest href=/manifest.json>
+<link rel=canonical href=https://www.zhangjc.site/archives-604/>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","datePublished":"2019-07-02T06:57:00+00:00","dateModified":"2021-10-01T20:54:44+08:00","url":"https://www.zhangjc.site/archives-604/","headline":"MIT6.828 | Lec6: Virtual Memory - 1","description":"Notes MIT6.828 Lec6 Virtual Memory","inLanguage":"zh-CN","articleSection":"tech","wordCount":2050,"image":["https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1745336595.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1798872467.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/462757007.jpg"],"author":{"@type":"Person","description":"The Daily Awesome","email":"zhangjc1999@gmail.com","image":"https://www.zhangjc.site/icons/apple-touch-icon.png","url":"https://www.zhangjc.site/","name":"Jiachen"},"license":"[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh)","publisher":{"@type":"Organization","name":"The Daily Awesome","logo":{"@type":"ImageObject","url":"https://www.zhangjc.site/icons/apple-touch-icon.png"},"url":"https://www.zhangjc.site/"},"mainEntityOfPage":{"@type":"WebSite","@id":"https://www.zhangjc.site/"}}</script>
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:site content="@JiachenZhang5">
+<meta name=twitter:creator content="@JiachenZhang5">
+<meta property="og:title" content="MIT6.828 | Lec6: Virtual Memory - 1">
+<meta property="og:description" content="Notes MIT6.828 Lec6 Virtual Memory">
+<meta property="og:url" content="https://www.zhangjc.site/archives-604/">
+<meta property="og:site_name" content="The Daily Awesome">
+<meta property="og:locale" content="zh"><meta property="og:image" content="https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1745336595.png">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2019-07-02T06:57:00+00:00">
+<meta property="article:modified_time" content="2021-10-01T20:54:44+08:00">
+<meta property="article:section" content="tech">
+<script type=text/javascript src="https://s4.cnzz.com/z_stat.php?id=1279769355&web_id=1279769355"></script>
+</head>
+<body>
+<div class=container>
+<header class=header>
+<div class=header-wrapper>
+<div class="header-inner single">
+<div class=site-brand>
+<a href=/ class=brand>The Daily Awesome</a>
+</div>
+<nav class=nav>
+<ul class=menu id=menu>
+<li class=menu-item><a href=/life/><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon archive"><path d="M32 448c0 17.7 14.3 32 32 32h384c17.7.0 32-14.3 32-32V160H32v288zm160-212c0-6.6 5.4-12 12-12h104c6.6.0 12 5.4 12 12v8c0 6.6-5.4 12-12 12H204c-6.6.0-12-5.4-12-12v-8zM480 32H32C14.3 32 0 46.3.0 64v48c0 8.8 7.2 16 16 16h480c8.8.0 16-7.2 16-16V64c0-17.7-14.3-32-32-32z"/></svg><span class=menu-item-name>生活</span></a>
+</li>
+<li class=menu-item><a href=/tech/><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon th"><path d="M149.333 56v80c0 13.255-10.745 24-24 24H24c-13.255.0-24-10.745-24-24V56c0-13.255 10.745-24 24-24h101.333c13.255.0 24 10.745 24 24zm181.334 240v-80c0-13.255-10.745-24-24-24H205.333c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256.0 24.001-10.745 24.001-24zm32-240v80c0 13.255 10.745 24 24 24H488c13.255.0 24-10.745 24-24V56c0-13.255-10.745-24-24-24H386.667c-13.255.0-24 10.745-24 24zm-32 80V56c0-13.255-10.745-24-24-24H205.333c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256.0 24.001-10.745 24.001-24zm-205.334 56H24c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24zM0 376v80c0 13.255 10.745 24 24 24h101.333c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H24c-13.255.0-24 10.745-24 24zm386.667-56H488c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zm0 160H488c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zM181.333 376v80c0 13.255 10.745 24 24 24h101.333c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H205.333c-13.255.0-24 10.745-24 24z"/></svg><span class=menu-item-name>技术</span></a>
+</li>
+<li class=menu-item><a href=/about/><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" class="icon user-circle"><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 96c48.6.0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 344c-58.7.0-111.3-26.6-146.5-68.2 18.8-35.4 55.6-59.8 98.5-59.8 2.4.0 4.8.4 7.1 1.1 13 4.2 26.6 6.9 40.9 6.9s28-2.7 40.9-6.9c2.3-.7 4.7-1.1 7.1-1.1 42.9.0 79.7 24.4 98.5 59.8C359.3 421.4 306.7 448 248 448z"/></svg><span class=menu-item-name>关于</span></a>
+</li>
+<li class=menu-item>
+<a id=theme-switcher href=#><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon theme-icon-light"><path d="M193.2 104.5 242 7a18 18 0 0128 0l48.8 97.5L422.2 70A18 18 0 01442 89.8l-34.5 103.4L505 242a18 18 0 010 28l-97.5 48.8L442 422.2A18 18 0 01422.2 442l-103.4-34.5L270 505a18 18 0 01-28 0l-48.8-97.5L89.8 442A18 18 0 0170 422.2l34.5-103.4-97.5-48.8a18 18 0 010-28l97.5-48.8L70 89.8A18 18 0 0189.8 70zM256 128a128 128 0 10.01.0M256 160a96 96 0 10.01.0"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon theme-icon-dark"><path d="M27 412A256 256 0 10181 5a11.5 11.5.0 00-5 20A201.5 201.5.0 0142 399a11.5 11.5.0 00-15 13"/></svg></a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+<input type=checkbox id=nav-toggle aria-hidden=true>
+<label for=nav-toggle class=nav-toggle></label>
+<label for=nav-toggle class=nav-curtain></label>
+</header>
+<main class="main single" id=main>
+<div class=main-inner>
+<article class="content post h-entry" data-align=justify data-type=tech data-toc-num=true>
+<h1 class="post-title p-name">MIT6.828 | Lec6: Virtual Memory - 1</h1>
+<div class=post-meta>
+<time datetime=2019-07-02T06:57:00+00:00 class="post-meta-item published dt-published"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon post-meta-icon"><path d="M148 288h-40c-6.6.0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6.0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5.0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6.0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6.0 12 5.4 12 12v52h48c26.5.0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3.0 6-2.7 6-6z"/></svg>&nbsp;2019.7.2</time>
+<span class="post-meta-item category"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49.0 112v288c0 26.51 21.49 48 48 48h416c26.51.0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>&nbsp;<a href=/tech/ class="category-link p-category">Tech</a></span>
+</div>
+<nav class=contents>
+<ol class=toc>
+<li><a id=contents:虚拟内存概述 href=#虚拟内存概述>虚拟内存概述</a></li>
+<li><a id=contents:案例研究xv6使用x86分页硬件 href=#案例研究xv6使用x86分页硬件>案例研究：xv6使用x86分页硬件</a></li>
+</ol>
+</nav><div class="post-body e-content">
+<p><a href=https://pdos.csail.mit.edu/6.828/2018/lec/l-vm.md target=_blank rel=noopener>LINK</a></p>
+<p>计划：</p>
+<ul>
+<li>地址空间</li>
+<li>页面硬件</li>
+<li><code>xv6</code> VM 代码</li>
+</ul>
+<h2 id=虚拟内存概述><a href=#虚拟内存概述 class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:虚拟内存概述 class=headings>虚拟内存概述</a></h2>
+<p><strong>当今的问题：</strong></p>
+<p>[用户/内核图]</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1745336595.png alt=内存视图：内存中包含用户进程和内核的图表><figcaption>
+<p>内存视图：内存中包含用户进程和内核的图表</p>
+</figcaption>
+</figure>
+<p>假设shell有一个bug：有时它会写入随机存储器地址</p>
+<p>我们如何防止它破坏内核或其他过程？</p>
+<p><strong>我们想要隔离的地址空间</strong>：</p>
+<ul>
+<li>每个进程都有自己的内存</li>
+<li>它可以读写自己的内存</li>
+<li>它无法读取或写入任何其他内容</li>
+<li>挑战：如何在一个物理内存中复用多个内存？同时保持内存之间的隔离</li>
+</ul>
+<p><strong><code>xv6</code> 和 <code>JOS</code> 使用 <code>x86</code> 的分页硬件实现 AS</strong></p>
+<p><strong>分页为寻址提供了间接层</strong>：</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1798872467.png>
+</figure>
+<p><code>s/w</code> 只能 <code>ld</code>/<code>st</code>到虚拟地址，而非物理地址，内核告诉MMU如何将每个虚拟地址映射到物理地址。</p>
+<p><code>MMU</code> 本质上是一个由 <code>va</code> 索引至 <code>pa</code> 的表，<code>MMU</code> 能够限制用户代码允许使用的虚拟地址。</p>
+<p><strong><code>x86</code> 映射 <code>4KB</code> “页面”并从 <code>4KB</code> 边界开始对齐——因此页表索引是 <code>VA</code> 的前20位。</strong></p>
+<p><strong>页表条目（PTE）中的内容是什么？</strong></p>
+<p>前20位是物理地址的前20位</p>
+<ul>
+<li>“物理页码”</li>
+<li>MMU用PPN取代VA的高20位</li>
+</ul>
+<p>低12位是标志位</p>
+<p>Present， Writeable，&c</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/462757007.jpg>
+</figure>
+<p><strong>页表存储在哪里：</strong></p>
+<p>在 <code>RAM</code> 中——<code>MMU</code> 加载（和存储）<code>PTE</code> ；操作系统可以读写 <code>PTE</code></p>
+<p><strong>是否可以认为页表是一个<code>PTE</code>数组？它有多大？</strong></p>
+<p>$2^{20}$是一百万 -> 每个条目32位 -> 整页表格为<code>4MB</code></p>
+<p>在早期机器上相当大，但会为小程序浪费大量内存！—— 你只需要几百页的映射，所以其余的百万条目将在那里但不需要。</p>
+<p><strong>x86使用“两级页表”来节省空间：</strong></p>
+<p>RAM中的PTE页面</p>
+<p>RAM中的页面目录（PD）</p>
+<p>PDE还包含20位PPN —— 1024个PTE组成的页面，1024个PDE指向PTE页面</p>
+<p>每个PTE页面有1024个PTE——总共1024*1024个PTE</p>
+<p>PD条目可能无效</p>
+<p>那些PTE页面不需要存在，因此，小地址空间的页表可以很小</p>
+<p><strong>mmu如何知道页表在RAM中的位置？</strong></p>
+<p><code>％cr3</code>保存<code>PD</code>的物理地址</p>
+<p><code>PD</code>保存<code>PTE</code>页面的物理地址</p>
+<p>(它们可以在RAM中的任何位置 - 不需要连续)</p>
+<p><strong>x86寻页硬件如何翻译虚拟地址(va)？</strong></p>
+<ul>
+<li>定位正确的 <code>PTE</code></li>
+<li><code>%cr3</code> 指向 <code>PD</code> 的 <code>PA</code></li>
+<li>高 <code>10bit</code> 作为 <code>PD</code> 的索引来得到 <code>PT</code> 的 <code>PA</code></li>
+<li>之后的 <code>10bit</code> 作为 <code>PT</code> 的索引得到 <code>PTE</code></li>
+<li>最终得到 【来自 <code>PTE</code> 的 <code>PPN</code> + <code>VA</code> 的低12bit】</li>
+</ul>
+<p><strong>PTE 中的标志位：</strong></p>
+<ul>
+<li><code>P</code>, <code>W</code>, <code>U</code></li>
+<li>xv6 使用 <code>U</code> 来防止用户使用内核内存</li>
+</ul>
+<p><strong>如果没有设置P位怎么办？ 或存储和W位未设置？</strong></p>
+<p>“页面错误”</p>
+<p>CPU保存寄存器，强制转移到内核</p>
+<p>trap.c在xv6源码中</p>
+<p>内核能够产生错误，结束进程；或安装PTE，恢复进程</p>
+<p>例如 从磁盘加载内存页面后</p>
+<p><strong>问：为什么映射而不是基址/约束？</strong></p>
+<ul>
+<li>间接允许分页 <code>h/w</code> 解决许多问题，例如</li>
+<li>避免碎片化</li>
+<li><code>copy-on-write fork</code></li>
+<li>懒惰分配（下一课的家庭作业）</li>
+<li>更多技术，下一讲的主题</li>
+</ul>
+<p><strong>问：为什么在内核中使用虚拟内存？为用户进程提供页表显然很好****但为什么需要内核的页表？</strong></p>
+<p>内核可以只使用物理地址运行吗？是的<code>Singularity</code> 是使用物理地址的示例内核但是，大多数标准内核都使用虚拟地址？为什么标准内核会这样做？</p>
+<p>硬件使其难以关闭</p>
+<p>例如在进入系统调用时，必须禁用VM</p>
+<p>内核可以方便地使用用户地址，例如传递给系统调用的用户地址但是，可能是一个坏主意：内核/应用程序之间的隔离比较差</p>
+<p>如果地址是连续的则很方便。例如内核有4Kbyte对象和64Kbyte对象，如果没有页表，我们很容易就会出现<strong>内存碎片</strong></p>
+<p>例如，分配64K，分配4Kbyte，释放64K，从64Kbyte分配4Kbyte现在一个新的64Kbyte对象不能使用空闲的60Kbyte。</p>
+<p>内核必须运行各种硬件，而它们可能具有不同的物理内存布局</p>
+<h2 id=案例研究xv6使用x86分页硬件><a href=#案例研究xv6使用x86分页硬件 class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:案例研究xv6使用x86分页硬件 class=headings>案例研究：xv6使用x86分页硬件</a></h2>
+<p><strong>xv6中每个进程的地址空间</strong></p>
+<pre tabindex=0><code>  0x00000000:0x80000000 -- user addresses below KERNBASE
+  0x80000000:0x80100000 -- map low 1MB devices (for kernel)
+  0x80100000:?          -- kernel instructions/data
+  ?         :0x8E000000 -- 224 MB of DRAM mapped here
+  0xFE000000:0x00000000 -- more memory-mapped devices
+
+</code></pre><p><strong>xv6内存映射的对饮关系</strong>——课本，或者代码注释 （mem_layout.h）</p>
+<p><strong>每个进程都有独立的地址空间和页表，但所有的进程有相同的内核映射（高内存地址片段）</strong></p>
+<p>内核通过切换页表，（例如设置 <code>%cr3</code>）来切换进程</p>
+<p><strong>问：为什么这样安排地址空间？</strong></p>
+<p>用户虚拟地址从零开始，那么用户的虚拟地址 <code>va: 0</code> 对于每个进程映射不同的 <code>PA</code></p>
+<p>虚拟内存中2GB大小的用户堆连续增长，但不需要连续的物理内存 —— 内核和用户映射都不会产生碎片问题—— 易于系统调用的切换，中断在所有进程的相同位置映射内核</p>
+<p>简化进程切换</p>
+<p>内核能方便地读写用户内存</p>
+<p><code>pa x</code> 映射到 <code>va x + 0x80000000</code> ，我们很快就会在操作页面表时看到这一点</p>
+<p><strong>这样的视图下能承载的最大进程？</strong></p>
+<p><strong>是否能增加这样的最大进程，通过增加或减少 <code>0x80000000</code>？</strong></p>
+<p><strong>内核是否必须将所有的物理内存映射到其虚拟地址空间？</strong></p>
+<p>let's look at some xv6 virtual memory codeterminology: virtual memory == address space / translationwill help you w. next homework and labs</p>
+<ul>
+<li>
+<p>where did this pgdir get setup?look at vm.c: setupkvm and inituvm</p>
+</li>
+<li>
+<p>mappages() in vm.carguments are PD, va, size, pa, permadds mappings from a range of va's to corresponding pa'srounds b/c some uses pass in non-page-aligned addressesfor each page-aligned address in the rangecall walkpgdir to find address of PTEneed the PTE's address (not just content) b/c we want to modifyput the desired pa into the PTEmark PTE as valid w/ PTE_P</p>
+</li>
+<li>
+<p>diagram of PD &c, as following steps build it</p>
+</li>
+<li>
+<p>walkpgdir() in vm.cmimics how the paging h/w finds the PTE for an addressrefer to the handoutPDX extracts top ten bits&pgdir[PDX(va)] is the address of the relevant PDEnow *pde is the PDEif PTE_Pthe relevant page-table page already existsPTE_ADDR extracts the PPN from the PDEp2v() adds 0x80000000, since PTE holds physical addressif not PTE_Palloc a page-table pagefill in PDE with PPN -- thus v2pnow the PTE we want is in the page-table pageat offset PTX(va)which is 2nd 10 bits of va</p>
+</li>
+<li>
+<p>tracing and date system call</p>
+</li>
+<li>
+<p>a process calls sbrk(n) to ask for n more bytes of heap memorymalloc() uses sbrk()each process has a sizekernel adds new memory at process's end, increases sizesbrk() allocates physical memory (RAM)maps it into the process's page tablereturns the starting address of the new memory</p>
+</li>
+<li>
+<p>sys_sbrk() in sysproc.c</p>
+</li>
+<li>
+<p>growproc() in proc.cproc->sz is the process's current sizeallocuvm() does most of the workswitchuvm sets %cr3 with new page tablealso flushes some MMU caches so it will see new PTEs</p>
+</li>
+<li>
+<p>allocuvm() in vm.cwhy if(newsz >= KERNBASE) ?why PGROUNDUP?arguments to mappages()...</p>
+</li>
+</ul>
+</div>
+</article>
+<div class=related-posts>
+<h2 class=related-title>相关文章：<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon related-icon"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm144 276c0 6.6-5.4 12-12 12h-92v92c0 6.6-5.4 12-12 12h-56c-6.6.0-12-5.4-12-12v-92h-92c-6.6.0-12-5.4-12-12v-56c0-6.6 5.4-12 12-12h92v-92c0-6.6 5.4-12 12-12h56c6.6.0 12 5.4 12 12v92h92c6.6.0 12 5.4 12 12v56z"/></svg></h2>
+<ul class=related-list>
+<li class=related-item>
+<a href=/archives-602/ class=related-link>MIT6.828 | hw5: xv6 system calls 【待填坑 dup2】</a>
+</li>
+<li class=related-item>
+<a href=/archives-601/ class=related-link>MIT6.828 | Lec 5: Isolation mechanisms</a>
+</li>
+<li class=related-item>
+<a href=/archives-592/ class=related-link>MIT6.828 | Lec4: Shell & OS organization</a>
+</li>
+<li class=related-item>
+<a href=/archives-579/ class=related-link>MIT6.828 | Lab 2: Memory Management</a>
+</li>
+<li class=related-item>
+<a href=/archives-588/ class=related-link>MIT6.828 | Lab 2: Memory Management - Part 3: Kernel Address Space</a>
+</li>
+</ul>
+</div>
+<div class=post-tags>
+<a href=/tags/note/ rel=tag class=post-tags-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon tag-icon"><path d="M0 252.118V48C0 21.49 21.49.0 48 0h204.118a48 48 0 0133.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137.0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882.0L14.059 286.059A48 48 0 010 252.118zM112 64c-26.51.0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"/></svg>note</a>
+<a href=/tags/mit6.828/ rel=tag class=post-tags-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon tag-icon"><path d="M0 252.118V48C0 21.49 21.49.0 48 0h204.118a48 48 0 0133.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137.0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882.0L14.059 286.059A48 48 0 010 252.118zM112 64c-26.51.0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"/></svg>MIT6.828</a>
+</div>
+<footer class=minimal-footer>
+<div class=post-tag><a href=/tags/note/ rel=tag class=post-tag-link>#note</a> <a href=/tags/mit6.828/ rel=tag class=post-tag-link>#mit6828</a></div>
+<div class=post-category>
+<a href=/tech/ class="post-category-link active">tech</a>
+</div>
+</footer>
+<ul class=post-nav>
+<li class=post-nav-prev>
+<a href=/archives-610/ rel=prev>&lt; 脚本 | 利用python自动整理桌面文件</a>
+</li>
+<li class=post-nav-next>
+<a href=/archives-602/ rel=next>MIT6.828 | hw5: xv6 system calls 【待填坑 dup2】 ></a>
+</li>
+</ul>
+</div>
+</main>
+<div id=back-to-top class=back-to-top>
+<a href=#><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon arrow-up"><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6.0-33.9L207 39c9.4-9.4 24.6-9.4 33.9.0l194.3 194.3c9.4 9.4 9.4 24.6.0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3.0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"/></svg></a>
+</div>
+<footer id=footer class=footer>
+<div class=footer-inner>
+<div class=site-info>©&nbsp;2019–2021&nbsp;&nbsp;Jiachen</div><div class=site-copyright><a href=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh target=_blank rel=noopener>CC BY-NC-SA 4.0</a></div>
+</div>
+</footer>
+</div>
+<script>'serviceWorker'in navigator&&window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js')})</script>
+<script src=https://cdn.jsdelivr.net/npm/medium-zoom@latest/dist/medium-zoom.min.js></script>
+<script>mediumZoom(document.querySelectorAll('div.post-body img'),{background:'hsla(var(--color-bg-h), var(--color-bg-s), var(--color-bg-l), 0.95)'})</script>
+<script src=https://cdn.jsdelivr.net/npm/instant.page@5.1.0/instantpage.min.js type=module defer></script>
+</body>
+</html>

@@ -1,0 +1,528 @@
+<!doctype html><html lang=zh-cn>
+<head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+<meta charset=utf-8>
+<meta name=generator content="Hugo 0.88.1"><meta name=theme-color content="#16171d">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=format-detection content="telephone=no, date=no, address=no, email=no">
+<meta http-equiv=cache-control content="no-transform">
+<meta http-equiv=cache-control content="no-siteapp">
+<title>译 | pipe, fork & dup: 理解命令执行和输入输出流 | The Daily Awesome</title>
+<link rel=stylesheet href=/css/meme.min.c7b66d8ab937ea5489e87c6d96c470e3f5e7b5a21a385e18c358b7b3be61b6de.css>
+<script src=/js/meme.min.8cbe976441b5181abfd3093c9beee209b19cdbb1fa77c48d225a83ba81fa3fb1.js></script>
+<link rel=preconnect href=https://fonts.gstatic.com crossorigin>
+<link rel=stylesheet href="https://fonts.loli.net/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400;1,700&family=Noto+Serif+SC:wght@400;500;700&family=Source+Code+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap" media=print onload="this.media='all'">
+<noscript><link rel=stylesheet href="https://fonts.loli.net/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400;1,700&family=Noto+Serif+SC:wght@400;500;700&family=Source+Code+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap"></noscript>
+<meta name=author content="Jiachen Zhang"><meta name=description content="使用图表清晰的展示了管道的工作方式 原文链接 i> 注意：理解这篇文章需要基本熟悉Unix命令和C / C ++。 我的目标是在运行命令时解释进程之间的数据流。 如果您想直接跳转到管道内容，请单击此处。 在这篇文章中，我们将讨论Unix命令如何通过管道和输入/输出重定向将数据相互传递，并且我将说明执行命令时数据流实际发……">
+<link rel="shortcut icon" href=/favicon.ico type=image/x-icon>
+<link rel=mask-icon href=/icons/safari-pinned-tab.svg color=#2a6df4>
+<link rel=apple-touch-icon sizes=180x180 href=/icons/apple-touch-icon.png>
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-title content="The Daily Awesome">
+<meta name=apple-mobile-web-app-status-bar-style content="black">
+<meta name=mobile-web-app-capable content="yes">
+<meta name=application-name content="The Daily Awesome">
+<meta name=msapplication-starturl content="../">
+<meta name=msapplication-TileColor content="#fff">
+<meta name=msapplication-TileImage content="../icons/mstile-150x150.png">
+<link rel=manifest href=/manifest.json>
+<link rel=canonical href=https://www.zhangjc.site/archives-548/>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","datePublished":"2019-06-17T19:50:00+00:00","dateModified":"2021-10-01T20:54:44+08:00","url":"https://www.zhangjc.site/archives-548/","headline":"译 | pipe, fork \u0026 dup: 理解命令执行和输入输出流","description":"使用图表清晰的展示了管道的工作方式 原文链接 i\u003e 注意：理解这篇文章需要基本熟悉Unix命令和C / C ++。 我的目标是在运行命令时解释进程之间的数据流。 如果您想直接跳转到管道内容，请单击此处。 在这篇文章中，我们将讨论Unix命令如何通过管道和输入/输出重定向将数据相互传递，并且我将说明执行命令时数据流实际发……","inLanguage":"zh-CN","articleSection":"tech","wordCount":10010,"image":["https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/934882281.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/2219399307.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1803916423.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/3951086506.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1890630013.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/3661565337.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/3635806968.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/559331101.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/3468895538.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/2777588998.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/532152986.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1764986794.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/420070424.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1822211430.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/2524930646.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/107943395.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/3197517764.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/2682487936.png","https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1974451041.png"],"author":{"@type":"Person","description":"The Daily Awesome","email":"zhangjc1999@gmail.com","image":"https://www.zhangjc.site/icons/apple-touch-icon.png","url":"https://www.zhangjc.site/","name":"Jiachen"},"license":"[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh)","publisher":{"@type":"Organization","name":"The Daily Awesome","logo":{"@type":"ImageObject","url":"https://www.zhangjc.site/icons/apple-touch-icon.png"},"url":"https://www.zhangjc.site/"},"mainEntityOfPage":{"@type":"WebSite","@id":"https://www.zhangjc.site/"}}</script>
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:site content="@JiachenZhang5">
+<meta name=twitter:creator content="@JiachenZhang5">
+<meta property="og:title" content="译 | pipe, fork & dup: 理解命令执行和输入输出流">
+<meta property="og:description" content="使用图表清晰的展示了管道的工作方式 原文链接 i> 注意：理解这篇文章需要基本熟悉Unix命令和C / C ++。 我的目标是在运行命令时解释进程之间的数据流。 如果您想直接跳转到管道内容，请单击此处。 在这篇文章中，我们将讨论Unix命令如何通过管道和输入/输出重定向将数据相互传递，并且我将说明执行命令时数据流实际发……">
+<meta property="og:url" content="https://www.zhangjc.site/archives-548/">
+<meta property="og:site_name" content="The Daily Awesome">
+<meta property="og:locale" content="zh"><meta property="og:image" content="https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/934882281.png">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2019-06-17T19:50:00+00:00">
+<meta property="article:modified_time" content="2021-10-01T20:54:44+08:00">
+<meta property="article:section" content="tech">
+<script type=text/javascript src="https://s4.cnzz.com/z_stat.php?id=1279769355&web_id=1279769355"></script>
+</head>
+<body>
+<div class=container>
+<header class=header>
+<div class=header-wrapper>
+<div class="header-inner single">
+<div class=site-brand>
+<a href=/ class=brand>The Daily Awesome</a>
+</div>
+<nav class=nav>
+<ul class=menu id=menu>
+<li class=menu-item><a href=/life/><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon archive"><path d="M32 448c0 17.7 14.3 32 32 32h384c17.7.0 32-14.3 32-32V160H32v288zm160-212c0-6.6 5.4-12 12-12h104c6.6.0 12 5.4 12 12v8c0 6.6-5.4 12-12 12H204c-6.6.0-12-5.4-12-12v-8zM480 32H32C14.3 32 0 46.3.0 64v48c0 8.8 7.2 16 16 16h480c8.8.0 16-7.2 16-16V64c0-17.7-14.3-32-32-32z"/></svg><span class=menu-item-name>生活</span></a>
+</li>
+<li class=menu-item><a href=/tech/><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon th"><path d="M149.333 56v80c0 13.255-10.745 24-24 24H24c-13.255.0-24-10.745-24-24V56c0-13.255 10.745-24 24-24h101.333c13.255.0 24 10.745 24 24zm181.334 240v-80c0-13.255-10.745-24-24-24H205.333c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256.0 24.001-10.745 24.001-24zm32-240v80c0 13.255 10.745 24 24 24H488c13.255.0 24-10.745 24-24V56c0-13.255-10.745-24-24-24H386.667c-13.255.0-24 10.745-24 24zm-32 80V56c0-13.255-10.745-24-24-24H205.333c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256.0 24.001-10.745 24.001-24zm-205.334 56H24c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24zM0 376v80c0 13.255 10.745 24 24 24h101.333c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H24c-13.255.0-24 10.745-24 24zm386.667-56H488c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zm0 160H488c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255.0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zM181.333 376v80c0 13.255 10.745 24 24 24h101.333c13.255.0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H205.333c-13.255.0-24 10.745-24 24z"/></svg><span class=menu-item-name>技术</span></a>
+</li>
+<li class=menu-item><a href=/about/><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" class="icon user-circle"><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 96c48.6.0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 344c-58.7.0-111.3-26.6-146.5-68.2 18.8-35.4 55.6-59.8 98.5-59.8 2.4.0 4.8.4 7.1 1.1 13 4.2 26.6 6.9 40.9 6.9s28-2.7 40.9-6.9c2.3-.7 4.7-1.1 7.1-1.1 42.9.0 79.7 24.4 98.5 59.8C359.3 421.4 306.7 448 248 448z"/></svg><span class=menu-item-name>关于</span></a>
+</li>
+<li class=menu-item>
+<a id=theme-switcher href=#><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon theme-icon-light"><path d="M193.2 104.5 242 7a18 18 0 0128 0l48.8 97.5L422.2 70A18 18 0 01442 89.8l-34.5 103.4L505 242a18 18 0 010 28l-97.5 48.8L442 422.2A18 18 0 01422.2 442l-103.4-34.5L270 505a18 18 0 01-28 0l-48.8-97.5L89.8 442A18 18 0 0170 422.2l34.5-103.4-97.5-48.8a18 18 0 010-28l97.5-48.8L70 89.8A18 18 0 0189.8 70zM256 128a128 128 0 10.01.0M256 160a96 96 0 10.01.0"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon theme-icon-dark"><path d="M27 412A256 256 0 10181 5a11.5 11.5.0 00-5 20A201.5 201.5.0 0142 399a11.5 11.5.0 00-15 13"/></svg></a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+<input type=checkbox id=nav-toggle aria-hidden=true>
+<label for=nav-toggle class=nav-toggle></label>
+<label for=nav-toggle class=nav-curtain></label>
+</header>
+<main class="main single" id=main>
+<div class=main-inner>
+<article class="content post h-entry" data-align=justify data-type=tech data-toc-num=true>
+<h1 class="post-title p-name">译 | pipe, fork & dup: 理解命令执行和输入输出流</h1>
+<div class=post-meta>
+<time datetime=2019-06-17T19:50:00+00:00 class="post-meta-item published dt-published"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon post-meta-icon"><path d="M148 288h-40c-6.6.0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6.0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6.0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6.0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5.0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6.0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6.0 12 5.4 12 12v52h48c26.5.0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3.0 6-2.7 6-6z"/></svg>&nbsp;2019.6.17</time>
+<span class="post-meta-item category"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49.0 112v288c0 26.51 21.49 48 48 48h416c26.51.0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>&nbsp;<a href=/tech/ class="category-link p-category">Tech</a></span>
+</div>
+<nav class=contents>
+<ol class=toc>
+<li><a id=contents:文件描述符---file-descriptors href=#文件描述符---file-descriptors>文件描述符 - File Descriptors</a></li>
+<li><a id=contents:数据流---data-flow href=#数据流---data-flow>数据流 - Data Flow</a></li>
+<li><a id=contents:管道---pipe href=#管道---pipe>管道 - Pipe</a></li>
+<li><a id=contents:在管道中运行命令---running-commands-in-a-pipeline href=#在管道中运行命令---running-commands-in-a-pipeline>在管道中运行命令 - Running Commands in a Pipeline</a></li>
+<li><a id=contents:输入输出重定向---io-redirection href=#输入输出重定向---io-redirection>输入输出重定向 - I/O Redirection</a></li>
+<li><a id=contents:总结---summary href=#总结---summary>总结 - Summary</a></li>
+</ol>
+</nav><div class="post-body e-content">
+<p>使用图表清晰的展示了管道的工作方式</p>
+<p><a href=http://www.rozmichelle.com/pipes-forks-dups/ target=_blank rel=noopener>原文链接</a></p>
+<p>i> 注意：理解这篇文章需要基本熟悉Unix命令和C / C ++。 我的目标是在运行命令时解释进程之间的数据流。 如果您想直接跳转到管道内容，请单击<a href=/archives/548.html#%E7%AE%A1%E9%81%93-Pipe>此处</a>。</p>
+<p>在这篇文章中，我们将讨论Unix命令如何通过管道和输入/输出重定向将数据相互传递，并且我将说明执行命令时数据流实际发生的情况。</p>
+<h2 id=文件描述符---file-descriptors><a href=#文件描述符---file-descriptors class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:文件描述符---file-descriptors class=headings>文件描述符 - File Descriptors</a></h2>
+<p>从基本的 “在键盘上键入内容，按回车键，并获得结果” 模型开始，在终端中运行单个命令而不进行输入/输出重定向。 在本文的讨论中，我们将输入和输出称为进出流程（into and out）的文本数据。</p>
+<p>Unix将输入与终端键盘关联，并默认输出终端显示。 Unix以将计算机中的所有内容建模为文件（包括键盘和显示器）而闻名。 因此，写入“显示”实际上只是写入管理屏幕上数据显示的文件。 类似地，从键盘读取数据意味着从代表键盘的文件中读取数据。</p>
+<p>数据通过流将字节从一个区域传输到另一个区域。有三个默认输入/输出（I / O）流：</p>
+<ul>
+<li>标准输入（<code>stdin = 0</code>）</li>
+<li>标准输出（<code>stdout = 1</code>）</li>
+<li>标准错误（<code>stderr = 2</code>）</li>
+</ul>
+<p>默认情况下，这些流都具有特定的文件描述符。文件描述符是与打开文件相关联的整数（其工作范围超出了本讨论的范围），并且进程使用文件描述符来处理数据。三个默认流具有以下文件描述符编号：<code>stdin = 0</code>，<code>stdout = 1</code>和<code>stderr = 2</code>.文件描述符存储在文件描述符表中，每个进程都有自己的文件描述符表（0,1和2创建进程时默认创建并映射到其相应的流）。</p>
+<p>每个数据流只了解描述符本身，而对其背后的文件不清楚，即数据流只处理文件描述符而非数据源；</p>
+<p>因此进程只需要处理文件描述符，文件本身由内核安全地管理。</p>
+<h2 id=数据流---data-flow><a href=#数据流---data-flow class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:数据流---data-flow class=headings>数据流 - Data Flow</a></h2>
+<p>现在我们准备好深入讨论数据流。 当我们在终端中运行命令时，需要适当地处理任何输入和输出。 每个命令都需要知道输入哪些数据（如果有的话）以及可能输出的数据。 每个命令还需要知道发送和接收此类数据的位置。 为了表示数据流（默认情况下通过键盘输入<code>stdin</code>）和输出（默认情况下通过<code>stdout</code>输出到终端，如果出现问题，还可以通过<code>stderr</code>），我将使用如下图所示的图表：</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/934882281.png>
+</figure>
+<p>标准输入（0）和输出（1）流的概念数据流</p>
+<p>上图表示了输入输入流地默认步骤。使用键盘将输入数据传递给程序指令（从指令角度来看，通过 <code>stdin</code> 来接受输入），之后程序通过 <code>stdout</code> 将输出数据发送给终端。我还使用<code>in</code>和<code>out</code>来表示分别进入一个区域和另一个区域的数据。虽然在这种情况下<code>in</code>和<code>out</code>分别与<code>stdin</code>和<code>stdout</code>相关联，但<strong>在将来的图中不一定是这种情况</strong>。因此，我将文件描述符号放在与相关<code>in</code>/<code>out</code>操作相对应的相关“文件”旁边，以便清楚哪个文件描述符用于哪个目的。通常，“流入”某物的数据被视为输入（并且正通过文件描述符从源<strong>读入</strong>），并且“流出”某物的数据被视为输出（并且通过文件描述符被写入源） 。换句话说：<strong>输入是从某处读取;输出是写在某处</strong>。这种心理模型将在未来更复杂的图表中证明是有用的。</p>
+<p>需要注意的一点是，实际上有两个流可以默认将输出写入终端：<code>stdout</code> 和 <code>stderr</code> 。 当尝试执行命令时出现错误时，将使用 <code>stderr</code> 流。 例如，下面是在我的终端中使用 <code>ls dir_x</code> 命令尝试列出不存在的目录 <code>dir_x</code> 的内容：</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>$ ls dir_x
+ls: cannot access dir_x: No such file or directory
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p>在这个例子中，用于显示第二行的流实际上是 <code>stderr</code>，而不是 <code>stdout</code>。 由于 <code>stderr</code> 默认也会转到终端，因此我们会在终端中看到错误消息。 如果目录存在，那么 <code>stdou</code>t会将目录的内容输出到屏幕。</p>
+<p>这是一个更新的图表，展示了 <code>stdout</code> 和 <code>stderr</code> 的流的输出端：</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/2219399307.png>
+</figure>
+<p>标准输入（0），输出（1）和错误（2）流的概念数据流</p>
+<p>请记住，“out”一词仅表示输出，且与其相关的文件描述符在其旁边显示。 既然您已经了解了<code>stderr</code>的存在并且可以使用，我实际上将其从未来的数据流图中删除，除非示例专门使用<code>stderr</code>。 请记住它存在！</p>
+<p>现在我们可以使用命令行探索数据流。一些命令既读取输入又写入输出，其他命令只执行一个或两个都不执行。我们将探讨不同的情况，但首先，让我们讨论一下输入在这里的意义。从技术上讲，从shell的角度来看（shell处理给终端的命令行），键入键盘的任何东西（包括命令本身）都是一般意义上的“输入”，但我们专门处理输入和命令所需的输出，以便运行命令的进程与文件（包括键盘和显示器）之间传输数据。作为选项的命令参数实际上是从命令行读入的（作为参数数组）;从与文件描述符相关联的打开文件中读入实际输入。因此，我将命令的输入定义为<strong>使用 <code>stdin</code>（或可以读取的另一个重新调整的文件描述符）专门传入的数据</strong>，无论是通过键盘输入，还是通过I / O重定向重定向（稍后解释），或者可能作为文件参数传递给命令（与选项参数相对）。如果一个文件作为参数传递并且进程将实际读取或操作该文件的<strong>内容</strong>（例如，对内容进行排序），而不是简单地引用文件本身（例如，移动或重命名它），那么我认为它是输入 。</p>
+<p>另外，命令行选项参数是另一个Unix设计选择的结果，它允许将执行的命令的行为修改与接收的输入分开传递。 保持参数和输入分开可以在涉及管道时更轻松。</p>
+<p>现在让我们看一些例子。 一个没有输入但有输出的命令，可以考虑 <code>ls</code>——列出当前目录中的所有文件：</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>$ ls
+dir1
+file1
+file2
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p>这可以用下图形象地展示：</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1803916423.png>
+</figure>
+<p>ls 命令</p>
+<p>如果命令不接受来自stdin的输入，那么传递给这样一个命令的数据将被运行该命令的程序忽略，因为它没有被写入来处理输入数据。 例如，<code>&lt;words.txt ls</code>将列出当前目录中的文件和目录，并忽略重定向到stdin的输入（这使用I / O重定向，稍后我会解释）。</p>
+<p>我们来看看下一个不接受输入并且不输出地命令——<code>mv</code>，它可以用来移动或重命名文件。 如果我给它一个可以成功移动或重命名的文件或目录的名称，那么就不会通过<code>stdout</code>或<code>stderr</code>输出数据。 请记住，由于此文件的内容未以任何方式被读取或使用，因此传入的文件不被视为输入。 在成功调用此命令后，我将拥有这个非常简单的图表：</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/3951086506.png>
+</figure>
+<p>没有输入和输出</p>
+<p>但是，如果我错误地使用<code>mv</code>以便发生错误，那么我将输出到<code>stderr</code>：</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>$ mv
+mv: missing file operand
+Try <span class=s1>&#39;mv --help&#39;</span> <span class=k>for</span> more information.
+
+</code></pre></td></tr></table></div>
+</div>
+</div><figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1890630013.png>
+</figure>
+<p>没有参数地调用 mv</p>
+<p>让我们把事情变得更有趣。 我最喜欢的一个读取输入和写入输出的命令示例是<code>sort</code>。 当没有文件参数且没有输入重定向时，终端等待用户输入要排序的字符串（每行一个字符串）。 一旦用户键入<code>Ctrl-D</code>（这将关闭连接键盘到<code>sort</code>进程的<code>stdin</code>的通信通道的写端），运行<code>sort</code>的进程将知道已输入所有所需的字符串。 因此，这些字符串通过<code>stdin</code>传递到运行命令的进程中，按所述进程排序，然后通过<code>stdout</code>写入终端。 太漂亮了！ 这是输入/输出示例：</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>$ sort
+cherry
+banana
+apple
+apple
+banana
+cherry
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p>粗体字符串是用户输入，后面的字符串表示排序的输出。 以下是此示例的数据流：</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/3661565337.png>
+</figure>
+<p>sort命令。从键盘输入，然后输出按排序顺序显示</p>
+<p>请注意，<code>sort</code>也可以使用<code>filename</code>参数从指定文件获取输入，而不是等待用户输入数据（例如，<code>sort words.txt</code>），这是我们输入的定义，因为它是一个文件而不是 <code>sort -r</code>中的选项参数。 另外，sort可以通过输入重定向获取输入，我将在后面解释。</p>
+<p>现在我们了解了从<code>stdin</code>到<code>stdout</code>或<code>stderr</code>的数据流的一般概念，我们可以讨论如何控制输入和输出的流程。 我将介绍两种方法：</p>
+<ul>
+<li>使用管道，允许一个进程的输出作为输入传递到另一个进程</li>
+<li>使用I / O重定向，允许文件作为数据的源和目标而不是 默认键盘和终端。</li>
+</ul>
+<h2 id=管道---pipe><a href=#管道---pipe class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:管道---pipe class=headings>管道 - Pipe</a></h2>
+<p>Unix有一个简单但有价值的设计理念，正如Unix管道的发明者Doug McIlroy所解释的那样：</p>
+<p><em>“Write programs that do one thing and do it well. Write programs to work together. Write programs to handle text streams, because that is a universal interface.”</em></p>
+<p>管道的概念非常强大。 管道允许将来自一个进程的数据传递给另一个进程（通过单向数据流），以便命令可以通过数据流链接在一起。 这允许不同命令一起工作以实现更大的目标。 流程的链接可以由管道表示：管道中的命令通过管道连接，其中数据通过从管道的一端流到另一端而在流程之间共享。 由于管道中的每个命令都在一个单独的进程中运行，每个进程都有一个单独的内存空间，因此我们需要一种方法来允许这些进程相互通信。 这正是<code>pipe()</code>系统调用提供的行为。</p>
+<p>在实现方面，管道实际上只是与设置的两个文件描述符相关联的缓冲流，以便第一个可以读入数据并写入第二个文件的。 具体来说，在为处理管道中的命令执行而编写的代码中，创建了两个整数的数组，并且<code>pipe()</code>调用使用两个可用文件描述符（通常是最低的两个可用值）填充数组，以便第一个文件 数组中的描述符可以读入写入第二个的数据。</p>
+<p>物理管道自然是这种抽象的一个很好的类比。 我们可以将在一个过程中开始的数据流视为隔离环境中的水，并且允许水流入下一个过程的环境的唯一方法是使用管道连接环境。 通过这种方式，水（数据）从第一环境（过程）流入管道，用所有水填充管道，然后将水排放到另一个环境中。 这个数据流正是我试图在图中捕获的以下管道示例，<code>sort | grep ea</code>：</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/3635806968.png>
+</figure>
+<p>sort | grep ea</p>
+<p>让我们逐个击破。 和先前的示例一样，<code>sort</code>命令通过<code>stdin</code>（文件描述符0）等待来自用户（输入三个字符串以进行排序）的输入。 接下来，字符串被排序并通过<code>stdout</code>作为输出发送，<code>stdout</code>被送入管道。 这是因为Unix允许<code>stdout</code>将数据提供给管道的左端（文件描述符4）而不是终端来实现。 我在这里省略了一个细节，但这个过程将在本文后面进行更深入的解释。</p>
+<p>在继续之前，这里有一个重要的细节：还记得我提到每个进程都有自己的文件描述符表吗？ 好吧，因为管道中的每个命令都在一个单独的进程中运行，所以每个命令都有自己的文件描述符版本，包括它自己的<code>stdin</code>，<code>stdout</code>和<code>stderr</code>。 这意味着图的0和1在不同的文件描述符表中，其中<code>0</code>属于运行<code>sort</code>的进程，<code>1</code>属于运行<code>grep</code>的进程。 但是，由于流被设置为发送超出进程边界的数据，因此只要它正确传递到管道，最终结果就是位置结束的数据。</p>
+<p>接下来：既然<code>sort</code>命令有一个排序的字符串列表作为输出，它必须将它传递给创建的管道，以便将数据传递给下一个进程<code>grep</code>。 暂时忽略文件描述符<code>3</code>和<code>4</code>，查看“in”和“out”字样：我们看到数据流出<code>sort</code>进程并进入管道，然后它从管道传递到<code>grep</code>中 处理。 “In”和“out”基于它们所使用的上下文来表达：在管道内部或在管道外部。</p>
+<p>考虑到这一点，我们现在可以讨论<code>pipe()</code>调用分发的文件描述符。 假设在执行管道中的命令的代码中，<code>pipe()</code>调用填充文件描述符数组<code>{3,4}</code>，以便可以从<code>3</code>读取写入<code>4</code>的数据。(这些数字是什么并不重要 甚至他们只是升序）想象一下一个数组<code>{pickle，mickeymouse}</code>; 给定的值只对进程有影响，但每个文件描述符的目的对数据很重要！ 每个文件描述符的目的取决于每个数组中的索引。</p>
+<p>这里有一个非常重要的概念，一个让我花了一段时间才能最终理解的概念（直到我创建这些图表时才发生这种情况，因为我的视觉大脑的工作方式）。回想一下，在我的思考模型中，数据在图中从左向右流动。文件描述符被设置数组中以便可以从3读取写入4的内容，因此您可能想知道为什么在上图中管道左侧显示4、右侧显示3。<strong>需要理解的关键是，<code>pipe()</code>调用定义的读写操作是从使用管道的两个进程的角度来看，而不是管道本身！<strong>因此，当<code>pipe()</code>调用将4定义为管道的可写端时，这意味着它是第一个命令的进程的输出末端，以便管道本身接收该数据作为输入。（但反过来不是这样：4是管道中管道的输出端，这会诱使您将管道的右侧标记为4）同样，3是管道的可读端意味着它是</strong>第二个命令进程</strong>从中读取数据的管道的末尾。这完全取决于角度！ :)</p>
+<p>就这样，数据被传递到管道，一直放到所有的数据被传递到到<code>grep</code>进程【实际上管道是类似队列的FIFO原则】。 作为最后也是相对简单的步骤，运行<code>grep</code>的进程搜索从管道输出端接收的包含<code>"ea”</code>的行的输入。 然后，它使用其<code>stdout</code>流将匹配的字符串输出到终端。 全部完成！ 对我们的第一次管道演练来说不错！ 接下来，我们将深入了解代码如何执行这些过程。 在我看来，我们对<code>pipe()</code>如何工作的理解是成功的一半。 理解<code>fork()</code>和<code>dup2()</code>是另一半。 让我们看看这些功能是如何工作的！</p>
+<h2 id=在管道中运行命令---running-commands-in-a-pipeline><a href=#在管道中运行命令---running-commands-in-a-pipeline class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:在管道中运行命令---running-commands-in-a-pipeline class=headings>在管道中运行命令 - Running Commands in a Pipeline</a></h2>
+<p>在我们到目前为止看到的图中，在将数据从一个命令的进程传递到另一个命令的过程中使用了管道，但是我们还没有讨论运行这些命令的进程的层次结构。 在课堂上，我们学习了编写程序，使得每个命令都在子进程中执行，而不是父进程（调用进程）中执行。 通常，父进程执行所有必要的设置，然后通过<code>fork()</code>调用创建子进程，在这个过程克隆父进程的内存状态及文件描述符。 因此，子项最终会得到<code>fork()</code>调用时父项中存在的变量和文件描述符的独立副本。 在<code>fork()</code>调用之后，父进程的更改将对子进程不可见，反之亦然。</p>
+<p>这个children-execute-commands模块对于执行单个命令似乎是不必要的，因为我们可以简单地在父节点中运行命令而不创建子节点，但是当您考虑使代码通用到足以同时用于单个命令或管道中的多个命令，那么就有理由让不同的子进程执行每个命令。 此规则有例外，例如运行可以在父级中运行的内置命令，但是对于本讨论，我们假设所有命令都在子进程中执行。</p>
+<p>让我们看一下运行sort命令的一些C代码的迂腐示例。 在此示例中，使用<code>dprintf()</code>将输入直接打印到文件描述符，以显示使用管道将数据从父级发送到子级的情况。 这是我们的讲师Jerry向课堂提供的示例代码的简化版本：</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#include</span> <span class=cpf>&lt;unistd.h&gt;</span><span class=cp>
+</span><span class=cp>#include</span> <span class=cpf>&lt;sys/wait.h&gt;</span><span class=cp>
+</span><span class=cp>#include</span> <span class=cpf>&lt;stdio.h&gt;</span><span class=cp>
+</span><span class=cp>#include</span> <span class=cpf>&lt;stdlib.h&gt;</span><span class=cp>
+</span><span class=cp></span>
+<span class=kt>int</span> <span class=nf>main</span><span class=p>(</span><span class=kt>int</span> <span class=n>argc</span><span class=p>,</span> <span class=kt>char</span> <span class=o>*</span><span class=n>argv</span><span class=p>[])</span> <span class=p>{</span>
+  <span class=kt>int</span> <span class=n>fds</span><span class=p>[</span><span class=mi>2</span><span class=p>];</span>                      <span class=c1>// an array that will hold two file descriptors
+</span><span class=c1></span>  <span class=n>pipe</span><span class=p>(</span><span class=n>fds</span><span class=p>);</span>                       <span class=c1>// populates fds with two file descriptors
+</span><span class=c1></span>  <span class=n>pid_t</span> <span class=n>pid</span> <span class=o>=</span> <span class=n>fork</span><span class=p>();</span>              <span class=c1>// create child process that is a clone of the parent
+</span><span class=c1></span>  
+  <span class=k>if</span> <span class=p>(</span><span class=n>pid</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span>                  <span class=c1>// if pid == 0, then this is the child process
+</span><span class=c1></span>    <span class=n>dup2</span><span class=p>(</span><span class=n>fds</span><span class=p>[</span><span class=mi>0</span><span class=p>],</span> <span class=n>STDIN_FILENO</span><span class=p>);</span>    <span class=c1>// fds[0] (the read end of pipe) donates its data to file descriptor 0
+</span><span class=c1></span>    <span class=n>close</span><span class=p>(</span><span class=n>fds</span><span class=p>[</span><span class=mi>0</span><span class=p>]);</span>                 <span class=c1>// file descriptor no longer needed in child since stdin is a copy
+</span><span class=c1></span>    <span class=n>close</span><span class=p>(</span><span class=n>fds</span><span class=p>[</span><span class=mi>1</span><span class=p>]);</span>                 <span class=c1>// file descriptor unused in child
+</span><span class=c1></span>    <span class=kt>char</span> <span class=o>*</span><span class=n>argv</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{(</span><span class=kt>char</span> <span class=o>*</span><span class=p>)</span><span class=s>&#34;sort&#34;</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>};</span>   <span class=c1>// create argument vector
+</span><span class=c1></span>    <span class=k>if</span> <span class=p>(</span><span class=n>execvp</span><span class=p>(</span><span class=n>argv</span><span class=p>[</span><span class=mi>0</span><span class=p>],</span> <span class=n>argv</span><span class=p>)</span> <span class=o>&lt;</span> <span class=mi>0</span><span class=p>)</span> <span class=n>exit</span><span class=p>(</span><span class=mi>0</span><span class=p>);</span>  <span class=c1>// run sort command (exit if something went wrong)
+</span><span class=c1></span>  <span class=p>}</span> 
+
+  <span class=c1>// if we reach here, we are in parent process
+</span><span class=c1></span>  <span class=n>close</span><span class=p>(</span><span class=n>fds</span><span class=p>[</span><span class=mi>0</span><span class=p>]);</span>                 <span class=c1>// file descriptor unused in parent
+</span><span class=c1></span>  <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>words</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span><span class=s>&#34;pear&#34;</span><span class=p>,</span> <span class=s>&#34;peach&#34;</span><span class=p>,</span> <span class=s>&#34;apple&#34;</span><span class=p>};</span>
+  <span class=c1>// write input to the writable file descriptor so it can be read in from child:
+</span><span class=c1></span>  <span class=n>size_t</span> <span class=n>numwords</span> <span class=o>=</span> <span class=k>sizeof</span><span class=p>(</span><span class=n>words</span><span class=p>)</span><span class=o>/</span><span class=k>sizeof</span><span class=p>(</span><span class=n>words</span><span class=p>[</span><span class=mi>0</span><span class=p>]);</span>
+  <span class=k>for</span> <span class=p>(</span><span class=n>size_t</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>numwords</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
+    <span class=n>dprintf</span><span class=p>(</span><span class=n>fds</span><span class=p>[</span><span class=mi>1</span><span class=p>],</span> <span class=s>&#34;%s</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>words</span><span class=p>[</span><span class=n>i</span><span class=p>]);</span> 
+  <span class=p>}</span>
+
+  <span class=c1>// send EOF so child can continue (child blocks until all input has been processed):
+</span><span class=c1></span>  <span class=n>close</span><span class=p>(</span><span class=n>fds</span><span class=p>[</span><span class=mi>1</span><span class=p>]);</span> 
+
+  <span class=kt>int</span> <span class=n>status</span><span class=p>;</span>
+  <span class=n>pid_t</span> <span class=n>wpid</span> <span class=o>=</span> <span class=n>waitpid</span><span class=p>(</span><span class=n>pid</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>status</span><span class=p>,</span> <span class=mi>0</span><span class=p>);</span> <span class=c1>// wait for child to finish before exiting
+</span><span class=c1></span>  <span class=k>return</span> <span class=n>wpid</span> <span class=o>==</span> <span class=n>pid</span> <span class=o>&amp;&amp;</span> <span class=n>WIFEXITED</span><span class=p>(</span><span class=n>status</span><span class=p>)</span> <span class=o>?</span> <span class=n>WEXITSTATUS</span><span class=p>(</span><span class=n>status</span><span class=p>)</span> <span class=o>:</span> <span class=o>-</span><span class=mi>1</span><span class=p>;</span>
+<span class=p>}</span>
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p>编写该程序以运行一个特定的命令：<code>sort</code>。以下是代码的工作原理：在父进程中，创建一个数组来存储两个文件描述符。在<code>pipe()</code>调用之后，使用挂钩的文件描述符填充数组，其中第一个将被子进程读取，第二个将由父进程写入。然后调用<code>fork()</code>来创建子进程，该进程具有父进程的文件描述符和内存的副本。之后，检查程序是否在子进程中运行。如果是，则子进程调用<code>dup2()</code>使其<code>stdin</code>与管道的可读端相关联，这对应于<code>fds[0]</code>。关于<code>dup2()</code>工作方式的一个重要细节是，如果需要，它将首先关闭其第二个参数，即文件描述符。因此，在此示例中，首先关闭<code>stdin</code>（默认情况下是打开的），这将删除其对默认键盘文件的引用。然后子进程的<code>stdin</code>将能够通过<code>fds [0]</code>而不是键盘接收数据。这就是<code>dup2()</code>的魔力！</p>
+<p>现在子进程的<code>stdin</code>已准备好读入数据，它关闭了<code>pipe()</code>调用创建的文件描述符，因为子进程不再需要它们。 然后，子进程执行<code>sort</code>命令，等待所有父数据在排序数据之前写入管道末端。</p>
+<p>调用<code>fork()</code>时，子进程可能会在父进程继续之前运行，在这种情况下，子进程将挂起，直到收到所有输入。 一旦<code>sort</code>命令结束运行，子进程在<code>execvp()</code>调用（执行给定命令）之后结束并自动关闭其默认文件描述符0,1和2。在创建子节点的<code>fork()</code>调用之后，父进程关闭<code>fds[0]</code>，因为父进程不需要它（父进程只需要写入数据，而不是读取它）。然后，父进程将给定数组中的每个单词写入管道的可写端（<code>fds[1]</code>），在末尾添加一个新行字符，以允许<code>sort</code>命令正确接收新行上的每个单词。当所有单词都被写入后，父进程将关闭<code>fds[1]</code>，因为它已完成写入数据，该数据向子进程发送<code>EOF</code>以允许它执行<code>sort</code>命令。在退出之前，父进程会等待子进程运行结束（通过<code>waitpid()</code>调用）。最后一行只是一种整齐的方式来返回一个值，该值取决于事情是否按预期进行。</p>
+<p>完成所有操作后，这是整个事件序列的数据流图：</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/559331101.png>
+</figure>
+<p>代码示例的最终数据流。在子进程中，文件描述符3被复制到子进程的stdin，然后3被关闭，只有子进程的stdin用于获取数据，如管道右侧的数字所示。</p>
+<p>!> 这里应该是关闭0，<code>dup2(old_fd, new_fd)</code> 是用新的替换旧的</p>
+<p>需要注意这个示例显示了如何使用管道，但在这种情况下不需要管道。 例如，孩子可以简单地从默认的stdin访问数据而不受父母的任何干扰，这不需要使用管道。 此代码仅显示管道如何设置从一个进程到另一个进程的通信，并且在管理具有多个命令的管道时，此模式至关重要。</p>
+<p>为了了解此代码中发生的情况，我设计了以下图表。 在下面的图像中，这些行显示了文件描述符与它有指针的打开文件之间的关联。 线箭头方向表示数据流。 这些图表应该有助于明确父和子需要哪些文件描述符，这反过来应该有助于解释何时关闭文件描述符以避免泄漏。 另请注意，由于父母中的说明不能保证在孩子的指示之前运行，因此下面的一些步骤可能会在不同的时间发生。 这些图片只是为了让您了解执行过程中可能发生的事情，即使可以在此过程中交换几个步骤。</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/3468895538.png>
+</figure>
+<p>程序启动时，使用在其文件描述符表中设置的默认流创建父进程。箭头显示数据流：stdin接收来自键盘的输入，stdout和stderr将输出发送到终端显示器。</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/2777588998.png>
+</figure>
+<p>pipe()调用查找接下来的两个可用文件描述符，并将每个描述符与创建的管道的相应末尾相关联。在这种情况下，进程可以通过3读取并通过4写入。</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/532152986.png>
+</figure>
+<p>fork()调用创建子进程，该进程是该时间点父进程的内存和文件描述符表的副本。父文件描述符与之关联的文件与子文件描述符关联的文件相同。</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1764986794.png>
+</figure>
+<p>父关闭它不需要的文件描述符。子调用dup2()使其stdin成为fds[0]的副本，首先关闭文件描述符0。</p>
+<p>图中漏关了父进程的 <code>fd[]0</code></p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/420070424.png>
+</figure>
+<p>父进程将数据写入管道的可写端。子进程关闭它不需要的文件描述符。</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1822211430.png>
+</figure>
+<p>在写完所有数据后，父进程关闭fds[1]让子进程知道所有数据都已发送。</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/2524930646.png>
+</figure>
+<p>子进程基于输入执行sort命令。</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/107943395.png>
+</figure>
+<p>排序的输出被发送到终端，子进程终止时发送信号，然后允许父进程完成。</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/3197517764.png>
+</figure>
+<p>这些进程在自己的默认文件描述符之后进行清理。 程序执行期间使用的所有其他文件描述符都已正确关闭。</p>
+<p>特别是，请查看具有蓝线的步骤，这些蓝线代表该时间点的数据流。 如果将这些步骤链接在一起，则会得到以下内容：父进程将数据写入管道的可写端，然后子进程通过其<code>stdin</code>文件描述符从管道的可读端读取数据，最后，运行结果作为输出从子进程发送到终端。 简而言之，图中的所有其他行最终都会将数据传递给其他人，甚至不会被使用。 此外，当程序结束时，需要关闭的文件描述符也消失了。 这是一个小程序示例，但您可以看到在涉及管道时它会变得多么混乱。 然而，这是一个美好的过程：跟踪数据并在自己之后进行清理，混乱最终会自行解决！</p>
+<p>你会注意到的一件事是管道开始的文件描述符可能会根据需要重定向到另一个流。 管道是一种便利，它为您提供了两个设置为一起工作的文件描述符，但可以根据需要重定向它们的目的，以确保数据流入和流出正确的位置。</p>
+<p>希望这些图表阐明在创建运行命令的进程时会发生什么。 重要的是不仅要了解文件描述符的使用方式，还要了解它们何时不被使用，以便可以适当地关闭它们。 他们很强大，很容易出错或留下。</p>
+<h2 id=输入输出重定向---io-redirection><a href=#输入输出重定向---io-redirection class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:输入输出重定向---io-redirection class=headings>输入输出重定向 - I/O Redirection</a></h2>
+<p>还有一个我想要讨论的话题。在我们迄今为止的讨论中，我们已经探索了使用三个默认文件描述符所带来的默认行为，其中我们分别使用键盘和终端来进行所有初始输入和最终输出。我们还研究了如何在管道中的进程之间传递数据。如果我们想要将现有文件用作管道中第一个命令的输入而不是使用键盘进行输入，或者如果我们想将最后一个管道命令的输出发送到文件，该怎么办？这可以通过I / O重定向完成。在命令行中，“&lt;”字符用于输入重定向，“>”用于输出重定向，如果输出文件不存在则创建输出文件，如果输出文件已存在则覆盖。要将数据附加到输出文件而不是覆盖内容，可以使用“>>”。让我们看一个使用输入和输出重定向的示例。假设我们有文件words.txt，其中包含以下内容：</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>$ cat words.txt
+pear
+peach
+apple
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p>我们可以使用此文件作为sort命令的输入，然后将内容输出到另一个文件（如果需要，甚至是同一个文件），如下所示：</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>&lt; words.txt sort &gt; words2.txt
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p>请注意，屏幕没有输出，因为输出存储在words2.txt中。 我们也可以将此命令编写为<code>sort &lt;words.txt> words2.txt</code>。 如果我们使用cat打印输出文件的内容，我们得到以下内容：</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>$ cat words2.txt
+apple
+peach
+pear
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p>事实证明，实现I / O重定向相对简单。 我们可以简单地使用前面看到的<code>dup2()</code>魔法：</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=c1>// if first command in pipeline has input redirection
+</span><span class=c1></span><span class=k>if</span> <span class=p>(</span><span class=n>hasInputFile</span> <span class=o>&amp;&amp;</span> <span class=n>is1stCommand</span><span class=p>)</span> <span class=p>{</span> 
+  <span class=kt>int</span> <span class=n>fdin</span> <span class=o>=</span> <span class=n>open</span><span class=p>(</span><span class=n>inputFile</span><span class=p>,</span> <span class=n>O_RDONLY</span><span class=p>,</span> <span class=mo>0644</span><span class=p>);</span>
+  <span class=n>dup2</span><span class=p>(</span><span class=n>fdin</span><span class=p>,</span> <span class=n>STDIN_FILENO</span><span class=p>);</span>
+  <span class=n>close</span><span class=p>(</span><span class=n>fdin</span><span class=p>);</span>
+<span class=p>}</span>
+
+<span class=c1>// if last command in pipeline has output redirection
+</span><span class=c1></span><span class=k>if</span> <span class=p>(</span><span class=n>hasOutputFile</span> <span class=o>&amp;&amp;</span> <span class=n>isLastCommand</span><span class=p>)</span> <span class=p>{</span> 
+  <span class=kt>int</span> <span class=n>fdout</span> <span class=o>=</span> <span class=n>open</span><span class=p>(</span><span class=n>outputFile</span><span class=p>,</span> <span class=n>O_WRONLY</span> <span class=o>|</span> <span class=n>O_CREAT</span> <span class=o>|</span> <span class=n>O_TRUNC</span><span class=p>,</span> <span class=mo>0644</span><span class=p>);</span>
+  <span class=n>dup2</span><span class=p>(</span><span class=n>fdout</span><span class=p>,</span> <span class=n>STDOUT_FILENO</span><span class=p>);</span>
+  <span class=n>close</span><span class=p>(</span><span class=n>fdout</span><span class=p>);</span>
+<span class=p>}</span>
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p>希望这段代码非常简单明了。 如果有重定向的输入（其检测在此处未显示的另一个函数中处理），则在文件上调用<code>open()</code>并将该数据流分配给<code>open()</code>使用的文件描述符。 然后使用<code>dup2()</code>允许<code>stdin</code>读取该文件的内容作为输入。 同样，如果输出重定向位于管道的末尾，则重定向<code>stdout</code>以将最后一个命令的内容写入指定的文件。</p>
+<p>这是一个代表前一个例子的图表：</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/2682487936.png>
+</figure>
+<p>输入输出重定向</p>
+<p>您可能想知道为什么文件描述符都以3开始。我在为家庭作业分配的迷你shell中运行此命令，因此我能够打印出运行任何命令时分配的文件描述符。 我的shell使用上面显示的代码。 请注意，首先我检查是否有输入重定向。 如果有，我调用open（）命令来读取数据，该数据将此流分配给文件描述符3.一旦我重定向stdin来处理3处理的数据，然后我关闭3，这使得3可用于输出重定向 校验。 因此，两个文件都使用3开始，然后适当地重定向到需要数据的流，如红色穿透文本所示。</p>
+<p>您可以在这里看到Unix的强大功能，我们不仅可以将小程序链接在一起制作更大的程序，而且我们还可以将数据加载到管道中并将数据输出到文件中以供将来使用。 我觉得这一切都太神奇了。:)</p>
+<h2 id=总结---summary><a href=#总结---summary class=anchor-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96.0-59.27-59.26-59.27-155.7.0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757.0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037.0 01-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482.0 0120.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96.0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454.0 0020.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037.0 00-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639.0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a><a href=#contents:总结---summary class=headings>总结 - Summary</a></h2>
+<p>为了总结我们讨论过的内容，让我们看一个冗长的管道，其中包含一个简单但可能有用的示例。 让我们想象一下，你想要找出一群人中最喜欢的颜色。 有人键入一个颜色列表，其中每一行代表一个人最喜欢的颜色。 你的工作是获取该文件并在其上运行一些命令，理想情况是在一个令人印象深刻的管道中，这样三种最流行的颜色都保存在一个新文件中，并计算每种颜色收到的票数。 这是你如何做到的：</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>$ &lt; colors.txt sort <span class=p>|</span> uniq -c <span class=p>|</span> sort -r <span class=p>|</span> head -3 &gt; favcolors.txt
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p>图示如下：</p>
+<figure><img src=https://image-hosting.zhangjc.tech/ghost/content/images/2019/06/1974451041.png>
+</figure>
+<p>寻找最受欢迎的颜色</p>
+<p>命令的工作方式如下：colors.txt包含以随机顺序输入的颜色列表。 <code>uniq</code>命令删除与其前面的行相同的任何行，从而有效地删除所有连续的重复行。 为了使其按需工作，我们需要先对颜色列表进行排序，这就是我们先调用<code>sort</code>的原因。 然后我们调用<code>uniq -c</code>，其中<code>-c</code>选项将删除重复的颜色，并显示每种颜色出现的次数。 接下来，我们按降序对这些数据进行排序（这是<code>-r</code>选项在传递给<code>sort</code>时的作用）。 最后，我们调用<code>head-3</code>来获得结果中的前三行，并将该输出存储在<code>favcolors.txt</code>中。 最后，<code>favcolors.txt</code>具有以下所需数据：</p>
+<div class=highlight><div class=chroma>
+<div class=table-container><table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>$ cat favcolors.txt
+      <span class=m>4</span> red
+      <span class=m>3</span> blue
+      <span class=m>2</span> green
+
+</code></pre></td></tr></table></div>
+</div>
+</div><p>这比我们研究的其他示例更复杂，图中显示的文件描述符清楚地表明了这一点。 因为我的shell程序在检查I / O重定向之前调用<code>pipe()</code>，所以第一个管道获取文件描述符3和4，然后输入和输出文件的文件描述符分别被分配5和6。 一旦5和6分别重定向到<code>stdin</code>和<code>stdout</code>，它们就会被关闭（如图中最左侧和最右侧所示）。 在创建第二个管道时，它可以使用一些回收的文件描述符，最后一个管道也是如此。 不要太担心文件描述符是如何被回收的，因为这是我的代码所特有的，但是知道最后一切都被清理干净并且数据被正确传递出去。</p>
+<p>我们已经介绍了相当多的材料，虽然我喜欢我的观众，但我真的为了自己的理智而写了更多内容！ 但一如既往，我希望这是有帮助的。 写下这一切并创建图表肯定巩固了我对一切的理解，尽管对于我上周经历的期中和家庭作业噩梦来说可能已经太迟了一周。:)</p>
+<p>一个特别的“谢谢！”走向Hemanth，这位赛事助理回答了我关于这些主题的无数问题！ 我非常擅长确保它们既准确又清晰，并且真正帮助我获得了一个可靠的理解点。 这个班级的比赛工作人员一直很棒，但Hemanth真的已经超越了我的帮助。 杰瑞教授也是如此，他容忍了我的许多问题和对我的比赛表现的恐慌。 :) Shoutout阅读这篇文章的准确性。 我非常喜欢斯坦福大学。</p>
+<p>谢谢你的阅读！</p>
+</div>
+</article>
+<div class=related-posts>
+<h2 class=related-title>相关文章：<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon related-icon"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm144 276c0 6.6-5.4 12-12 12h-92v92c0 6.6-5.4 12-12 12h-56c-6.6.0-12-5.4-12-12v-92h-92c-6.6.0-12-5.4-12-12v-56c0-6.6 5.4-12 12-12h92v-92c0-6.6 5.4-12 12-12h56c6.6.0 12 5.4 12 12v92h92c6.6.0 12 5.4 12 12v56z"/></svg></h2>
+<ul class=related-list>
+<li class=related-item>
+<a href=/learn-linux-link/ class=related-link>深入理解 Linux 链接</a>
+</li>
+<li class=related-item>
+<a href=/archives-604/ class=related-link>MIT6.828 | Lec6: Virtual Memory - 1</a>
+</li>
+<li class=related-item>
+<a href=/archives-602/ class=related-link>MIT6.828 | hw5: xv6 system calls 【待填坑 dup2】</a>
+</li>
+<li class=related-item>
+<a href=/archives-601/ class=related-link>MIT6.828 | Lec 5: Isolation mechanisms</a>
+</li>
+<li class=related-item>
+<a href=/archives-592/ class=related-link>MIT6.828 | Lec4: Shell & OS organization</a>
+</li>
+</ul>
+</div>
+<div class=post-tags>
+<a href=/tags/note/ rel=tag class=post-tags-link><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon tag-icon"><path d="M0 252.118V48C0 21.49 21.49.0 48 0h204.118a48 48 0 0133.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137.0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882.0L14.059 286.059A48 48 0 010 252.118zM112 64c-26.51.0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"/></svg>note</a>
+</div>
+<footer class=minimal-footer>
+<div class=post-tag><a href=/tags/note/ rel=tag class=post-tag-link>#note</a></div>
+<div class=post-category>
+<a href=/tech/ class="post-category-link active">tech</a>
+</div>
+</footer>
+<ul class=post-nav>
+<li class=post-nav-prev>
+<a href=/archives-572/ rel=prev>&lt; MIT6.828 | Hw-3: Shell 【待填坑】</a>
+</li>
+<li class=post-nav-next>
+<a href=/archives-543/ rel=next><ol start=1091>
+<li>二进制矩阵中的最短路径 - Shortest Path in Binary Matrix</li>
+</ol>
+></a>
+</li>
+</ul>
+</div>
+</main>
+<div id=back-to-top class=back-to-top>
+<a href=#><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon arrow-up"><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6.0-33.9L207 39c9.4-9.4 24.6-9.4 33.9.0l194.3 194.3c9.4 9.4 9.4 24.6.0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3.0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"/></svg></a>
+</div>
+<footer id=footer class=footer>
+<div class=footer-inner>
+<div class=site-info>©&nbsp;2019–2021&nbsp;&nbsp;Jiachen</div><div class=site-copyright><a href=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh target=_blank rel=noopener>CC BY-NC-SA 4.0</a></div>
+</div>
+</footer>
+</div>
+<script>'serviceWorker'in navigator&&window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js')})</script>
+<script src=https://cdn.jsdelivr.net/npm/medium-zoom@latest/dist/medium-zoom.min.js></script>
+<script>mediumZoom(document.querySelectorAll('div.post-body img'),{background:'hsla(var(--color-bg-h), var(--color-bg-s), var(--color-bg-l), 0.95)'})</script>
+<script src=https://cdn.jsdelivr.net/npm/instant.page@5.1.0/instantpage.min.js type=module defer></script>
+</body>
+</html>
